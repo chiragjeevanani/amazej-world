@@ -41,7 +41,7 @@ const ReferEarnComponent = () => {
                             <div className="grid gap-4">
                                 <MechanicCard title="LP Reward" desc={<>Earn <strong>14%</strong> rewards on a <strong>10-day cycle</strong>.</>} />
                                 <MechanicCard title="Referral Reward" desc={<>Flat <strong>5%</strong> referral reward on direct referrals.</>} />
-                                <MechanicCard title="Fastrack Reward" desc={<>Unlock by completing <strong>7 direct first deposits within 10 days</strong> and earn <strong>additional 2 level rewards for lifetime</strong>.</>} />
+                                <MechanicCard title="Fastrack Reward" desc={<>Unlock by completing <strong>7 direct first deposits within 30 days</strong> and earn <strong>additional 9 level rewards for lifetime</strong>.</>} />
                                 <MechanicCard title="Salary Reward" desc={<>Earn salaries ranging from <strong>$15 to $3,200</strong> every <strong>10 days</strong> based on performance.</>} />
                                 <MechanicCard title="Team Reward" desc={<>One-time team reward between <strong>$7 to $2,500</strong>.</>} />
                                 <MechanicCard title="Global Royalty Reward" desc={<>Earn a share of the global royalty pool by achieving VIP levels. Rewards are distributed over fixed periods, with <strong>VIP 7 offering lifetime benefits</strong>.</>} />

@@ -346,7 +346,7 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
                 {/* Reward Card - Ultra Glossy */}
                 <div className={`flex items-center justify-between p-3 rounded-lg border backdrop-blur-xl shadow-inner ${theme.inner}`}>
                     <div className="flex flex-col">
-                        <span className="text-[9px] font-black uppercase opacity-60">Daily Yield</span>
+                        <span className="text-[9px] font-black uppercase opacity-60">Each step reward</span>
                         <div className="text-xl font-black drop-shadow-md tracking-tight">${plan.stepReward}</div>
                     </div>
                     <div className="h-8 w-[1px] bg-white/10 mx-2"></div>
@@ -357,7 +357,10 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
                 </div>
 
                 {/* Compact Grid for Steps */}
-                <div className="space-y-1">
+                <div className="space-y-2">
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-center opacity-70">
+                        Top-Up Requirements
+                    </h4>
                     <div className="grid grid-cols-3 gap-1.5">
                         {plan.topUps.map((top, i) => (
                             <div key={i} className={`flex flex-col items-center justify-center py-2 px-1 rounded-md border backdrop-blur-md shadow-sm transition-transform hover:scale-110 ${theme.inner}`}>
