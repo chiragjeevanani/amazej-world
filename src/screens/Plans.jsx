@@ -295,12 +295,12 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
             button: "bg-white text-orange-600 border-orange-200 hover:shadow-orange-500/50",
             shine: "bg-orange-300/20"
         },
-        // 6: Plan 7 - Infernal Red
+        // 6: Plan 7 - Cosmic Purple
         {
-            outer: "from-red-500 via-red-600 to-rose-600 border-red-400/50 shadow-rose-500/50",
-            inner: "bg-red-950/60 border-red-200/30 text-rose-50",
-            button: "bg-white text-rose-600 border-rose-200 hover:shadow-rose-500/50",
-            shine: "bg-rose-300/20"
+            outer: "from-purple-600 via-fuchsia-500 to-indigo-600 border-fuchsia-400/50 shadow-fuchsia-500/50",
+            inner: "bg-purple-950/60 border-purple-200/30 text-purple-50",
+            button: "bg-white text-purple-600 border-fuchsia-200 hover:shadow-fuchsia-500/50",
+            shine: "bg-purple-300/20"
         }
     ];
 
