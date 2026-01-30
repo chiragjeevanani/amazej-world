@@ -4,7 +4,7 @@ import { useProtocol } from "@/contexts/ProtocolContext";
 import { DollarSign } from "lucide-react"; // Assuming we might want an icon, or just strictly copy
 // If LightTile uses hardcoded styles, I'll copy them.
 
-const fmtUSDc = (c) => c === undefined ? "—" : (Number(c) / 100).toLocaleString(undefined, { style: "currency", currency: "USD" });
+const fmtUSDc = (c) => c === undefined ? "—" : (Number(c) / 100).toFixed(2);
 const fmtTok = (x) => x === undefined ? "—" : (Number(x) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 });
 const fmtDate = (s) => !s || s === 0n ? "—" : new Date(Number(s) * 1000).toLocaleString();
 
@@ -67,9 +67,9 @@ export default function WithdrawEarningsComponent() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <LightTile label="Unclaimed USD" value={fmtUSDc(withdraw?.availableWithdraw)} />
+                    <LightTile label="Unclaimed" currency="USDT" value={fmtUSDc(withdraw?.availableWithdraw)} />
                     <LightTile label="Unclaimed Tokens" value={fmtTok(withdraw?.availableWithdrawTokens)} />
-                    <LightTile label="Realized USD" value={fmtUSDc(withdraw?.totalWithdrawn)} />
+                    <LightTile label="Realized" currency="USDT" value={fmtUSDc(withdraw?.totalWithdrawn)} />
                     <LightTile label="Realized Tokens" value={fmtTok(withdraw?.totalTokensWithdrawn)} />
                 </div>
 
@@ -94,10 +94,13 @@ export default function WithdrawEarningsComponent() {
     );
 }
 
-function LightTile({ label, value }) {
+function LightTile({ label, value, currency }) {
     return (
         <div className="p-4 bg-accent/50 rounded-xl border border-border">
-            <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{label}</div>
+            <div className="flex justify-between items-center mb-1">
+                <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{label}</div>
+                {currency && <div className="text-sm font-black text-popover-foreground">{currency}</div>}
+            </div>
             <div className="text-xl font-black text-popover-foreground">{value}</div>
         </div>
     );

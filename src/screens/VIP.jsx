@@ -23,61 +23,72 @@ export default function VipScreen() {
         const team = Number(data.referral?.teamMembers || 0);
 
         const tSelf = getTableVal(vipTables.selfCents, nextLevel);
-        const tDirects = Number(vipTables.directsMin?.[nextLevel] || 0);
+        const tDirects = Number(vipTables.directsVip1Min?.[nextLevel] || vipTables.directsMin?.[nextLevel] || 0);
         const tTeam = Number(vipTables.teamMin?.[nextLevel] || 0);
 
         return { self, directs, team, tSelf, tDirects, tTeam };
     }, [vipTables, data.user, data.referral, nextLevel]);
 
     return (
-        <div className="space-y-8 max-w-2xl mx-auto md:max-w-none">
-            {/* VIP Progress Card */}
-            <div className="bg-card rounded-2xl border border-border p-6 shadow-xl">
-                <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-black uppercase tracking-wide">VIP</h2>
-                    <div className="flex items-center gap-4">
-                        <span className="text-xs font-bold text-muted-foreground">Pending: {fmtUSDCents(pendingVipTokens)}</span>
-                        <button
-                            disabled={!canClaim || actions.loading.claimVIP}
-                            onClick={() => actions.claimVIP()}
-                            className="h-8 px-4 rounded border border-border bg-background hover:bg-accent text-xs font-black uppercase tracking-widest transition-colors disabled:opacity-50"
-                        >
-                            {canClaim ? "Claim Rewards" : "No VIP rewards"}
-                        </button>
-                    </div>
+        <div className="space-y-6 max-w-2xl mx-auto md:max-w-none p-4 md:p-8 bg-[#1a2b5d] rounded-3xl min-h-screen">
+            {/* VIP Pending Header */}
+            <div className="bg-white rounded-2xl border border-gray-200 p-6 flex items-center justify-between gap-4 shadow-sm">
+                <div className="flex items-center gap-3">
+                    <span className="text-xl font-bold text-black">VIP</span>
+                    <span className="text-sm font-medium text-gray-500">Pending:</span>
+                    <span className="text-xl font-bold text-black">${(Number(pendingVipTokens) / 100).toFixed(2)}</span>
                 </div>
-
-                <div className="bg-white dark:bg-blue-900/10 rounded-xl p-6 border-2 border-blue-400 dark:border-blue-900/30">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-black dark:text-white" style={{ color: 'var(--foreground, #000)' }}>Progress to VIP {nextLevel}</h3>
-                        <span className="text-xs font-bold dark:text-white" style={{ color: 'var(--foreground, #000)' }}>Current: VIP {currentLevel}</span>
-                    </div>
-
-                    {progress && (
-                        <div className="space-y-4">
-                            <RequirementItem label="Self Stake" current={progress.self} target={progress.tSelf} isCurrency />
-                            {progress.tDirects > 0 && (
-                                <RequirementItem label="Direct Team" current={progress.directs} target={progress.tDirects} />
-                            )}
-                            {progress.tTeam > 0 && (
-                                <RequirementItem label="Total Team" current={progress.team} target={progress.tTeam} />
-                            )}
-
-                            <div className="pt-4 text-[10px] dark:text-white font-medium leading-relaxed" style={{ color: 'var(--foreground, #000)' }}>
-                                Hit all checks above to unlock VIP {nextLevel}. Self stake shown is your current base plan amount.
-                            </div>
-                        </div>
-                    )}
-                </div>
+                <button
+                    disabled={!canClaim || actions.loading.claimVIP}
+                    onClick={() => actions.claimVIP()}
+                    className="py-3 px-6 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 text-base font-medium text-black transition-all shadow-sm active:scale-95 text-center min-w-[140px]"
+                >
+                    {actions.loading.claimVIP ? "Wait…" : "Claim VIP Rewards"}
+                </button>
             </div>
 
-            {/* Redeposit Rewards */}
+            {/* VIP Progress Card */}
+            <div className="bg-[#ebf3ff] rounded-2xl p-6 border border-blue-100 shadow-sm relative overflow-hidden">
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-bold text-[#1a4b8d]">Progress to VIP {nextLevel}</h3>
+                    <span className="text-xs font-bold text-blue-500">Current: VIP {currentLevel}</span>
+                </div>
+
+                {progress && (
+                    <div className="space-y-6">
+                        <RequirementItem
+                            label="Self Stake"
+                            current={progress.self}
+                            target={progress.tSelf}
+                            subValue={`$${progress.self.toLocaleString()} / $${progress.tSelf.toLocaleString()}`}
+                        />
+                        <RequirementItem
+                            label={nextLevel > 1 ? "Directs with VIP1" : "Direct Referrals"}
+                            current={progress.directs}
+                            target={progress.tDirects}
+                            subValue={`${progress.directs} / ${progress.tDirects}`}
+                        />
+                        <RequirementItem
+                            label="Your Team Members"
+                            current={progress.team}
+                            target={progress.tTeam}
+                            subValue={`${progress.team} / ${progress.tTeam}`}
+                        />
+
+                        <div className="pt-4 text-xs font-semibold text-[#1a4b8d]/60 leading-relaxed">
+                            Hit all checks above to unlock VIP {nextLevel}. Self stake shown is your current base plan amount.
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* VIP Levels Section */}
             <div className="space-y-4">
                 <div className="flex items-center justify-between px-2">
-                    <h3 className="text-xl font-black">Redeposit Rewards</h3>
-                    <span className="text-xs font-medium text-muted-foreground">Current Team Count: {Number(data.referral?.teamMembers ?? 0)}</span>
+                    <h3 className="text-2xl font-bold text-white tracking-tight">VIP Levels</h3>
+                    <span className="text-sm font-medium text-white/60">Current: VIP {currentLevel}</span>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                     {[1, 2, 3, 4, 5, 6, 7].map(lvl => (
                         <LevelCard
                             key={lvl}
@@ -85,173 +96,113 @@ export default function VipScreen() {
                             vipTables={vipTables}
                             currentLevel={currentLevel}
                             redeProgress={data.redeProgress}
-                            type="redeposit"
+                            nextClaimAt={data.vipProg?.[lvl]?.nextClaimAt}
                         />
                     ))}
-                </div>
-            </div>
-
-            {/* VIP Levels */}
-            <div className="space-y-4">
-                <div className="flex items-center justify-between px-2">
-                    <h3 className="text-xl font-black">VIP Levels</h3>
-                    <span className="text-xs font-medium text-muted-foreground">Current: VIP {currentLevel}</span>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {[1, 2, 3, 4, 5, 6, 7].map(lvl => (
-                        <LevelCard
-                            key={lvl}
-                            level={lvl}
-                            vipTables={vipTables}
-                            currentLevel={currentLevel}
-                            type="main"
-                        />
-                    ))}
-                </div>
-
-                {/* Detailed Table */}
-                <div className="pt-8">
-                    <h3 className="text-xl font-black mb-4 px-2">Detailed Requirements</h3>
-                    <VipDetailsTable vipTables={vipTables} currentLevel={currentLevel} />
                 </div>
             </div>
         </div>
     );
 }
 
-function VipDetailsTable({ vipTables, currentLevel }) {
-    if (!vipTables) {
-        return (
-            <div className="bg-card rounded-2xl border border-border p-8 text-center">
-                <p className="text-muted-foreground text-sm">Connect your wallet to view detailed VIP requirements</p>
-            </div>
-        );
-    }
 
-    const getVal = (arr, i) => numUSDCents(arr?.[i]);
 
-    return (
-        <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm">
-            <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                    <thead className="bg-secondary/30 border-b border-border">
-                        <tr>
-                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Level</th>
-                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Self Stake</th>
-                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Directs</th>
-                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Team</th>
-                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">One-Time</th>
-                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Salary</th>
-                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                        {[1, 2, 3, 4, 5, 6, 7].map((lvl) => {
-                            const isReached = currentLevel >= lvl;
-                            const self = getVal(vipTables.selfCents, lvl);
-                            const bonus = getVal(vipTables.oneTimeCents, lvl);
-                            const salary = getVal(vipTables.vipPerClaimCents, lvl);
-                            const directs = Number(vipTables.directsMin?.[lvl] || 0);
-                            const team = Number(vipTables.teamMin?.[lvl] || 0);
-
-                            return (
-                                <tr key={lvl} className={`transition-colors hover:bg-muted/10 ${isReached ? 'bg-green-50/50 dark:bg-green-900/10' : ''}`}>
-                                    <td className="px-6 py-4 text-sm font-black text-foreground">VIP {lvl}</td>
-                                    <td className="px-6 py-4 text-sm font-bold text-foreground">{fmtUSD(self)}</td>
-                                    <td className="px-6 py-4 text-sm text-muted-foreground">{directs}</td>
-                                    <td className="px-6 py-4 text-sm text-muted-foreground">{team}</td>
-                                    <td className="px-6 py-4 text-sm font-bold text-green-600 dark:text-green-400">{fmtUSD(bonus)}</td>
-                                    <td className="px-6 py-4 text-sm font-bold text-blue-600 dark:text-blue-400">{fmtUSD(salary)}</td>
-                                    <td className="px-6 py-4">
-                                        {isReached ? (
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                                                Active
-                                            </span>
-                                        ) : (
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400">
-                                                Locked
-                                            </span>
-                                        )}
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
-}
-
-function RequirementItem({ label, current, target, isCurrency }) {
+function RequirementItem({ label, current, target, subValue }) {
     const ok = current >= target;
-    const pct = Math.min(100, Math.max(0, (current / target) * 100));
+    const pct = Math.min(100, Math.max(2, (Number(current) / Number(target || 1)) * 100));
 
     return (
         <div className="space-y-2">
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <div className={`w-5 h-5 rounded-full flex items-center justify-center ${ok ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
-                        {ok ? <Check size={12} strokeWidth={4} /> : <div className="w-1.5 h-1.5 rounded-full bg-current" />}
+                <div className="flex items-center gap-3">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${ok ? 'bg-[#4caf50] text-white' : 'bg-gray-100 text-gray-300'}`}>
+                        {ok ? <Check size={14} strokeWidth={4} /> : <div className="w-1.5 h-1.5 rounded-full bg-current" />}
                     </div>
-                    <span className="text-sm font-bold text-foreground">{label}</span>
+                    <span className="text-[17px] font-bold text-[#1a4b8d]">{label}</span>
                 </div>
-                <span className="text-sm font-bold text-muted-foreground">
-                    {isCurrency ? fmtUSD(current) : current} / {isCurrency ? fmtUSD(target || 0) : target}
+                <span className="text-[15px] font-bold text-blue-500/80">
+                    {subValue}
                 </span>
             </div>
-            <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
-                <div className="h-full bg-amber-400 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+            <div className="h-3.5 w-full bg-white rounded-full overflow-hidden shadow-inner border border-blue-50">
+                <div
+                    className={`h-full rounded-full transition-all duration-700 ${ok ? 'bg-[#ffcc00]' : 'bg-[#ffcc00]/20'}`}
+                    style={{ width: `${pct}%` }}
+                />
             </div>
         </div>
     );
 }
 
-function LevelCard({ level, vipTables, currentLevel, redeProgress, type }) {
+function LevelCard({ level, vipTables, currentLevel, redeProgress, nextClaimAt }) {
     if (!vipTables) return null;
 
     const self = numUSDCents(vipTables.selfCents[level]);
     const salary = numUSDCents(vipTables.vipPerClaimCents[level]);
     const oneTime = numUSDCents(vipTables.oneTimeCents?.[level]);
+    const dMin = Number(vipTables.directsMin?.[level] || 0);
+    const dv1Min = Number(vipTables.directsVip1Min?.[level] || 0);
+    const tMin = Number(vipTables.teamMin?.[level] || 0);
 
     const isUnlocked = currentLevel >= level;
+    const isEligible = !isUnlocked && (currentLevel + 1 === level);
     const redeCount = redeProgress ? Number(redeProgress[level] || 0) : 0;
 
+    const { data } = useProtocol();
+    const teamCount = Number(data.referral?.teamMembers || 0);
+    const directCount = Number(data.referral?.directReferrals || 0);
+
     return (
-        <div className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-all relative overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm relative overflow-hidden">
             <div className="flex justify-between items-start mb-6">
-                <span className="text-xl font-black text-foreground">VIP {level}</span>
-                <span className={`px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest ${isUnlocked ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'}`}>
-                    {isUnlocked ? 'Active' : 'Not yet'}
+                <span className="text-2xl font-bold text-black">VIP {level}</span>
+                <span className={`px-3 py-1 rounded-lg text-xs font-bold ${isUnlocked ? 'bg-green-50 text-green-600' :
+                    isEligible ? 'bg-green-50 text-green-600' :
+                        'bg-orange-50 text-orange-600'
+                    }`}>
+                    {isUnlocked ? 'Active' : isEligible ? 'Eligible' : 'Not yet'}
                 </span>
             </div>
 
-            <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1">
-                        <span className="text-sm text-foreground font-medium">Self Stake</span>
-                        <span className="text-base font-medium text-foreground">{fmtUSD(self)}</span>
-                    </div>
-
-                    {type === 'main' ? (
-                        <div className="flex flex-col gap-1">
-                            <span className="text-sm text-foreground font-medium">One-Time</span>
-                            <span className="text-base font-medium text-foreground">Unclaimed ({isUnlocked ? '0' : '0'})</span>
-                        </div>
-                    ) : (
-                        <div className="flex flex-col gap-1">
-                            <span className="text-sm text-foreground font-medium">Status</span>
-                            <span className="text-base font-medium text-foreground">{isUnlocked ? 'Active' : 'Locked'}</span>
-                        </div>
-                    )}
+            <div className="grid grid-cols-2 gap-y-6">
+                <div>
+                    <span className="text-[15px] font-medium text-gray-500 block mb-1">Self Stake</span>
+                    <div className="text-base font-bold text-black">${self.toLocaleString()}</div>
+                </div>
+                <div>
+                    <span className="text-[15px] font-medium text-gray-500 block mb-1">{level > 1 ? "VIP1 Directs" : "Directs"}</span>
+                    <div className="text-base font-bold text-black">{directCount} / {level > 1 ? dv1Min : dMin}</div>
                 </div>
 
-                <div className="flex flex-col gap-1">
-                    <span className="text-sm text-foreground font-medium">Salary</span>
-                    <div className="text-base font-medium text-foreground">
-                        {type === 'redeposit' ? `${redeCount}/4` : '0/4'} ({fmtUSD(salary)}/claim)
+                <div>
+                    <span className="text-[15px] font-medium text-gray-500 block mb-1">Team</span>
+                    <div className="text-base font-bold text-black">{teamCount} / {tMin}</div>
+                </div>
+                <div>
+                    <span className="text-[15px] font-medium text-gray-500 block mb-1">One-Time</span>
+                    <div className="text-base font-bold text-black">
+                        {isUnlocked ? "Claimed" : "Unclaimed"} ({oneTime})
                     </div>
                 </div>
+
+                <div>
+                    <span className="text-[15px] font-medium text-gray-500 block mb-1">Salary</span>
+                    <div className="text-base font-bold text-black">
+                        {redeCount}/4 (${salary}/claim)
+                    </div>
+                </div>
+                {isUnlocked && nextClaimAt && (
+                    <div>
+                        <span className="text-[15px] font-medium text-gray-500 block mb-1">Next Salary</span>
+                        <div className="text-xs font-bold text-black leading-tight">
+                            {new Date(Number(nextClaimAt) * 1000).toLocaleString('en-GB', {
+                                day: '2-digit', month: '2-digit', year: 'numeric',
+                                hour: '2-digit', minute: '2-digit', second: '2-digit',
+                                hour12: true
+                            })}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

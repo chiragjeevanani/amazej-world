@@ -42,7 +42,7 @@ const ReferEarnComponent = () => {
                                 <MechanicCard title="LP Reward" desc={<>Earn <strong>14%</strong> rewards on a <strong>10-day cycle</strong>.</>} />
                                 <MechanicCard title="Referral Reward" desc={<>Flat <strong>5%</strong> referral reward on direct referrals.</>} />
                                 <MechanicCard title="Fastrack Reward" desc={<>Unlock by completing <strong>7 direct first deposits within 30 days</strong> and earn <strong>additional 9 level rewards for lifetime</strong>.</>} />
-                                <MechanicCard title="Salary Reward" desc={<>Earn salaries ranging from <strong>$15 to $3,200</strong> every <strong>10 days</strong> based on performance.</>} />
+                                <MechanicCard title="Salary Reward" desc={<>Earn salaries ranging from <strong>$15 to $3,300</strong> every <strong>10 days</strong> based on performance.</>} />
                                 <MechanicCard title="Team Reward" desc={<>One-time team reward between <strong>$7 to $2,500</strong>.</>} />
                                 <MechanicCard title="Global Royalty Reward" desc={<>Earn a share of the global royalty pool by achieving VIP levels. Rewards are distributed over fixed periods, with <strong>VIP 7 offering lifetime benefits</strong>.</>} />
 
@@ -96,6 +96,21 @@ const ReferEarnComponent = () => {
                                         ["VIP 7", "20%", "Lifetime"],
                                     ]}
                                 />
+
+                                <RewardTable
+                                    title="Salary Reward"
+                                    headers={["Rank", "LP Package", "Qualification", "Reward"]}
+                                    rows={[
+                                        ["VIP 1", "—", "Direct 7 People", "$15 / 10 Days"],
+                                        ["VIP 2", "—", "2 Direct VIP1 / Team 25", "$50 / 10 Days"],
+                                        ["VIP 3", "—", "3 Direct VIP1 / Team 124", "$150 / 10 Days"],
+                                        ["VIP 4", "$810", "4 Direct VIP1 / Team 502", "$400 / 10 Days"],
+                                        ["VIP 5", "$1610", "5 Direct VIP1 / Team 1501", "$800 / 10 Days"],
+                                        ["VIP 6", "$3210", "6 Direct VIP1 / Team 3400", "$1600 / 10 Days"],
+                                        ["VIP 7", "$6410", "9 Direct VIP1 / Team 5002", "$3300 / 10 Days"],
+                                    ]}
+                                    footer="Complete The Target & Get Unlimited Profit."
+                                />
                             </div>
                         </div>
                     </div>
@@ -120,30 +135,39 @@ function MechanicCard({ title, desc }) {
     );
 }
 
-function RewardTable({ title, headers, rows }) {
+function RewardTable({ title, headers, rows, footer }) {
     return (
         <div className="bg-secondary/20 rounded-xl border border-border overflow-hidden">
-            <div className="px-6 py-4 border-b border-border">
+            <div className="px-6 py-4 border-b border-border bg-secondary/10">
                 <h3 className="text-foreground font-bold text-sm">{title}</h3>
             </div>
-            <table className="w-full text-sm text-left">
-                <thead className="bg-secondary/50">
-                    <tr>
-                        {headers.map((h, i) => (
-                            <th key={i} className="px-6 py-3 font-black text-[10px] uppercase tracking-widest text-muted-foreground">{h}</th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                    {rows.map((row, i) => (
-                        <tr key={i} className="hover:bg-muted/10 transition-colors">
-                            {row.map((cell, j) => (
-                                <td key={j} className="px-6 py-3 text-foreground font-medium">{cell}</td>
+            <div className="overflow-x-auto">
+                <table className="w-full text-sm text-left">
+                    <thead className="bg-secondary/50">
+                        <tr>
+                            {headers.map((h, i) => (
+                                <th key={i} className="px-6 py-3 font-black text-[10px] uppercase tracking-widest text-muted-foreground whitespace-nowrap">{h}</th>
                             ))}
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                        {rows.map((row, i) => (
+                            <tr key={i} className="hover:bg-muted/10 transition-colors">
+                                {row.map((cell, j) => (
+                                    <td key={j} className="px-6 py-3 text-foreground font-medium whitespace-nowrap">{cell}</td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            {footer && (
+                <div className="px-6 py-3 bg-primary/10 border-t border-border">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-center text-primary italic">
+                        {footer}
+                    </p>
+                </div>
+            )}
         </div>
     );
 }
