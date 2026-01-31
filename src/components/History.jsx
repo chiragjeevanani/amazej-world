@@ -3,7 +3,7 @@ import { formatEther } from "viem";
 import { useProtocol } from "@/contexts/ProtocolContext";
 
 const fmtToken18 = (x) => (Number(x) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 });
-const fmtUSDc = (c) => (Number(formatEther(c))).toLocaleString(undefined, { style: "currency", currency: "USD" });
+const fmtUSDc = (c) => "USDT " + (Number(formatEther(c))).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const fmtWad = (w) => (Number(w) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 });
 const fmtDate = (s) => s && s > 0n ? new Date(Number(s) * 1000).toLocaleString() : "—";
 
@@ -106,7 +106,7 @@ export default function HistoryTabs({ onlyShow }) {
             <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-2xl">
                 {currentTab === "deposits" && (
                     <HistorySection title="Incoming Deposits" total={depTotal} page={depPage} setPage={setDepPage} pageSize={pageSize}>
-                        <Table headers={["Time", "Amount (USD)", "Price"]}>
+                        <Table headers={["Time", "Amount (USDT)", "Price"]}>
                             {deposits.map((d, i) => (
                                 <tr key={i} className="hover:bg-muted/10 transition-colors border-b border-border last:border-0">
                                     <td className="px-6 py-4 text-xs font-bold text-muted-foreground">{fmtDate(d.depositedAt)}</td>
@@ -129,7 +129,7 @@ export default function HistoryTabs({ onlyShow }) {
 
                 {currentTab === "claims" && (
                     <HistorySection title="LP Claims" total={clmTotal} page={clmPage} setPage={setClmPage} pageSize={pageSize}>
-                        <Table headers={["Time", "LP (USD)", "Tokens (AMA)", "Periods"]}>
+                        <Table headers={["Time", "LP (USDT)", "Tokens (AMA)", "Periods"]}>
                             {claims.map((c, i) => (
                                 <tr key={i} className="hover:bg-muted/10 transition-colors border-b border-border last:border-0">
                                     <td className="px-6 py-4 text-xs font-bold text-muted-foreground">{fmtDate(c.claimedAt)}</td>
@@ -154,7 +154,7 @@ export default function HistoryTabs({ onlyShow }) {
 
                 {currentTab === "refAccr" && (
                     <HistorySection title="Referral Growth" total={refTotal} page={refPage} setPage={setRefPage} pageSize={pageSize}>
-                        <Table headers={["Time", "Accrued (USD)", "Level"]}>
+                        <Table headers={["Time", "Accrued (USDT)", "Level"]}>
                             {refAccr.map((r, i) => (
                                 <tr key={i} className="hover:bg-muted/10 transition-colors border-b border-border last:border-0">
                                     <td className="px-6 py-4 text-xs font-bold text-muted-foreground">{fmtDate(r.claimedAt)}</td>
@@ -177,7 +177,7 @@ export default function HistoryTabs({ onlyShow }) {
 
                 {currentTab === "withdraws" && (
                     <HistorySection title="Withdrawal History" total={wdTotal} page={wdPage} setPage={setWdPage} pageSize={pageSize}>
-                        <Table headers={["Time", "USD", "Net AMA", "Fee AMA"]}>
+                        <Table headers={["Time", "USDT", "Net AMA", "Fee AMA"]}>
                             {withdraws.map((w, i) => (
                                 <tr key={i} className="hover:bg-muted/10 transition-colors border-b border-border last:border-0">
                                     <td className="px-6 py-4 text-xs font-bold text-muted-foreground">{fmtDate(w.claimedAt)}</td>
@@ -191,7 +191,7 @@ export default function HistoryTabs({ onlyShow }) {
                             {(w) => (
                                 <>
                                     <Line label="Time" value={fmtDate(w.claimedAt)} />
-                                    <Line label="USD" value={fmtUSDc(w.claimAmount)} />
+                                    <Line label="USDT" value={fmtUSDc(w.claimAmount)} />
                                     <Line label="Net" value={fmtToken18(w.netTokens)} />
                                     <Line label="Fee" value={fmtToken18(w.feeTokens)} />
                                 </>

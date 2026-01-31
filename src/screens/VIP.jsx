@@ -2,8 +2,8 @@ import * as React from "react";
 import { useProtocol } from "@/contexts/ProtocolContext";
 import { Check } from "lucide-react";
 
-const fmtUSD = (usd) => usd.toLocaleString(undefined, { style: "currency", currency: "USD" });
-const fmtUSDCents = (c) => (Number(c ?? 0n) / 100).toLocaleString(undefined, { style: "currency", currency: "USD" });
+const fmtUSD = (usd) => "USDT " + usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtUSDCents = (c) => "USDT " + (Number(c ?? 0n) / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const numUSDCents = (c) => (Number(c ?? 0n) / 100);
 
 export default function VipScreen() {
@@ -36,7 +36,7 @@ export default function VipScreen() {
                 <div className="flex items-center gap-3">
                     <span className="text-xl font-bold text-black">VIP</span>
                     <span className="text-sm font-medium text-gray-500">Pending:</span>
-                    <span className="text-xl font-bold text-black">${(Number(pendingVipTokens) / 100).toFixed(2)}</span>
+                    <span className="text-xl font-bold text-black">USDT {(Number(pendingVipTokens) / 100).toFixed(2)}</span>
                 </div>
                 <button
                     disabled={!canClaim || actions.loading.claimVIP}
@@ -60,7 +60,7 @@ export default function VipScreen() {
                             label="Self Stake"
                             current={progress.self}
                             target={progress.tSelf}
-                            subValue={`$${progress.self.toLocaleString()} / $${progress.tSelf.toLocaleString()}`}
+                            subValue={`USDT ${progress.self.toLocaleString()} / USDT ${progress.tSelf.toLocaleString()}`}
                         />
                         <RequirementItem
                             label={nextLevel > 1 ? "Directs with VIP1" : "Direct Referrals"}
@@ -167,7 +167,7 @@ function LevelCard({ level, vipTables, currentLevel, redeProgress, nextClaimAt }
             <div className="grid grid-cols-2 gap-y-6">
                 <div>
                     <span className="text-[15px] font-medium text-gray-500 block mb-1">Self Stake</span>
-                    <div className="text-base font-bold text-black">${self.toLocaleString()}</div>
+                    <div className="text-base font-bold text-black">USDT {self.toLocaleString()}</div>
                 </div>
                 <div>
                     <span className="text-[15px] font-medium text-gray-500 block mb-1">{level > 1 ? "VIP1 Directs" : "Directs"}</span>
@@ -188,7 +188,7 @@ function LevelCard({ level, vipTables, currentLevel, redeProgress, nextClaimAt }
                 <div>
                     <span className="text-[15px] font-medium text-gray-500 block mb-1">Salary</span>
                     <div className="text-base font-bold text-black">
-                        {redeCount}/4 (${salary}/claim)
+                        {redeCount}/4 (USDT {salary}/claim)
                     </div>
                 </div>
                 {isUnlocked && nextClaimAt && (

@@ -46,7 +46,7 @@ const DepositTransactionsTable = ({
                 </div>
                 <div className="text-right">
                     <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Total Value</p>
-                    <p className="text-lg font-black">$708,762.50</p>
+                    <p className="text-lg font-black">USDT 708,762.50</p>
                 </div>
             </div>
 
@@ -65,7 +65,7 @@ const DepositTransactionsTable = ({
                         {currentTransactions.map((tx, i) => (
                             <tr key={i} className="hover:bg-muted/10 transition-colors">
                                 <td className="px-6 py-4 text-xs font-bold text-muted-foreground">{tx.type}</td>
-                                <td className="px-6 py-4 text-sm font-black">${tx.amount.toFixed(2)}</td>
+                                <td className="px-6 py-4 text-sm font-black">USDT {tx.amount.toFixed(2)}</td>
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-2 text-muted-foreground">
                                         <span className="truncate text-xs font-mono max-w-[100px]">{tx.username}</span>

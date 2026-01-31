@@ -39,10 +39,10 @@ export const sampleData = [
 ];
 
 export const depositData = [
-    { id: 1, name: "Total Deposit", price: "$2,450.00", value: "+2.5%", icon: DollarSign },
+    { id: 1, name: "Total Deposit", price: "USDT 2,450.00", value: "+2.5%", icon: DollarSign },
     { id: 2, name: "Active Users", price: "1,234", value: "+12%", icon: TrendingUp },
     { id: 3, name: "New Signups", price: "45", value: "+5%", icon: Gift },
-    { id: 4, name: "AMA Price", price: "$7.44", value: "+1.2%", icon: Droplets },
+    { id: 4, name: "AMA Price", price: "USDT 7.44", value: "+1.2%", icon: Droplets },
 ];
 
 export const rewardData = [

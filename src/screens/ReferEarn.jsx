@@ -42,8 +42,8 @@ const ReferEarnComponent = () => {
                                 <MechanicCard title="LP Reward" desc={<>Earn <strong>14%</strong> rewards on a <strong>10-day cycle</strong>.</>} />
                                 <MechanicCard title="Referral Reward" desc={<>Flat <strong>5%</strong> referral reward on direct referrals.</>} />
                                 <MechanicCard title="Fastrack Reward" desc={<>Unlock by completing <strong>7 direct first deposits within 30 days</strong> and earn <strong>additional 9 level rewards for lifetime</strong>.</>} />
-                                <MechanicCard title="Salary Reward" desc={<>Earn salaries ranging from <strong>$15 to $3,300</strong> every <strong>10 days</strong> based on performance.</>} />
-                                <MechanicCard title="Team Reward" desc={<>One-time team reward between <strong>$7 to $2,500</strong>.</>} />
+                                <MechanicCard title="Salary Reward" desc={<>Earn salaries ranging from <strong>USDT 15 to USDT 3,300</strong> every <strong>10 days</strong> based on performance.</>} />
+                                <MechanicCard title="Team Reward" desc={<>One-time team reward between <strong>USDT 7 to USDT 2,500</strong>.</>} />
                                 <MechanicCard title="Global Royalty Reward" desc={<>Earn a share of the global royalty pool by achieving VIP levels. Rewards are distributed over fixed periods, with <strong>VIP 7 offering lifetime benefits</strong>.</>} />
 
                                 <div className="pt-4">
@@ -75,11 +75,17 @@ const ReferEarnComponent = () => {
                             <div className="flex flex-col gap-6">
                                 <RewardTable
                                     title="Fastrack Reward"
-                                    headers={["Level", "Referral Reward"]}
+                                    headers={["S.No", "Level", "Referral Reward"]}
                                     rows={[
-                                        ["Level 1", "5%"],
-                                        ["Level 2", "2%"],
-                                        ["Level 3", "2%"]
+                                        ["1", "Level 1", "5%"],
+                                        ["2", "Level 2", "0.5%"],
+                                        ["3", "Level 3", "0.5%"],
+                                        ["4", "Level 4", "0.5%"],
+                                        ["5", "Level 5", "0.5%"],
+                                        ["6", "Level 6", "0.5%"],
+                                        ["7", "Level 7", "0.5%"],
+                                        ["8", "Level 8", "0.5%"],
+                                        ["9", "Level 9", "0.5%"],
                                     ]}
                                 />
 
@@ -101,13 +107,13 @@ const ReferEarnComponent = () => {
                                     title="Salary Reward"
                                     headers={["Rank", "LP Package", "Qualification", "Reward"]}
                                     rows={[
-                                        ["VIP 1", "—", "Direct 7 People", "$15 / 10 Days"],
-                                        ["VIP 2", "—", "2 Direct VIP1 / Team 25", "$50 / 10 Days"],
-                                        ["VIP 3", "—", "3 Direct VIP1 / Team 124", "$150 / 10 Days"],
-                                        ["VIP 4", "$810", "4 Direct VIP1 / Team 502", "$400 / 10 Days"],
-                                        ["VIP 5", "$1610", "5 Direct VIP1 / Team 1501", "$800 / 10 Days"],
-                                        ["VIP 6", "$3210", "6 Direct VIP1 / Team 3400", "$1600 / 10 Days"],
-                                        ["VIP 7", "$6410", "9 Direct VIP1 / Team 5002", "$3300 / 10 Days"],
+                                        ["VIP 1", "—", "Direct 7 People", "USDT 15 / 10 Days"],
+                                        ["VIP 2", "—", "2 Direct VIP1 / Team 25", "USDT 50 / 10 Days"],
+                                        ["VIP 3", "—", "3 Direct VIP1 / Team 124", "USDT 150 / 10 Days"],
+                                        ["VIP 4", "USDT 810", "4 Direct VIP1 / Team 502", "USDT 400 / 10 Days"],
+                                        ["VIP 5", "USDT 1610", "5 Direct VIP1 / Team 1501", "USDT 800 / 10 Days"],
+                                        ["VIP 6", "USDT 3210", "6 Direct VIP1 / Team 3400", "USDT 1600 / 10 Days"],
+                                        ["VIP 7", "USDT 6410", "9 Direct VIP1 / Team 5002", "USDT 3300 / 10 Days"],
                                     ]}
                                     footer="Complete The Target & Get Unlimited Profit."
                                 />

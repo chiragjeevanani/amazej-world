@@ -64,9 +64,9 @@ const GlobalReward = ({
                     <tbody className="divide-y divide-border">
                         {currentTransactions.map((tx, i) => (
                             <tr key={i} className="hover:bg-muted/10 transition-colors">
-                                <td className="px-6 py-4 text-sm font-black">${tx.amountUsdt}</td>
+                                <td className="px-6 py-4 text-sm font-black">USDT {tx.amountUsdt}</td>
                                 <td className="px-6 py-4 text-xs font-bold text-muted-foreground">{tx.amountAmz}</td>
-                                <td className="px-6 py-4 text-xs font-bold text-muted-foreground/60">${tx.rate}</td>
+                                <td className="px-6 py-4 text-xs font-bold text-muted-foreground/60">USDT {tx.rate}</td>
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-2 text-muted-foreground">
                                         <span className="truncate text-xs font-mono max-w-[100px]">{tx.username}</span>

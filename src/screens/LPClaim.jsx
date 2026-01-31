@@ -8,8 +8,8 @@ const gt0 = (x) => (x ?? 0n) > 0n;
 function fmtUSDc(cents) {
     if (cents === undefined) return "-";
     const c = typeof cents === "number" ? BigInt(cents) : cents;
-    const s = (Number(c) / 100).toFixed(2);
-    return `$${s}`;
+    const s = (Number(c) / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return `USDT ${s}`;
 }
 
 export default function LPClaimComponent() {
@@ -100,7 +100,7 @@ function TrancheCard({
     textClass,
     progressClass
 }) {
-    const pendingFmt = pending !== undefined ? `$${roundWithFormat(pending * (priceCents || 0n) / BigInt(10 ** 18))}` : "—";
+    const pendingFmt = pending !== undefined ? `USDT ${roundWithFormat(pending * (priceCents || 0n) / BigInt(10 ** 18))}` : "—";
     const progress = tranche?.claimCounts ? Math.min((tranche.claimCounts / 12) * 100, 100) : 0;
 
     return (

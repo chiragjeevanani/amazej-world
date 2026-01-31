@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 import { useProtocol } from "@/contexts/ProtocolContext";
 import { ClaimCountdown } from "@/components/Countdown";
 
-const fmtUSDc = (c) => c === undefined ? "—" : (Number(c) / 100).toLocaleString(undefined, { style: "currency", currency: "USD" });
+const fmtUSDc = (c) => c === undefined ? "—" : "USDT " + (Number(c) / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const fmtTok = (x) => x === undefined ? "—" : (Number(x) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 });
 const fmtDate = (s) => !s || s === 0n ? "—" : new Date(Number(s) * 1000).toLocaleString();
 

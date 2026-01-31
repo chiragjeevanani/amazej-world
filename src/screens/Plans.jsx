@@ -82,8 +82,8 @@ const plans = [
 function fmtUSDc(cents) {
     if (cents === undefined) return "-";
     const c = typeof cents === "number" ? BigInt(cents) : cents;
-    const s = (Number(c) / 100).toFixed(2);
-    return `$${s}`;
+    const s = (Number(c) / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return `USDT ${s}`;
 }
 
 export function fmtTs(ts) {
@@ -159,9 +159,9 @@ export default function PlansAndActions() {
             {/* Balances Section */}
             <div className="stat-card">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <StatBox label="AMA Balance" value={data.tokenBalanceFmt ? `${data.tokenBalanceFmt} ($${(Number(data.tokenBalanceFmt) * Number(data.priceUSD)).toFixed(4)})` : "—"} />
+                    <StatBox label="AMA Balance" value={data.tokenBalanceFmt ? `${data.tokenBalanceFmt} (USDT ${(Number(data.tokenBalanceFmt) * Number(data.priceUSD)).toFixed(4)})` : "—"} />
                     <StatBox label="USDT Balance" value={data.usdtBalanceFmt ?? "—"} />
-                    <StatBox label="AMA Price" value={data.priceUSD ?? "—"} subValue={`$${data.contractUsdtBalanceFmt} | ${data.contractTokenBalanceFmt} AMA`} />
+                    <StatBox label="AMA Price" value={data.priceUSD ?? "—"} subValue={`USDT ${data.contractUsdtBalanceFmt} | ${data.contractTokenBalanceFmt} AMA`} />
                     <StatBox label="Next Claim In" value={data?.user?.nextClaimAt ? <ClaimCountdown nextClaimAtSec={data?.user?.nextClaimAt} /> : "—"} />
                 </div>
             </div>
@@ -333,7 +333,7 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
                     </h3>
                     <div className="flex flex-col">
                         <span className="text-3xl font-black drop-shadow-xl tracking-tighter leading-none">
-                            ${plan.baseDeposit + 10}
+                            USDT {plan.baseDeposit + 10}
                         </span>
                         <span className="text-[9px] font-bold text-white/80 uppercase tracking-widest mt-1 opacity-90">
                             Entry
@@ -347,7 +347,7 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
                 <div className={`flex items-center justify-between p-3 rounded-lg border backdrop-blur-xl shadow-inner ${theme.inner}`}>
                     <div className="flex flex-col">
                         <span className="text-[9px] font-black uppercase opacity-60">Each step reward</span>
-                        <div className="text-xl font-black drop-shadow-md tracking-tight">${plan.stepReward}</div>
+                        <div className="text-xl font-black drop-shadow-md tracking-tight">USDT {plan.stepReward}</div>
                     </div>
                     <div className="h-8 w-[1px] bg-white/10 mx-2"></div>
                     <div className="flex flex-col text-right">
@@ -365,7 +365,7 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
                         {plan.topUps.map((top, i) => (
                             <div key={i} className={`flex flex-col items-center justify-center py-2 px-1 rounded-md border backdrop-blur-md shadow-sm transition-transform hover:scale-110 ${theme.inner}`}>
                                 <div className="text-[7px] font-black opacity-50 mb-0.5">STEP {top.step}</div>
-                                <div className="text-xs font-black drop-shadow-sm">${top.amount}</div>
+                                <div className="text-xs font-black drop-shadow-sm">USDT {top.amount}</div>
                             </div>
                         ))}
                     </div>

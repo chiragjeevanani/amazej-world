@@ -79,7 +79,7 @@ const SellComponent = () => {
 
                                 <div className="flex justify-between text-xs font-medium px-1">
                                     <span className="text-muted-foreground">Value</span>
-                                    <span className="text-foreground">≈ ${(Number(data.priceUSD) * amountIn).toFixed(2)} USDT</span>
+                                    <span className="text-foreground">≈ USDT {(Number(data.priceUSD) * amountIn).toFixed(2)}</span>
                                 </div>
                             </div>
 

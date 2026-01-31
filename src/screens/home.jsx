@@ -24,7 +24,7 @@ const HomeComponet = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
                     <StatCard
                         title="Token Price"
-                        value="$7.44"
+                        value="USDT 7.44"
                         subtitle="per AMA token"
                         icon={DollarSign}
                         chartColor="#8884d8"
@@ -32,15 +32,15 @@ const HomeComponet = () => {
 
                     <StatCard
                         title="Market Cap"
-                        value="$15,423.47"
-                        subtitle="Total valuation in dollar"
+                        value="USDT 15,423.47"
+                        subtitle="Total valuation in USDT"
                         icon={TrendingUp}
                         chartColor="#4ade80"
                     />
 
                     <StatCard
                         title="Total Liquidity"
-                        value="$175,979.21"
+                        value="USDT 175,979.21"
                         subtitle="Total funds available in liquidity pools"
                         icon={Droplets}
                         chartColor="#60a5fa"
