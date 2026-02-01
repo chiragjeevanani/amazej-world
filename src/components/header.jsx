@@ -1,10 +1,13 @@
 import React from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Sun, Moon, Menu, Zap } from "lucide-react";
+import { Sun, Moon, Menu, Zap, Crown } from "lucide-react";
+import { useProtocol } from "@/contexts/ProtocolContext";
 
 const Header = ({ onToggleSidebar }) => {
     const { theme, toggleTheme } = useTheme();
+    const { data } = useProtocol();
+    const currentVip = Number(data.vip?.currentLevel ?? 0);
 
     return (
         <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b border-border transition-colors duration-300 w-full">
@@ -120,6 +123,12 @@ const Header = ({ onToggleSidebar }) => {
                                                     {chain.name}
                                                 </button>
 
+                                                {currentVip > 0 && (
+                                                    <div className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 text-primary animate-in fade-in zoom-in duration-500">
+                                                        <Crown size={14} className="fill-current" />
+                                                        <span className="text-xs font-black uppercase tracking-wider">VIP {currentVip}</span>
+                                                    </div>
+                                                )}
                                                 <button
                                                     onClick={openAccountModal}
                                                     type="button"

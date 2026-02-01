@@ -19,8 +19,8 @@ export default function ReferralsComponent() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <InfoTile label="Accumulated Rewards" value={fmtUSDCents(data.referral?.availableReferralUSDCents)} />
                     <InfoTile label="Direct Network" value={String(data.referral?.directReferrals ?? 0)} />
-                    <InfoTile label="Total Organization" value={String(data.referral?.teamMembers ?? 0)} />
-                    <InfoTile label="Global Volume" value={fmtUSDCents(data.referral?.teamDepositsCents)} />
+                    <InfoTile label="Total Inactive Direct Network" value={String(data.referral?.teamMembers ?? 0)} />
+                    <InfoTile label="Team Volume" value={fmtUSDCents(data.referral?.teamDepositsCents)} />
                 </div>
 
                 <div className="mt-8 pt-8 border-t border-border grid grid-cols-1 md:grid-cols-3 gap-6">

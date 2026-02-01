@@ -5,60 +5,63 @@ import { useProtocol } from "@/contexts/ProtocolContext";
 const fmtToken18 = (x) => (Number(x) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 });
 const fmtUSDc = (c) => "USDT " + (Number(formatEther(c))).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const fmtWad = (w) => (Number(w) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 });
-const fmtDate = (s) => s && s > 0n ? new Date(Number(s) * 1000).toLocaleString() : "—";
-
-function Pager({ page, setPage, total, pageSize, className = "" }) {
-    const pages = Math.max(1, Math.ceil(total / pageSize));
-    const prev = () => setPage(Math.max(0, page - 1));
-    const next = () => setPage(Math.min(Math.max(0, pages - 1), page + 1));
-    return (
-        <div className={`flex items-center gap-3 ${className}`}>
-            <button
-                className="h-8 w-8 flex items-center justify-center rounded-lg bg-secondary/30 border border-border hover:bg-secondary/50 disabled:opacity-30 transition-all font-bold text-lg text-foreground"
-                disabled={page <= 0}
-                onClick={prev}
-            >
-                ‹
-            </button>
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground tabular-nums">
-                {pages === 0 ? "0/0" : `${page + 1} / ${pages}`}
-            </span>
-            <button
-                className="h-8 w-8 flex items-center justify-center rounded-lg bg-secondary/30 border border-border hover:bg-secondary/50 disabled:opacity-30 transition-all font-bold text-lg text-foreground"
-                disabled={page + 1 >= pages}
-                onClick={next}
-            >
-                ›
-            </button>
-        </div>
-    );
-}
-
-function Line({ label, value }) {
-    return (
-        <div className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{label}</span>
-            <span className="text-sm font-black text-foreground tabular-nums">{value}</span>
-        </div>
-    );
-}
+const fmtDate = (s) => s && s > 0n ? new Date(Number(s) * 1000).toLocaleString(undefined, {
+    year: 'numeric', month: 'short', day: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+}) : "—";
 
 const TABS = [
     { key: "deposits", label: "Deposits" },
-    { key: "claims", label: "Staking" },
+    { key: "claims", label: "LP Rewards" },
     { key: "refAccr", label: "Referral" },
-    { key: "vip", label: "VIP" },
+    { key: "vip", label: "Salary Rewards" },
     { key: "withdraws", label: "Withdrawals" },
     { key: "sells", label: "Sells" },
-    { key: "royalty", label: "Royalty" },
+    { key: "royalty", label: "Global Royalty" },
 ];
+
+function HistorySection({ title, total, page, setPage, pageSize, children }) {
+    return (
+        <div className="flex flex-col space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 px-2">
+                <div className="flex items-center gap-4">
+                    <span className="text-2xl font-black text-foreground">{title}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#d946ef]">Total: {total}</span>
+                </div>
+                <Pager page={page} setPage={setPage} total={total} pageSize={pageSize} />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {children}
+            </div>
+        </div>
+    );
+}
+
+function DataCard({ children }) {
+    return (
+        <div className="bg-card/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl hover:border-white/20 transition-all">
+            <div className="space-y-3">
+                {children}
+            </div>
+        </div>
+    );
+}
+
+function DataLine({ label, value, highlight }) {
+    return (
+        <div className="flex items-center justify-between gap-4">
+            <span className="text-[10px] font-black uppercase tracking-widest text-[#d946ef] opacity-80">{label}</span>
+            <span className={`text-sm font-black tabular-nums ${highlight ? 'text-foreground' : 'text-foreground/80'}`}>{value}</span>
+        </div>
+    );
+}
 
 export default function HistoryTabs({ onlyShow }) {
     const { data: { history }, actions: { refetch } } = useProtocol();
     const {
-        enabled, loading, pageSize, depTotal, clmTotal, refTotal, vipTotal, wdTotal, sellTotal, royaltyTotal,
-        depPage, setDepPage, clmPage, setClmPage, refPage, setRefPage, vipPage, setVipPage, wdPage, setWdPage,
-        sellPage, setSellPage, royaltyPage, setRoyaltyPage, deposits, claims, refAccr, vipClms, withdraws, sells, royalty,
+        enabled, loading, pageSize, depTotal, clmTotal, refTotal, salaryTotal, wdTotal, sellTotal, globalRoyaltyTotal,
+        depPage, setDepPage, clmPage, setClmPage, refPage, setRefPage, salaryPage, setSalaryPage, wdPage, setWdPage,
+        sellPage, setSellPage, globalRoyaltyPage, setGlobalRoyaltyPage, deposits, claims, refAccr, salaryClms, withdraws, sells, globalRoyalty,
     } = history;
 
     const [tab, setTab] = React.useState("deposits");
@@ -89,186 +92,155 @@ export default function HistoryTabs({ onlyShow }) {
             </div>
 
             {!onlyShow && (
-                <div className="flex flex-wrap gap-2 px-2">
-                    {TABS.map((t) => (
-                        <button
-                            key={t.key}
-                            onClick={() => setTab(t.key)}
-                            className={`h-9 px-4 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${tab === t.key ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:bg-secondary/80"
-                                }`}
-                        >
-                            {t.label}
-                        </button>
-                    ))}
+                <div className="flex flex-wrap gap-3 px-2">
+                    {TABS.map((t) => {
+                        const count =
+                            t.key === "deposits" ? depTotal :
+                                t.key === "claims" ? clmTotal :
+                                    t.key === "refAccr" ? refTotal :
+                                        t.key === "vip" ? salaryTotal :
+                                            t.key === "withdraws" ? wdTotal :
+                                                t.key === "sells" ? sellTotal :
+                                                    t.key === "royalty" ? globalRoyaltyTotal : 0;
+                        const isActive = tab === t.key;
+                        return (
+                            <button
+                                key={t.key}
+                                onClick={() => setTab(t.key)}
+                                className={`h-11 px-6 rounded-xl text-sm font-black transition-all flex items-center gap-3 border ${isActive
+                                    ? "bg-yellow-400 text-black border-yellow-500 shadow-lg shadow-yellow-400/20"
+                                    : "bg-secondary/30 text-muted-foreground border-white/5 hover:bg-secondary/50 hover:border-white/10"
+                                    }`}
+                            >
+                                <span>{t.label}</span>
+                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-black ${isActive ? 'bg-black/10' : 'bg-white/5'}`}>
+                                    {count}
+                                </span>
+                            </button>
+                        );
+                    })}
                 </div>
             )}
 
-            <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-2xl">
+            <div>
                 {currentTab === "deposits" && (
-                    <HistorySection title="Incoming Deposits" total={depTotal} page={depPage} setPage={setDepPage} pageSize={pageSize}>
-                        <Table headers={["Time", "Amount (USDT)", "Price"]}>
-                            {deposits.map((d, i) => (
-                                <tr key={i} className="hover:bg-muted/10 transition-colors border-b border-border last:border-0">
-                                    <td className="px-6 py-4 text-xs font-bold text-muted-foreground">{fmtDate(d.depositedAt)}</td>
-                                    <td className="px-6 py-4 text-sm font-black text-foreground">{fmtUSDc(d.depositAmount)}</td>
-                                    <td className="px-6 py-4 text-xs font-bold text-muted-foreground tabular-nums">{fmtWad(d.tokenPrice)}</td>
-                                </tr>
-                            ))}
-                        </Table>
-                        <MobileCards data={deposits} emptyMsg="No deposits yet">
-                            {(d) => (
-                                <>
-                                    <Line label="Time" value={fmtDate(d.depositedAt)} />
-                                    <Line label="Amount" value={fmtUSDc(d.depositAmount)} />
-                                    <Line label="Price" value={fmtWad(d.tokenPrice)} />
-                                </>
-                            )}
-                        </MobileCards>
+                    <HistorySection title="Deposits" total={depTotal} page={depPage} setPage={setDepPage} pageSize={pageSize}>
+                        {deposits.map((d, i) => (
+                            <DataCard key={i}>
+                                <DataLine label="Time" value={fmtDate(d.depositedAt)} />
+                                <DataLine label="Amount" value={fmtUSDc(d.depositAmount)} highlight />
+                                <DataLine label="Price" value={`${fmtWad(d.tokenPrice)} $/token`} />
+                            </DataCard>
+                        ))}
                     </HistorySection>
                 )}
 
                 {currentTab === "claims" && (
-                    <HistorySection title="LP Claims" total={clmTotal} page={clmPage} setPage={setClmPage} pageSize={pageSize}>
-                        <Table headers={["Time", "LP (USDT)", "Tokens (AMA)", "Periods"]}>
-                            {claims.map((c, i) => (
-                                <tr key={i} className="hover:bg-muted/10 transition-colors border-b border-border last:border-0">
-                                    <td className="px-6 py-4 text-xs font-bold text-muted-foreground">{fmtDate(c.claimedAt)}</td>
-                                    <td className="px-6 py-4 text-sm font-black text-foreground">{fmtUSDc(c.claimAmount)}</td>
-                                    <td className="px-6 py-4 text-xs font-bold text-muted-foreground">{fmtWad(c.netTokens + c.feeTokens)}</td>
-                                    <td className="px-6 py-4 text-xs font-black text-foreground">{Number(c.periods)}</td>
-                                </tr>
-                            ))}
-                        </Table>
-                        <MobileCards data={claims} emptyMsg="No claims yet">
-                            {(c) => (
-                                <>
-                                    <Line label="Time" value={fmtDate(c.claimedAt)} />
-                                    <Line label="Amount" value={fmtUSDc(c.claimAmount)} />
-                                    <Line label="Tokens" value={fmtWad(c.netTokens + c.feeTokens)} />
-                                    <Line label="Periods" value={Number(c.periods)} />
-                                </>
-                            )}
-                        </MobileCards>
+                    <HistorySection title="LP Rewards" total={clmTotal} page={clmPage} setPage={setClmPage} pageSize={pageSize}>
+                        {claims.map((c, i) => (
+                            <DataCard key={i}>
+                                <DataLine label="Time" value={fmtDate(c.claimedAt)} />
+                                <DataLine label="LP Amount" value={fmtUSDc(c.claimAmount)} highlight />
+                                <DataLine label="AMA Tokens" value={fmtWad(c.netTokens + c.feeTokens)} />
+                                <DataLine label="Periods" value={Number(c.periods)} />
+                            </DataCard>
+                        ))}
                     </HistorySection>
                 )}
 
                 {currentTab === "refAccr" && (
-                    <HistorySection title="Referral Growth" total={refTotal} page={refPage} setPage={setRefPage} pageSize={pageSize}>
-                        <Table headers={["Time", "Accrued (USDT)", "Level"]}>
-                            {refAccr.map((r, i) => (
-                                <tr key={i} className="hover:bg-muted/10 transition-colors border-b border-border last:border-0">
-                                    <td className="px-6 py-4 text-xs font-bold text-muted-foreground">{fmtDate(r.claimedAt)}</td>
-                                    <td className="px-6 py-4 text-sm font-black text-foreground">{fmtUSDc(r.claimAmount)}</td>
-                                    <td className="px-6 py-4 text-xs font-black text-foreground">LVL {Number(r.level) + 1}</td>
-                                </tr>
-                            ))}
-                        </Table>
-                        <MobileCards data={refAccr} emptyMsg="No referral data">
-                            {(r) => (
-                                <>
-                                    <Line label="Time" value={fmtDate(r.claimedAt)} />
-                                    <Line label="Reward" value={fmtUSDc(r.claimAmount)} />
-                                    <Line label="Level" value={Number(r.level) + 1} />
-                                </>
-                            )}
-                        </MobileCards>
+                    <HistorySection title="Referral Rewards" total={refTotal} page={refPage} setPage={setRefPage} pageSize={pageSize}>
+                        {refAccr.map((r, i) => (
+                            <DataCard key={i}>
+                                <DataLine label="Time" value={fmtDate(r.claimedAt)} />
+                                <DataLine label="Reward" value={fmtUSDc(r.claimAmount)} highlight />
+                                <DataLine label="Tier" value={`LVL ${Number(r.level) + 1}`} />
+                            </DataCard>
+                        ))}
+                    </HistorySection>
+                )}
+
+                {currentTab === "vip" && (
+                    <HistorySection title="Salary Rewards" total={salaryTotal} page={salaryPage} setPage={setSalaryPage} pageSize={pageSize}>
+                        {salaryClms.map((s, i) => (
+                            <DataCard key={i}>
+                                <DataLine label="Time" value={fmtDate(s.claimedAt)} />
+                                <DataLine label="Amount" value={fmtUSDc(s.claimAmount)} highlight />
+                                <DataLine label="Rank" value={`VIP ${Number(s.level)}`} />
+                            </DataCard>
+                        ))}
+                    </HistorySection>
+                )}
+
+                {currentTab === "royalty" && (
+                    <HistorySection title="Global Royalty" total={globalRoyaltyTotal} page={globalRoyaltyPage} setPage={setGlobalRoyaltyPage} pageSize={pageSize}>
+                        {globalRoyalty.map((r, i) => (
+                            <DataCard key={i}>
+                                <DataLine label="Time" value={fmtDate(r.claimedAt)} />
+                                <DataLine label="Amount" value={fmtUSDc(r.claimAmount)} highlight />
+                                <DataLine label="Rank" value={`VIP ${Number(r.level)}`} />
+                            </DataCard>
+                        ))}
                     </HistorySection>
                 )}
 
                 {currentTab === "withdraws" && (
-                    <HistorySection title="Withdrawal History" total={wdTotal} page={wdPage} setPage={setWdPage} pageSize={pageSize}>
-                        <Table headers={["Time", "USDT", "Net AMA", "Fee AMA"]}>
-                            {withdraws.map((w, i) => (
-                                <tr key={i} className="hover:bg-muted/10 transition-colors border-b border-border last:border-0">
-                                    <td className="px-6 py-4 text-xs font-bold text-muted-foreground">{fmtDate(w.claimedAt)}</td>
-                                    <td className="px-6 py-4 text-sm font-black text-foreground">{fmtUSDc(w.claimAmount)}</td>
-                                    <td className="px-6 py-4 text-xs font-bold text-muted-foreground">{fmtToken18(w.netTokens)}</td>
-                                    <td className="px-6 py-4 text-xs font-bold text-muted-foreground">{fmtToken18(w.feeTokens)}</td>
-                                </tr>
-                            ))}
-                        </Table>
-                        <MobileCards data={withdraws} emptyMsg="No withdrawals">
-                            {(w) => (
-                                <>
-                                    <Line label="Time" value={fmtDate(w.claimedAt)} />
-                                    <Line label="USDT" value={fmtUSDc(w.claimAmount)} />
-                                    <Line label="Net" value={fmtToken18(w.netTokens)} />
-                                    <Line label="Fee" value={fmtToken18(w.feeTokens)} />
-                                </>
-                            )}
-                        </MobileCards>
+                    <HistorySection title="Withdrawals" total={wdTotal} page={wdPage} setPage={setWdPage} pageSize={pageSize}>
+                        {withdraws.map((w, i) => (
+                            <DataCard key={i}>
+                                <DataLine label="Time" value={fmtDate(w.claimedAt)} />
+                                <DataLine label="USDT" value={fmtUSDc(w.claimAmount)} highlight />
+                                <DataLine label="Net AMA" value={fmtToken18(w.netTokens)} />
+                                <DataLine label="Fee AMA" value={fmtToken18(w.feeTokens)} />
+                            </DataCard>
+                        ))}
                     </HistorySection>
                 )}
 
                 {currentTab === "sells" && (
-                    <HistorySection title="Sale Records" total={sellTotal} page={sellPage} setPage={setSellPage} pageSize={pageSize}>
-                        <Table headers={["Time", "USDT Extracted", "AMA Sold"]}>
-                            {sells.map((w, i) => (
-                                <tr key={i} className="hover:bg-muted/10 transition-colors border-b border-border last:border-0">
-                                    <td className="px-6 py-4 text-xs font-bold text-muted-foreground">{fmtDate(w.soldAt)}</td>
-                                    <td className="px-6 py-4 text-sm font-black text-foreground">{fmtUSDc(w.sellAmount)}</td>
-                                    <td className="px-6 py-4 text-xs font-bold text-muted-foreground">{fmtToken18(w.netTokens + w.feeTokens)}</td>
-                                </tr>
-                            ))}
-                        </Table>
-                        <MobileCards data={sells} emptyMsg="No sales executed">
-                            {(w) => (
-                                <>
-                                    <Line label="Time" value={fmtDate(w.soldAt)} />
-                                    <Line label="USDT" value={fmtUSDc(w.sellAmount)} />
-                                    <Line label="Tokens" value={fmtToken18(w.netTokens + w.feeTokens)} />
-                                </>
-                            )}
-                        </MobileCards>
+                    <HistorySection title="Sell History" total={sellTotal} page={sellPage} setPage={setSellPage} pageSize={pageSize}>
+                        {sells.map((w, i) => (
+                            <DataCard key={i}>
+                                <DataLine label="Time" value={fmtDate(w.soldAt)} />
+                                <DataLine label="USDT" value={fmtUSDc(w.sellAmount)} highlight />
+                                <DataLine label="Tokens Sold" value={fmtToken18(w.netTokens + w.feeTokens)} />
+                            </DataCard>
+                        ))}
                     </HistorySection>
                 )}
             </div>
+            {onlyShow === undefined && deposits.length === 0 && claims.length === 0 && refAccr.length === 0 && (
+                <div className="py-20 text-center opacity-30 select-none">
+                    <p className="text-sm font-black uppercase tracking-[0.5em]">No Activity Logged</p>
+                </div>
+            )}
         </section>
     );
 }
 
-function Table({ headers, children }) {
+function Pager({ page, setPage, total, pageSize, className = "" }) {
+    const pages = Math.max(1, Math.ceil(total / pageSize));
+    const prev = () => setPage(Math.max(0, page - 1));
+    const next = () => setPage(Math.min(Math.max(0, pages - 1), page + 1));
     return (
-        <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-left">
-                <thead className="bg-secondary/30 border-b border-border">
-                    <tr>
-                        {headers.map((h) => (
-                            <th key={h} className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">{h}</th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                    {children}
-                </tbody>
-            </table>
-        </div>
-    );
-}
-
-function MobileCards({ data, emptyMsg, children }) {
-    if (data.length === 0) {
-        return <div className="md:hidden px-6 py-12 text-center text-muted-foreground text-xs font-bold uppercase tracking-widest">{emptyMsg}</div>;
-    }
-    return (
-        <div className="md:hidden divide-y divide-border">
-            {data.map((item, i) => (
-                <div key={i} className="p-6">
-                    {children(item)}
-                </div>
-            ))}
-        </div>
-    );
-}
-
-function HistorySection({ title, total, page, setPage, pageSize, children }) {
-    return (
-        <div className="flex flex-col">
-            <div className="px-6 py-4 bg-secondary/10 flex items-center justify-between border-b border-border">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{title}</span>
-                <Pager page={page} setPage={setPage} total={total} pageSize={pageSize} />
+        <div className={`flex items-center gap-2 ${className}`}>
+            <button
+                className="h-8 px-4 rounded-lg bg-secondary/30 border border-white/5 hover:bg-secondary/50 disabled:opacity-20 transition-all font-black text-[10px] uppercase tracking-widest text-foreground"
+                disabled={page <= 0}
+                onClick={prev}
+            >
+                Prev
+            </button>
+            <div className="h-8 min-w-[32px] flex items-center justify-center font-black text-xs tabular-nums text-foreground/60 px-2">
+                {pages === 0 ? "0/0" : `${page + 1}/${pages}`}
             </div>
-            {children}
+            <button
+                className="h-8 px-4 rounded-lg bg-secondary/30 border border-white/5 hover:bg-secondary/50 disabled:opacity-20 transition-all font-black text-[10px] uppercase tracking-widest text-foreground"
+                disabled={page + 1 >= pages}
+                onClick={next}
+            >
+                Next
+            </button>
         </div>
     );
 }

@@ -1,9 +1,12 @@
 import React, { useMemo, useState } from "react";
 import { formatUnits } from "viem";
 import { useProtocol } from "@/contexts/ProtocolContext";
-import { roundWithFormat } from "@/blockchain/roundsNumber";
+import { roundWithFormat, shortAddress } from "@/blockchain/roundsNumber";
 import { ClaimCountdown } from "@/components/Countdown";
 import WithdrawStatsCard from "@/components/WithdrawStatsCard";
+import { useAccount } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Copy, CheckCircle2 } from "lucide-react";
 
 const plans = [
     {
@@ -89,7 +92,10 @@ function fmtUSDc(cents) {
 export function fmtTs(ts) {
     if (!ts || ts === 0n) return "—";
     const d = new Date(Number(ts) * 1000);
-    return d.toLocaleString();
+    return d.toLocaleString(undefined, {
+        year: 'numeric', month: 'short', day: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
 }
 
 export default function PlansAndActions() {
@@ -154,6 +160,29 @@ export default function PlansAndActions() {
         actions.refetch();
     }
 
+    const { isConnected, address } = useAccount();
+    const [copied, setCopied] = useState(false);
+
+    const referralLink = useMemo(() => {
+        if (typeof window === 'undefined') return '';
+        const demo = window.location.pathname.includes("/amazejworld");
+        const test = window.location.pathname.includes("/test");
+        return `${window.location.origin}${test ? '/test' : demo ? '/amazejworld' : ''}/?ref_id=${address}`;
+    }, [address]);
+
+    const referralLinkDisplay = useMemo(() => {
+        if (typeof window === 'undefined') return '';
+        const demo = window.location.pathname.includes("/amazejworld");
+        const test = window.location.pathname.includes("/test");
+        return `${window.location.host}${test ? '/test' : demo ? '/amazejworld' : ''}/?ref_id=${shortAddress(address || '')}`;
+    }, [address]);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(referralLink);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
     return (
         <div className="grid gap-8">
             {/* Balances Section */}
@@ -181,10 +210,11 @@ export default function PlansAndActions() {
                         const now = Math.floor(Date.now() / 1000);
                         const target = Number(at);
                         const s = Math.max(0, target - now);
+                        const sec = s % 60;
                         const m = Math.floor(s / 60) % 60;
                         const h = Math.floor(s / 3600) % 24;
                         const d = Math.floor(s / 86400);
-                        return d > 0 ? `${d}d ${h}h` : h > 0 ? `${h}h ${m}m` : `${m}m`;
+                        return d > 0 ? `${d}d ${h}h` : h > 0 ? `${h}h ${m}m` : `${m}m ${sec}s`;
                     };
 
                     const lockHint = !eligible
@@ -218,6 +248,51 @@ export default function PlansAndActions() {
                     ) : null;
                 })()
             )}
+
+            {/* Referral Link Section */}
+            <div className="bg-card/40 backdrop-blur-xl rounded-3xl border border-white/10 p-6 shadow-2xl overflow-hidden group relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative z-10">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div className="w-full md:w-auto">
+                            <h3 className="text-sm font-black text-muted-foreground uppercase tracking-widest mb-2">Your Referral Link</h3>
+                            {isConnected ? (
+                                <div className="flex flex-col gap-4">
+                                    <div className="bg-black/20 border border-white/5 rounded-2xl px-4 py-3 font-mono text-sm text-primary break-all">
+                                        {referralLinkDisplay}
+                                    </div>
+                                    <button
+                                        onClick={handleCopy}
+                                        className="w-full md:w-auto flex items-center justify-center gap-2 py-3 px-8 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-black text-xs uppercase tracking-widest transition-all shadow-lg active:scale-95"
+                                    >
+                                        {copied ? (
+                                            <>
+                                                <CheckCircle2 size={16} />
+                                                <span>Copied!</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Copy size={16} />
+                                                <span>Copy Referral Link</span>
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center md:items-start gap-4">
+                                    <p className="text-sm text-muted-foreground italic">Connect your wallet to generate a referral link</p>
+                                    <ConnectButton />
+                                </div>
+                            )}
+                        </div>
+                        <div className="hidden lg:block">
+                            <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 rotate-3 group-hover:rotate-0 transition-transform duration-500">
+                                <Copy size={32} className="text-primary opacity-40" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {/* Plans Section */}
             <div className="space-y-6">

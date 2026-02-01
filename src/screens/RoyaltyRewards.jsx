@@ -30,7 +30,7 @@ export default function RoyaltyRewardsComponent() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <DarkTile label="Active Tier" value={`VIP ${Number(royalty?.activeLevel || 0)}`} />
+                    <DarkTile label="Active Tier" value={royalty?.activeLevel > 0 ? `VIP ${royalty.activeLevel}` : "None"} />
                     <DarkTile label="Pool Participants" value={Number(royalty?.activeMembersCount || 0)} />
                     <DarkTile label="Tenure (Days)" value={Number(royalty?.claimDaysUsed || 0)} />
                     <DarkTile label="Available Reward" value={fmtTok(royalty?.usdt)} highlight />

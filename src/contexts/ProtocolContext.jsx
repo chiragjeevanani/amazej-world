@@ -96,8 +96,26 @@ export function ProtocolProvider({ children }) {
         }
     });
 
+    const ROYALTY_CALLS = useMemo(() => {
+        if (!enabled || !royalty) return [];
+        const acct = address;
+        return [
+            { address: royalty, abi: amzGlobalRoyaltyAbi, functionName: "getMemberDetails", args: [acct] },
+            { address: royalty, abi: amzGlobalRoyaltyAbi, functionName: "getRoyaltyPoolStatus" },
+        ];
+    }, [enabled, address, royalty]);
+
+    const { data: royaltyData, refetch: royaltyRefetch } = useReadContracts({
+        contracts: ROYALTY_CALLS,
+        query: {
+            enabled,
+            refetchInterval: 10000,
+        }
+    });
+
     const R = (i) => (mcData && mcData[i] && mcData[i].status === "success" ? mcData[i].result : undefined);
     const V = (i) => (vipData && vipData[i] && vipData[i].status === "success" ? vipData[i].result : undefined);
+    const RY = (i) => (royaltyData && royaltyData[i] && royaltyData[i].status === "success" ? royaltyData[i].result : undefined);
 
     const priceCents = R(0);
     const rewardPeriod = R(1);
@@ -121,6 +139,9 @@ export function ProtocolProvider({ children }) {
     const vipTuple = V(0);
     const claimVipUSDT = V(1);
     const tablesTuple = V(5);
+
+    const memberDetailsTuple = RY(0);
+    const poolStatusTuple = RY(1);
 
     const user = useMemo(() => {
         if (!userTuple) return undefined;
@@ -178,13 +199,34 @@ export function ProtocolProvider({ children }) {
         return { selfCents, directsMin, directsVip1Min, teamMin, perClaimCents, oneTimeCents, vipPerClaimCents: perClaimCents, vipOneTimeCents: oneTimeCents, redeAllowed, periodSeconds };
     }, [tablesTuple]);
 
+    const royaltyInfo = useMemo(() => {
+        if (!memberDetailsTuple) return undefined;
+        const [isActive, activeLevel, claimDaysUsed, claimDaysRemaining, totalClaimed, lastClaimDate, isPermanent, waitlistPosition, activeMembersCount, canClaim] = memberDetailsTuple;
+        return {
+            isActive, activeLevel: Number(activeLevel), claimDaysUsed, claimDaysRemaining, totalClaimed,
+            lastClaimDate, isPermanent, waitlistPosition, activeMembersCount, canClaim,
+            poolStats: poolStatusTuple ? {
+                totalPool: poolStatusTuple[0],
+                dailyPool: poolStatusTuple[1],
+                lastDistribution: poolStatusTuple[2],
+                canDistribute: poolStatusTuple[3]
+            } : undefined
+        };
+    }, [memberDetailsTuple, poolStatusTuple]);
+
     const tokenBalanceFmt = tokenBalance !== undefined ? roundWithFormat(tokenBalance) : undefined;
     const usdtBalanceFmt = usdtBalance !== undefined ? roundWithFormat(usdtBalance, 2) : undefined;
     const priceUSD = priceCents !== undefined ? (Number(priceCents) / 10 ** 18).toFixed(6) : undefined;
+    const contractTokenBalanceFmt = contractTokenBalance !== undefined ? roundWithFormat(contractTokenBalance) : undefined;
+    const contractUsdtBalanceFmt = contractUsdtBalance !== undefined ? roundWithFormat(contractUsdtBalance, 2) : undefined;
 
     const [loading, setLoading] = useState({
         approveUsdt: false, deposit: false, sell: false, claimAll: false, claimRoyalty: false, distributeTokens: false, claimPhase: false, claimReferral: false, claimVIP: false, setReferrer: false,
     });
+
+    const claimRoyalty = useCallback(() => runTx("claimRoyalty", "Claim Royalty Rewards", () => writeContractAsync({
+        address: royalty, abi: amzGlobalRoyaltyAbi, functionName: "distributeDailyRoyalty"
+    })), [royalty, writeContractAsync, runTx]);
 
     const runTx = useCallback(async (key, label, txFn) => {
         setLoading((s) => ({ ...s, [key]: true }));
@@ -244,9 +286,9 @@ export function ProtocolProvider({ children }) {
     })), [vipC, writeContractAsync, runTx]);
 
     const actions = useMemo(() => ({
-        refetch: () => { refetch(); vipRefetch(); history.refetch(); },
-        loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP,
-    }), [refetch, vipRefetch, history, loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP]);
+        refetch: () => { refetch(); vipRefetch(); royaltyRefetch(); history.refetch(); },
+        loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty,
+    }), [refetch, vipRefetch, royaltyRefetch, history, loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty]);
 
     const vipProgressTuple = V(2);
     const redeProgressTuple = V(3);
@@ -255,10 +297,12 @@ export function ProtocolProvider({ children }) {
 
     const data = {
         tokenBalanceFmt, usdtBalanceFmt, priceUSD, pending, referral, user, history, depositWindow, chainId, main, usdt,
+        contractTokenBalanceFmt, contractUsdtBalanceFmt,
         vip: { ...vipDataState, currentLevel: vipDataState?.[0], vip: vipDataState },
         vipTables, claimVip,
         vipProgress: vipProgressTuple,
-        redeProgress: redeProgressTuple
+        redeProgress: redeProgressTuple,
+        royalty: royaltyInfo
     };
 
     return <ProtocolContext.Provider value={{ data, actions }}>{children}</ProtocolContext.Provider>;

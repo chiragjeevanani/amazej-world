@@ -28,8 +28,6 @@ const ReferEarnComponent = () => {
     return (
         <div className="space-y-8 p-2 md:p-6">
             <div className="w-full space-y-8">
-                <WithdrawStatsCard />
-
                 <div className="space-y-6">
                     <div className="bg-card border border-border text-card-foreground shadow-2xl rounded-2xl overflow-hidden p-6 md:p-8">
                         <div className="flex flex-col space-y-1.5 mb-6">
