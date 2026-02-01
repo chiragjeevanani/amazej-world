@@ -3,7 +3,7 @@ import { useProtocol } from "@/contexts/ProtocolContext";
 import { roundWithFormat } from "@/blockchain/roundsNumber";
 import { fmtTs } from "@/screens/Plans"; // Ensure we can import this or redefine it
 
-const gt0 = (x) => (x ?? 0n) > 0n;
+function gt0(x) { return (x ?? 0n) > 0n; }
 
 function fmtUSDc(cents) {
     if (cents === undefined) return "-";

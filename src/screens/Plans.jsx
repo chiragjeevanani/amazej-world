@@ -8,6 +8,8 @@ import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Copy, CheckCircle2 } from "lucide-react";
 
+function gt0(x) { return (x ?? 0n) > 0n; }
+
 const plans = [
     {
         name: "Plan 1",
@@ -468,4 +470,3 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
 
 
 
-const gt0 = (x) => (x ?? 0n) > 0n;

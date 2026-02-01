@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from "react";
 import { Copy } from "lucide-react";
 import Pagination from "./Pagination";
 
-const GlobalReward = ({
+function GlobalReward({
     transactions,
     onSearch,
     onExportCSV,
@@ -10,7 +10,7 @@ const GlobalReward = ({
     initialItemsPerPage = 5,
     showItemsPerPageSelector = true,
     itemsPerPageOptions = [5, 10, 25, 50],
-}) => {
+}) {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
     const [searchQuery, setSearchQuery] = useState("");

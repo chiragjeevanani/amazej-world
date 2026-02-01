@@ -4,7 +4,7 @@ import { FaXTwitter } from "react-icons/fa6";
 import { RiTelegramFill } from "react-icons/ri";
 import GridBackground from "./GridBackground";
 
-const ProtocolHeader = () => {
+function ProtocolHeader() {
     return (
         <div className="relative flex flex-col md:flex-row items-center justify-between p-8 md:p-12 bg-card rounded-3xl border border-border shadow-2xl overflow-hidden min-h-[320px] mb-8">
             <div className="relative z-10 space-y-6 max-w-2xl text-card-foreground">
@@ -38,15 +38,17 @@ const ProtocolHeader = () => {
             </div>
         </div>
     );
-};
+}
 
-const SocialIcon = ({ icon, href }) => (
-    <a
-        href={href}
-        className="h-10 w-10 flex items-center justify-center rounded-xl bg-primary text-primary-foreground hover:scale-110 active:scale-95 transition-all shadow-lg"
-    >
-        {icon}
-    </a>
-);
+function SocialIcon({ icon, href }) {
+    return (
+        <a
+            href={href}
+            className="h-10 w-10 flex items-center justify-center rounded-xl bg-primary text-primary-foreground hover:scale-110 active:scale-95 transition-all shadow-lg"
+        >
+            {icon}
+        </a>
+    );
+}
 
 export default ProtocolHeader;

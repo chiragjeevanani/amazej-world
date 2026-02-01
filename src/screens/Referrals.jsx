@@ -2,7 +2,7 @@ import React from "react";
 import { useProtocol } from "@/contexts/ProtocolContext";
 import { fmtTs } from "@/screens/Plans";
 
-const fmtUSDCents = (c) => "USDT " + (Number(c ?? 0n) / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+function fmtUSDCents(c) { return "USDT " + (Number(c ?? 0n) / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 
 export default function ReferralsComponent() {
     const { data } = useProtocol();

@@ -4,7 +4,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { Sun, Moon, Menu, Zap, Crown } from "lucide-react";
 import { useProtocol } from "@/contexts/ProtocolContext";
 
-const Header = ({ onToggleSidebar }) => {
+function Header({ onToggleSidebar }) {
     const { theme, toggleTheme } = useTheme();
     const { data } = useProtocol();
     const currentVip = Number(data.vip?.currentLevel ?? 0);

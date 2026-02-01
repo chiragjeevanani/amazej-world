@@ -1,7 +1,7 @@
 import React from "react";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
 
-const Pagination = ({
+function Pagination({
     currentPage,
     totalPages,
     totalItems,
@@ -10,7 +10,7 @@ const Pagination = ({
     onItemsPerPageChange,
     itemsPerPageOptions = [5, 10, 25, 50],
     showItemsPerPage = true,
-}) => {
+}) {
     const startItem = (currentPage - 1) * itemsPerPage + 1;
     const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 

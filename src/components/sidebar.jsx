@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { menuItems } from "@/const/data";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const Sidebar = ({
+function Sidebar({
     activeItem = "Home",
     onItemClick,
     isOpen,
     onClose,
-}) => {
+}) {
     const navigate = useNavigate();
     const location = useLocation();
     const pathname = location.pathname;

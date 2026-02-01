@@ -2,12 +2,12 @@ import React, { useMemo, useState } from "react";
 import { Copy } from "lucide-react";
 import Pagination from "./Pagination";
 
-const DepositTransactionsTable = ({
+function DepositTransactionsTable({
     transactions,
     itemsPerPageOptions = [10, 25, 50, 100],
     showItemsPerPageSelector = true,
     initialItemsPerPage = 10,
-}) => {
+}) {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
     const [searchQuery, setSearchQuery] = useState("");

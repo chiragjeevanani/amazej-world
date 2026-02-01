@@ -7,7 +7,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import VipRequirementsTable from "@/screens/VIP";
 import WithdrawStatsCard from "@/components/WithdrawStatsCard";
 
-const ReferEarnComponent = () => {
+function ReferEarnComponent() {
     const { data } = useProtocol();
     const { isConnected, address } = useAccount();
 

@@ -4,9 +4,9 @@ import { useProtocol } from "@/contexts/ProtocolContext";
 import { DollarSign } from "lucide-react"; // Assuming we might want an icon, or just strictly copy
 // If LightTile uses hardcoded styles, I'll copy them.
 
-const fmtUSDc = (c) => c === undefined ? "—" : (Number(c) / 100).toFixed(2);
-const fmtTok = (x) => x === undefined ? "—" : (Number(x) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 });
-const fmtDate = (s) => !s || s === 0n ? "—" : new Date(Number(s) * 1000).toLocaleString();
+function fmtUSDc(c) { return c === undefined ? "—" : (Number(c) / 100).toFixed(2); }
+function fmtTok(x) { return x === undefined ? "—" : (Number(x) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 }); }
+function fmtDate(s) { return !s || s === 0n ? "—" : new Date(Number(s) * 1000).toLocaleString(); }
 
 function useCountdown(targetSec) {
     const targetMs = targetSec && targetSec > 0n ? Number(targetSec) * 1000 : 0;

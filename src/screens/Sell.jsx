@@ -7,7 +7,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { parseEther } from "viem";
 import HistoryTabs from "@/components/History";
 
-const SellComponent = () => {
+function SellComponent() {
     const { data, actions } = useProtocol();
     const { address } = useAccount();
     const [amountIn, setAmountIn] = useState(0);
