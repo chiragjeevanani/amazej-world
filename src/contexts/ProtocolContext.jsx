@@ -224,9 +224,6 @@ export function ProtocolProvider({ children }) {
         approveUsdt: false, deposit: false, sell: false, claimAll: false, claimRoyalty: false, distributeTokens: false, claimPhase: false, claimReferral: false, claimVIP: false, setReferrer: false,
     });
 
-    const claimRoyalty = useCallback(() => runTx("claimRoyalty", "Claim Royalty Rewards", () => writeContractAsync({
-        address: royalty, abi: amzGlobalRoyaltyAbi, functionName: "distributeDailyRoyalty"
-    })), [royalty, writeContractAsync, runTx]);
 
     const runTx = useCallback(async (key, label, txFn) => {
         setLoading((s) => ({ ...s, [key]: true }));
@@ -243,6 +240,10 @@ export function ProtocolProvider({ children }) {
             setLoading((s) => ({ ...s, [key]: false }));
         }
     }, [publicClient, refetch]);
+
+    const claimRoyalty = useCallback(() => runTx("claimRoyalty", "Claim Royalty Rewards", () => writeContractAsync({
+        address: royalty, abi: amzGlobalRoyaltyAbi, functionName: "distributeDailyRoyalty"
+    })), [royalty, writeContractAsync, runTx]);
 
     const approveUsdtIfNeeded = useCallback(async (cents, decs = usdtDecimals) => {
         if (!address || !usdt || !main) throw new Error("Missing config");
