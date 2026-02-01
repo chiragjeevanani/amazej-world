@@ -15,5 +15,18 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-  }
+    target: 'esnext',
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'wagmi-vendor': ['wagmi', 'viem', '@rainbow-me/rainbowkit', '@tanstack/react-query'],
+          'ui-vendor': ['lucide-react', 'react-icons', 'recharts'],
+        },
+      },
+    },
+  },
 })

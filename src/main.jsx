@@ -3,14 +3,14 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './app/globals.css'
 import '@rainbow-me/rainbowkit/styles.css'
-import { Providers } from './blockchain/Providers'
+import { AppProviders } from './blockchain/AppProviders'
 import { Toaster } from 'react-hot-toast'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
-        <Providers>
+        <AppProviders>
             <App />
             <Toaster />
-        </Providers>
+        </AppProviders>
     </React.StrictMode>,
 )

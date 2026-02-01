@@ -1,19 +1,14 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WagmiProvider } from 'wagmi';
 import { RainbowKitProvider, darkTheme, lightTheme } from '@rainbow-me/rainbowkit';
 
 import { config } from './wagmi';
-import { getQueryVar } from "./query";
-import { DEFAULT_REFERRER } from "./contracts";
 import { ProtocolProvider } from "@/contexts/ProtocolContext";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 
-
-
-// Create a wrapper component to access the theme context
 function RainbowKitWrapper({ children }) {
     const { theme } = useTheme();
     return (
@@ -23,16 +18,11 @@ function RainbowKitWrapper({ children }) {
     );
 }
 
-export function Providers({ children }) {
-    const [mounted, setMounted] = React.useState(false);
-    const queryClient = React.useMemo(() => new QueryClient(), []);
-    useEffect(() => {
-        setMounted(true);
-        if (typeof window === 'undefined') return;
-        localStorage?.setItem('ref_id', getQueryVar('ref_id') || DEFAULT_REFERRER)
-    }, [])
+export function AppProviders({ children }) {
+    const queryClient = useMemo(() => new QueryClient(), []);
 
-    if (!mounted) return null;
+    // NOTE: ProtocolProvider is purposely nested inside the Wagmi/Query providers
+    // because it depends on their context hooks (useAccount, etc).
 
     return (
         <ThemeProvider>
