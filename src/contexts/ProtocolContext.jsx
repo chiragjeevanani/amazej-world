@@ -7,7 +7,7 @@ import {
     treasuryAbi,
     vipModuleAbi,
     amzGlobalRoyaltyAbi,
-} from "@/blockchain/generated";
+} from "@/blockchain/abis";
 import { toast } from "react-hot-toast";
 import { getQueryVar } from "@/blockchain/query";
 import { roundWithFormat } from "@/blockchain/roundsNumber";

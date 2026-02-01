@@ -1,6 +1,6 @@
 import { useAccount, usePublicClient } from "wagmi";
 import { useCallback, useEffect, useState } from "react";
-import { amzTokenAbi as mainAbi } from "@/blockchain/generated";
+import { amzTokenAbi as mainAbi } from "@/blockchain/abis";
 
 export function useAllHistory(main, pageSize = 10) {
     const { address } = useAccount();
