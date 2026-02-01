@@ -132,7 +132,7 @@ function MechanicCard({ title, desc }) {
     return (
         <div className="bg-secondary/30 hover:bg-secondary/50 transition-colors rounded-xl border border-border p-4">
             <h3 className="text-foreground font-bold mb-2 text-sm">{title}</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm text-muted-foreground leading-relaxed whitespace-normal break-words">
                 {desc}
             </p>
         </div>
