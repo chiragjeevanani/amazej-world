@@ -2,13 +2,15 @@ import * as React from "react";
 import { formatEther } from "viem";
 import { useProtocol } from "@/contexts/ProtocolContext";
 
-const fmtToken18 = (x) => (Number(x) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 });
-const fmtUSDc = (c) => "USDT " + (Number(formatEther(c))).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const fmtWad = (w) => (Number(w) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 });
-const fmtDate = (s) => s && s > 0n ? new Date(Number(s) * 1000).toLocaleString(undefined, {
-    year: 'numeric', month: 'short', day: 'numeric',
-    hour: '2-digit', minute: '2-digit', second: '2-digit'
-}) : "—";
+function fmtToken18(x) { return (Number(x) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 }); }
+function fmtUSDc(c) { return "USDT " + (Number(formatEther(c))).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function fmtWad(w) { return (Number(w) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 }); }
+function fmtDate(s) {
+    return s && s > 0n ? new Date(Number(s) * 1000).toLocaleString(undefined, {
+        year: 'numeric', month: 'short', day: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+    }) : "—";
+}
 
 const TABS = [
     { key: "deposits", label: "Deposits" },
@@ -19,6 +21,33 @@ const TABS = [
     { key: "sells", label: "Sells" },
     { key: "royalty", label: "Global Royalty" },
 ];
+
+function Pager({ page, setPage, total, pageSize, className = "" }) {
+    const pages = Math.max(1, Math.ceil(total / pageSize));
+    const prev = () => setPage(Math.max(0, page - 1));
+    const next = () => setPage(Math.min(Math.max(0, pages - 1), page + 1));
+    return (
+        <div className={`flex items-center gap-2 ${className}`}>
+            <button
+                className="h-8 px-4 rounded-lg bg-secondary/30 border border-white/5 hover:bg-secondary/50 disabled:opacity-20 transition-all font-black text-[10px] uppercase tracking-widest text-foreground"
+                disabled={page <= 0}
+                onClick={prev}
+            >
+                Prev
+            </button>
+            <div className="h-8 min-w-[32px] flex items-center justify-center font-black text-xs tabular-nums text-foreground/60 px-2">
+                {pages === 0 ? "0/0" : `${page + 1}/${pages}`}
+            </div>
+            <button
+                className="h-8 px-4 rounded-lg bg-secondary/30 border border-white/5 hover:bg-secondary/50 disabled:opacity-20 transition-all font-black text-[10px] uppercase tracking-widest text-foreground"
+                disabled={page + 1 >= pages}
+                onClick={next}
+            >
+                Next
+            </button>
+        </div>
+    );
+}
 
 function HistorySection({ title, total, page, setPage, pageSize, children }) {
     return (
@@ -218,29 +247,3 @@ export default function HistoryTabs({ onlyShow }) {
     );
 }
 
-function Pager({ page, setPage, total, pageSize, className = "" }) {
-    const pages = Math.max(1, Math.ceil(total / pageSize));
-    const prev = () => setPage(Math.max(0, page - 1));
-    const next = () => setPage(Math.min(Math.max(0, pages - 1), page + 1));
-    return (
-        <div className={`flex items-center gap-2 ${className}`}>
-            <button
-                className="h-8 px-4 rounded-lg bg-secondary/30 border border-white/5 hover:bg-secondary/50 disabled:opacity-20 transition-all font-black text-[10px] uppercase tracking-widest text-foreground"
-                disabled={page <= 0}
-                onClick={prev}
-            >
-                Prev
-            </button>
-            <div className="h-8 min-w-[32px] flex items-center justify-center font-black text-xs tabular-nums text-foreground/60 px-2">
-                {pages === 0 ? "0/0" : `${page + 1}/${pages}`}
-            </div>
-            <button
-                className="h-8 px-4 rounded-lg bg-secondary/30 border border-white/5 hover:bg-secondary/50 disabled:opacity-20 transition-all font-black text-[10px] uppercase tracking-widest text-foreground"
-                disabled={page + 1 >= pages}
-                onClick={next}
-            >
-                Next
-            </button>
-        </div>
-    );
-}

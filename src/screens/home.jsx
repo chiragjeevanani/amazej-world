@@ -24,7 +24,17 @@ function fmtUSDc(cents) {
     return `USDT ${s}`;
 }
 
-const HomeComponet = () => {
+function PersonalStat({ label, value, subValue }) {
+    return (
+        <div className="bg-card border border-border p-5 rounded-2xl shadow-lg hover:shadow-primary/5 transition-all text-card-foreground">
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">{label}</p>
+            <div className="text-2xl font-black mb-1">{value}</div>
+            <div className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">{subValue}</div>
+        </div>
+    );
+}
+
+function HomeComponet() {
     const { data, actions } = useProtocol();
     const { isConnected } = useAccount();
     const { loading } = actions;
@@ -229,14 +239,5 @@ const HomeComponet = () => {
     );
 };
 
-function PersonalStat({ label, value, subValue }) {
-    return (
-        <div className="bg-card border border-border p-5 rounded-2xl shadow-lg hover:shadow-primary/5 transition-all text-card-foreground">
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">{label}</p>
-            <div className="text-2xl font-black mb-1">{value}</div>
-            <div className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">{subValue}</div>
-        </div>
-    );
-}
 
 export default HomeComponet;

@@ -2,9 +2,9 @@ import * as React from "react";
 import { useProtocol } from "@/contexts/ProtocolContext";
 import { Check } from "lucide-react";
 
-const fmtUSD = (usd) => "USDT " + usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const fmtUSDCents = (c) => "USDT " + (Number(c ?? 0n) / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const numUSDCents = (c) => (Number(c ?? 0n) / 100);
+function fmtUSD(usd) { return "USDT " + usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function fmtUSDCents(c) { return "USDT " + (Number(c ?? 0n) / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function numUSDCents(c) { return (Number(c ?? 0n) / 100); }
 
 export default function VipScreen() {
     const { data, actions } = useProtocol();
