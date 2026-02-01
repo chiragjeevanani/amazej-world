@@ -11,7 +11,7 @@ import { DEFAULT_REFERRER } from "./contracts";
 import { ProtocolProvider } from "@/contexts/ProtocolContext";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 
-const queryClient = new QueryClient();
+
 
 // Create a wrapper component to access the theme context
 function RainbowKitWrapper({ children }) {
@@ -25,6 +25,7 @@ function RainbowKitWrapper({ children }) {
 
 export function Providers({ children }) {
     const [mounted, setMounted] = React.useState(false);
+    const queryClient = React.useMemo(() => new QueryClient(), []);
     useEffect(() => {
         setMounted(true);
         if (typeof window === 'undefined') return;

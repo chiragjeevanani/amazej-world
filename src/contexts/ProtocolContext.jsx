@@ -113,9 +113,9 @@ export function ProtocolProvider({ children }) {
         }
     });
 
-    const R = (i) => (mcData && mcData[i] && mcData[i].status === "success" ? mcData[i].result : undefined);
-    const V = (i) => (vipData && vipData[i] && vipData[i].status === "success" ? vipData[i].result : undefined);
-    const RY = (i) => (royaltyData && royaltyData[i] && royaltyData[i].status === "success" ? royaltyData[i].result : undefined);
+    function R(i) { return mcData && mcData[i] && mcData[i].status === "success" ? mcData[i].result : undefined; }
+    function V(i) { return vipData && vipData[i] && vipData[i].status === "success" ? vipData[i].result : undefined; }
+    function RY(i) { return royaltyData && royaltyData[i] && royaltyData[i].status === "success" ? royaltyData[i].result : undefined; }
 
     const priceCents = R(0);
     const rewardPeriod = R(1);

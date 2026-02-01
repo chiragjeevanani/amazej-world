@@ -4,7 +4,7 @@ import { useProtocol } from "@/contexts/ProtocolContext";
 import { roundWithFormat, shortAddress } from "@/blockchain/roundsNumber";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import VipRequirementsTable from "@/screens/VIP";
+import VipScreen from "@/screens/VIP";
 import WithdrawStatsCard from "@/components/WithdrawStatsCard";
 
 function ReferEarnComponent() {
@@ -121,7 +121,7 @@ function ReferEarnComponent() {
                 </div>
 
                 <div className="mt-8">
-                    <VipRequirementsTable />
+                    <VipScreen />
                 </div>
             </div>
         </div>

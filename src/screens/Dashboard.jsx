@@ -1,6 +1,6 @@
 import ProtocolHeader from "@/components/ProtocolCom";
 
-const DashboardComponent = () => {
+function DashboardComponent() {
     return (
         <div className="space-y-6">
             <div className="md:px-6 p-2">

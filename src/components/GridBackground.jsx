@@ -1,6 +1,6 @@
 import React from "react";
 
-const GridBackground = () => {
+function GridBackground() {
     return (
         <svg
             aria-hidden="true"

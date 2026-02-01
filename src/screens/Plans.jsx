@@ -10,80 +10,6 @@ import { Copy, CheckCircle2 } from "lucide-react";
 
 function gt0(x) { return (x ?? 0n) > 0n; }
 
-const plans = [
-    {
-        name: "Plan 1",
-        baseDeposit: 100,
-        stepReward: 14,
-        topUps: [
-            { step: 5, amount: "50" },
-            { step: 9, amount: "25" },
-            { step: 12, amount: "100" },
-        ],
-    },
-    {
-        name: "Plan 2",
-        baseDeposit: 200,
-        stepReward: 28,
-        topUps: [
-            { step: 5, amount: "100" },
-            { step: 9, amount: "50" },
-            { step: 12, amount: "200" },
-        ],
-        popular: true,
-    },
-    {
-        name: "Plan 3",
-        baseDeposit: 400,
-        stepReward: 56,
-        topUps: [
-            { step: 5, amount: "200" },
-            { step: 9, amount: "100" },
-            { step: 12, amount: "400" },
-        ],
-    },
-    {
-        name: "Plan 4",
-        baseDeposit: 800,
-        stepReward: 112,
-        topUps: [
-            { step: 5, amount: "400" },
-            { step: 9, amount: "200" },
-            { step: 12, amount: "800" },
-        ],
-    },
-    {
-        name: "Plan 5",
-        baseDeposit: 1600,
-        stepReward: 224,
-        topUps: [
-            { step: 5, amount: "800" },
-            { step: 9, amount: "400" },
-            { step: 12, amount: "1600" },
-        ],
-    },
-    {
-        name: "Plan 6",
-        baseDeposit: 3200,
-        stepReward: 448,
-        topUps: [
-            { step: 5, amount: "1600" },
-            { step: 9, amount: "800" },
-            { step: 12, amount: "3200" },
-        ],
-    },
-    {
-        name: "Plan 7",
-        baseDeposit: 6400,
-        stepReward: 896,
-        topUps: [
-            { step: 5, amount: "3200" },
-            { step: 9, amount: "1600" },
-            { step: 12, amount: "6400" },
-        ],
-    },
-];
-
 function fmtUSDc(cents) {
     if (cents === undefined) return "-";
     const c = typeof cents === "number" ? BigInt(cents) : cents;
@@ -101,6 +27,79 @@ export function fmtTs(ts) {
 }
 
 export default function PlansAndActions() {
+    const plans = [
+        {
+            name: "Plan 1",
+            baseDeposit: 100,
+            stepReward: 14,
+            topUps: [
+                { step: 5, amount: "50" },
+                { step: 9, amount: "25" },
+                { step: 12, amount: "100" },
+            ],
+        },
+        {
+            name: "Plan 2",
+            baseDeposit: 200,
+            stepReward: 28,
+            topUps: [
+                { step: 5, amount: "100" },
+                { step: 9, amount: "50" },
+                { step: 12, amount: "200" },
+            ],
+            popular: true,
+        },
+        {
+            name: "Plan 3",
+            baseDeposit: 400,
+            stepReward: 56,
+            topUps: [
+                { step: 5, amount: "200" },
+                { step: 9, amount: "100" },
+                { step: 12, amount: "400" },
+            ],
+        },
+        {
+            name: "Plan 4",
+            baseDeposit: 800,
+            stepReward: 112,
+            topUps: [
+                { step: 5, amount: "400" },
+                { step: 9, amount: "200" },
+                { step: 12, amount: "800" },
+            ],
+        },
+        {
+            name: "Plan 5",
+            baseDeposit: 1600,
+            stepReward: 224,
+            topUps: [
+                { step: 5, amount: "800" },
+                { step: 9, amount: "400" },
+                { step: 12, amount: "1600" },
+            ],
+        },
+        {
+            name: "Plan 6",
+            baseDeposit: 3200,
+            stepReward: 448,
+            topUps: [
+                { step: 5, amount: "1600" },
+                { step: 9, amount: "800" },
+                { step: 12, amount: "3200" },
+            ],
+        },
+        {
+            name: "Plan 7",
+            baseDeposit: 6400,
+            stepReward: 896,
+            topUps: [
+                { step: 5, amount: "3200" },
+                { step: 9, amount: "1600" },
+                { step: 12, amount: "6400" },
+            ],
+        },
+    ];
     const { data, actions } = useProtocol();
     const { loading } = actions;
 

@@ -3,7 +3,7 @@ import { Copy, Instagram, Link as LinkIcon, Plus } from "lucide-react";
 import { RiTelegramFill } from "react-icons/ri";
 import { FaXTwitter } from "react-icons/fa6";
 
-const useClipboard = () => {
+function useClipboard() {
     const [copied, setCopied] = useState(null);
     const copy = async (text, key) => {
         try {
@@ -38,63 +38,63 @@ async function addTokenToWallet(opts) {
     }
 }
 
-const CONTRACTS = [
-    {
-        title: "AMA Token",
-        address: "0x240c54c51E359aDc86458ec6aa69ceDEDfEdfCd5",
-        scanUrl: "https://polygonscan.com/address/0x240c54c51E359aDc86458ec6aa69ceDEDfEdfCd5",
-        canAddToWallet: true,
-        token: { symbol: "AMA", decimals: 18, image: undefined },
-    },
-    {
-        title: "USDT Token",
-        address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
-        scanUrl: "https://polygonscan.com/address/0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
-        canAddToWallet: true,
-        token: { symbol: "USDT", decimals: 6, image: undefined },
-    },
-    {
-        title: "Liquidity Pool",
-        address: "0x6ab8A0299495e5d076B93705EB50B161bd1ac5dc",
-        scanUrl: "https://polygonscan.com/address/0x6ab8A0299495e5d076B93705EB50B161bd1ac5dc",
-        canAddToWallet: false,
-    },
-    {
-        title: "Insurance Lock",
-        address: "0xE9Ba4F738460cE7f31EC95a2407f0019B117F6c6",
-        scanUrl: "https://polygonscan.com/address/0xE9Ba4F738460cE7f31EC95a2407f0019B117F6c6",
-        canAddToWallet: false,
-    },
-    {
-        title: "Reward Wallet",
-        address: "0x4AB88e440945410655BA63813A97ab8093b547b8",
-        scanUrl: "https://polygonscan.com/address/0x4AB88e440945410655BA63813A97ab8093b547b8",
-        canAddToWallet: false,
-    },
-];
-
-const SOCIALS = [
-    {
-        name: "Instagram",
-        href: "https://instagram.com/amazejprotocol",
-        label: "Instagram",
-        icon: <Instagram size={18} />
-    },
-    {
-        name: "X",
-        href: "https://x.com/AMZPROTOCOL",
-        label: "X (Twitter)",
-        icon: <FaXTwitter size={18} />,
-    },
-    {
-        name: "Telegram",
-        href: "https://t.me/amazejprotocolofficial",
-        label: "Telegram",
-        icon: <RiTelegramFill size={18} />
-    },
-];
-
 export default function SocialMediaAndContracts() {
+    const CONTRACTS = [
+        {
+            title: "AMA Token",
+            address: "0x240c54c51E359aDc86458ec6aa69ceDEDfEdfCd5",
+            scanUrl: "https://polygonscan.com/address/0x240c54c51E359aDc86458ec6aa69ceDEDfEdfCd5",
+            canAddToWallet: true,
+            token: { symbol: "AMA", decimals: 18, image: undefined },
+        },
+        {
+            title: "USDT Token",
+            address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+            scanUrl: "https://polygonscan.com/address/0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+            canAddToWallet: true,
+            token: { symbol: "USDT", decimals: 6, image: undefined },
+        },
+        {
+            title: "Liquidity Pool",
+            address: "0x6ab8A0299495e5d076B93705EB50B161bd1ac5dc",
+            scanUrl: "https://polygonscan.com/address/0x6ab8A0299495e5d076B93705EB50B161bd1ac5dc",
+            canAddToWallet: false,
+        },
+        {
+            title: "Insurance Lock",
+            address: "0xE9Ba4F738460cE7f31EC95a2407f0019B117F6c6",
+            scanUrl: "https://polygonscan.com/address/0xE9Ba4F738460cE7f31EC95a2407f0019B117F6c6",
+            canAddToWallet: false,
+        },
+        {
+            title: "Reward Wallet",
+            address: "0x4AB88e440945410655BA63813A97ab8093b547b8",
+            scanUrl: "https://polygonscan.com/address/0x4AB88e440945410655BA63813A97ab8093b547b8",
+            canAddToWallet: false,
+        },
+    ];
+
+    const SOCIALS = [
+        {
+            name: "Instagram",
+            href: "https://instagram.com/amazejprotocol",
+            label: "Instagram",
+            icon: <Instagram size={18} />
+        },
+        {
+            name: "X",
+            href: "https://x.com/AMZPROTOCOL",
+            label: "X (Twitter)",
+            icon: <FaXTwitter size={18} />,
+        },
+        {
+            name: "Telegram",
+            href: "https://t.me/amazejprotocolofficial",
+            label: "Telegram",
+            icon: <RiTelegramFill size={18} />
+        },
+    ];
+
     const { copied, copy } = useClipboard();
 
     return (

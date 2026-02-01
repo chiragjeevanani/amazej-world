@@ -1,7 +1,7 @@
 import React from "react";
 import { LineChart, Line, ResponsiveContainer, XAxis, Tooltip } from "recharts";
 
-const generateData = (points = 30) => {
+function generateData(points = 30) {
     const data = [];
     let value = Math.random() * 100 + 50;
     const now = new Date();
@@ -16,7 +16,7 @@ const generateData = (points = 30) => {
         });
     }
     return data;
-};
+}
 
 export default function Chart({ className = "h-20", color = "#FFFFFF" }) {
     const data = generateData();
