@@ -206,7 +206,7 @@ function RedeCard({ level, vipTables, userRede, teamRedeCount }) {
     if (!vipTables) return null;
 
     const self = numUSDCents(vipTables.selfCents[level]);
-    const salaryPerClaim = numUSDCents(vipTables.perClaimCents[level]);
+    const salaryPerClaim = numUSDCents(vipTables.vipPerClaimCents[level]);
     const tMin = Number(vipTables.teamMin?.[level] || 0);
     const maxClaims = Number(vipTables.redeAllowed?.[level - 1] || 4); // Index level-1 for redeAllowed array
 
