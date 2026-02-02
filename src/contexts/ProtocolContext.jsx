@@ -99,31 +99,33 @@ export function ProtocolProvider({ children }) {
     const ROYALTY_CALLS = useMemo(() => {
         if (!enabled || !royalty) return [];
         const acct = address;
-        const req = [
+        return [
             { address: royalty, abi: amzGlobalRoyaltyAbi, functionName: "getMemberDetails", args: [acct] },
             { address: royalty, abi: amzGlobalRoyaltyAbi, functionName: "getRoyaltyPoolStatus" },
         ];
-
-        // If we already have the level, we can fetch the expected earning
-        const level = Number(memberDetailsTuple?.[1] || 0);
-        if (level > 0) {
-            req.push({ address: royalty, abi: amzGlobalRoyaltyAbi, functionName: "getExpectedDailyEarning", args: [level] });
-        }
-
-        return req;
     }, [enabled, address, royalty]);
 
     const { data: royaltyData, refetch: royaltyRefetch } = useReadContracts({
         contracts: ROYALTY_CALLS,
-        query: {
-            enabled,
-            refetchInterval: 10000,
-        }
+        query: { enabled, refetchInterval: 10000 }
     });
+
+    const RY = useCallback((i) => royaltyData && royaltyData[i] && royaltyData[i].status === "success" ? royaltyData[i].result : undefined, [royaltyData]);
+    const memberDetailsTuple = RY(0);
+    const poolStatusTuple = RY(1);
+
+    const earningLevel = Number(memberDetailsTuple?.[1] || 0);
+    const { data: earningData, refetch: earningRefetch } = useReadContracts({
+        contracts: (enabled && royalty && earningLevel > 0) ? [
+            { address: royalty, abi: amzGlobalRoyaltyAbi, functionName: "getExpectedDailyEarning", args: [earningLevel] }
+        ] : [],
+        query: { enabled: enabled && royalty && earningLevel > 0, refetchInterval: 10000 }
+    });
+
+    const expectedEarning = earningData?.[0]?.status === "success" ? earningData[0].result : undefined;
 
     function R(i) { return mcData && mcData[i] && mcData[i].status === "success" ? mcData[i].result : undefined; }
     function V(i) { return vipData && vipData[i] && vipData[i].status === "success" ? vipData[i].result : undefined; }
-    function RY(i) { return royaltyData && royaltyData[i] && royaltyData[i].status === "success" ? royaltyData[i].result : undefined; }
 
     const priceCents = R(0);
     const rewardPeriod = R(1);
@@ -147,9 +149,6 @@ export function ProtocolProvider({ children }) {
     const vipTuple = V(0);
     const claimVipUSDT = V(1);
     const tablesTuple = V(5);
-
-    const memberDetailsTuple = RY(0);
-    const poolStatusTuple = RY(1);
 
     const user = useMemo(() => {
         if (!userTuple) return undefined;
@@ -219,11 +218,11 @@ export function ProtocolProvider({ children }) {
                 lastDistribution: poolStatusTuple[2],
                 canDistribute: poolStatusTuple[3]
             } : undefined,
-            expectedEarning: RY(2),
+            expectedEarning: expectedEarning,
             contractBalance: usdtRoyalty,
-            usdt: RY(2) // Map expectedEarning to .usdt for convenience in UI
+            usdt: expectedEarning // Map expectedEarning to .usdt for convenience in UI
         };
-    }, [memberDetailsTuple, poolStatusTuple]);
+    }, [memberDetailsTuple, poolStatusTuple, expectedEarning, usdtRoyalty]);
 
     const tokenBalanceFmt = tokenBalance !== undefined ? roundWithFormat(tokenBalance) : undefined;
     const usdtBalanceFmt = usdtBalance !== undefined ? roundWithFormat(usdtBalance, 2) : undefined;
@@ -298,9 +297,9 @@ export function ProtocolProvider({ children }) {
     })), [vipC, writeContractAsync, runTx]);
 
     const actions = useMemo(() => ({
-        refetch: () => { refetch(); vipRefetch(); royaltyRefetch(); history.refetch(); },
+        refetch: () => { refetch(); vipRefetch(); royaltyRefetch(); earningRefetch(); history.refetch(); },
         loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty,
-    }), [refetch, vipRefetch, royaltyRefetch, history, loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty]);
+    }), [refetch, vipRefetch, royaltyRefetch, earningRefetch, history, loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty]);
 
     const vipProgressTuple = V(2);
     const redeProgressTuple = V(3);
