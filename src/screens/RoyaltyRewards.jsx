@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useProtocol } from "@/contexts/ProtocolContext";
 import { ClaimCountdown } from "@/components/Countdown";
 
-function fmtUSDT(x) { return x === undefined ? "—" : "USDT " + (Number(x) / 1e6).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function fmtUSDT(x) { return x === undefined ? "—" : "USDT " + (Number(x) / 1e18).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 function fmtTok(x) { return x === undefined ? "—" : (Number(x) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 }); }
 function fmtDate(s) { return !s || s === 0n ? "—" : new Date(Number(s) * 1000).toLocaleString(); }
 
@@ -33,32 +33,28 @@ export default function RoyaltyRewardsComponent() {
                     </button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <DarkTile label={t('royalty.active_tier')} value={royalty?.activeLevel > 0 ? `VIP ${royalty.activeLevel}` : t('royalty.none')} />
-                    <DarkTile label={t('royalty.pool_participants')} value={Number(royalty?.activeMembersCount || 0)} />
-                    <DarkTile label={t('royalty.tenure')} value={Number(royalty?.claimDaysUsed || 0)} highlight={Number(royalty?.claimDaysUsed) > 0} />
-                    <DarkTile label={t('royalty.available_reward')} value={fmtUSDT(royalty?.usdt)} highlight={royalty?.canClaim} />
-                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <DarkTile label={t('royalty.active_vip_level')} value={royalty?.activeLevel > 0 ? `${royalty.activeLevel}` : t('royalty.none')} />
+                    <DarkTile label={t('royalty.total_vip_in_level')} value={Number(royalty?.activeMembersCount || 0)} />
+                    <DarkTile label={t('royalty.claimed_days')} value={Number(royalty?.claimDaysUsed || 0)} />
+                    <DarkTile label={t('royalty.total_claimed')} value={fmtUSDT(royalty?.totalClaimed).replace('USDT ', '')} />
+                    <DarkTile label={t('royalty.royalty_available')} value={fmtUSDT(royalty?.usdt).replace('USDT ', '')} highlight={false} />
 
-                <div className="mt-8 pt-8 border-t border-border grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest">{t('royalty.last_distribution')}</span>
-                        <span className="text-sm font-black text-card-foreground">{fmtDate(royalty?.lastClaimDate)}</span>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest">{t('royalty.next_window')}</span>
-                        <div className="text-sm font-black text-card-foreground">
+                    <DarkTile label={t('royalty.last_claimed_date')} value={fmtDate(royalty?.lastClaimDate)} />
+
+                    <div className="p-4 bg-secondary/50 rounded-xl border border-border">
+                        <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{t('royalty.next_claimed_in')}</div>
+                        <div className="text-xl font-black text-card-foreground/90">
                             {royalty?.lastClaimDate ? (
                                 <ClaimCountdown nextClaimAtSec={(royalty?.lastClaimDate + (data?.claimPeriod || 0n))} />
                             ) : t('royalty.not_scheduled')}
                         </div>
                     </div>
-                    <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest">{t('royalty.rewards_status')}</span>
-                        <span className={`text-sm font-black ${royalty?.isPermanent ? 'text-green-500' : 'text-yellow-500'}`}>
-                            {royalty?.isPermanent ? t('royalty.permanent') : t('royalty.standard')}
-                        </span>
-                    </div>
+
+                    <DarkTile
+                        label={t('royalty.is_permanent')}
+                        value={royalty?.isPermanent ? t('royalty.yes') : t('royalty.no')}
+                    />
                 </div>
             </section>
         </div>

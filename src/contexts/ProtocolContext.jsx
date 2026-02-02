@@ -327,6 +327,19 @@ export function ProtocolProvider({ children }) {
         return vipDataState; // Already an object (if wagmi mapped it)
     }, [vipDataState]);
 
+    const vipProg = useMemo(() => {
+        if (!vipProgressTuple) return {};
+        const [lvl, claimsMade, nextAt, open] = vipProgressTuple;
+        return {
+            [Number(lvl)]: {
+                level: Number(lvl),
+                claimsMade: Number(claimsMade),
+                nextClaimAt: nextAt,
+                open
+            }
+        };
+    }, [vipProgressTuple]);
+
     const data = {
         tokenBalance, usdtBalance, // Added raw balances for Sell screen
         tokenBalanceFmt, usdtBalanceFmt, priceUSD, pending, referral, user, history, depositWindow, chainId, main, usdt, withdraw,
@@ -341,6 +354,7 @@ export function ProtocolProvider({ children }) {
         },
         vipTables, claimVip,
         vipProgress: vipProgressTuple,
+        vipProg, // Added for VIP screen compatibility
         redeProgress: redeProgressTuple,
         royalty: royaltyInfo
     };

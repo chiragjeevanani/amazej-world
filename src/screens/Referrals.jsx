@@ -47,7 +47,7 @@ export default function ReferralsComponent() {
                     label={t('referrals.direct_network')}
                     value={String(data.referral?.directReferrals ?? 0)}
                     icon={<Users className="text-blue-400" />}
-                    trend={`${t('referrals.active')}: ${data.referral?.directsInWindow ?? 0}`}
+                    trend={`${t('referrals.active')}: ${data.vip?.directsFirst ?? 0}`}
                     description={t('referrals.directly_referred')}
                 />
                 <PerformanceCard

@@ -346,7 +346,7 @@ function LevelCard({ level, vipTables, currentLevel, redeProgress, nextClaimAt }
                     <div className="space-y-1">
                         <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest block">{t('vip.next_payout')}</span>
                         <div className="text-sm font-black truncate tabular-nums">
-                            {nextClaimAt && nextClaimAt > 0n ? new Date(Number(nextClaimAt) * 1000).toLocaleDateString() : "—"}
+                            {nextClaimAt && nextClaimAt > 0n ? new Date(Number(nextClaimAt) * 1000).toLocaleString() : "—"}
                         </div>
                     </div>
                 </div>

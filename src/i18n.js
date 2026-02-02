@@ -263,6 +263,16 @@ i18n
                         not_scheduled: "Not scheduled",
                         rewards_status: "Rewards Status",
                         permanent: "Permanent",
+                        active_vip_level: "Active VIP Level",
+                        total_vip_in_level: "Total VIP in Level",
+                        claimed_days: "Claimed Days",
+                        total_claimed: "Total Claimed (USDT)",
+                        royalty_available: "Royalty Available USDT",
+                        last_claimed_date: "Last Claimed Date",
+                        next_claimed_in: "Next Claimed In",
+                        is_permanent: "Is Permanent",
+                        yes: "Yes",
+                        no: "No",
                         standard: "Standard"
                     },
                     referrals: {
