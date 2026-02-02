@@ -5,7 +5,6 @@ import Header from '@/components/header'
 import './i18n';
 
 const PlansComponent = lazy(() => import('@/screens/Plans'))
-const HomeComponent = lazy(() => import('@/screens/home'))
 const ReferEarnComponent = lazy(() => import('@/screens/ReferEarn'))
 const SellComponent = lazy(() => import('@/screens/Sell'))
 const LPClaimComponent = lazy(() => import('@/screens/LPClaim'))
@@ -67,7 +66,6 @@ function App() {
                         <Suspense fallback={<LoadingScreen />}>
                             <Routes>
                                 <Route path="/" element={<PlansComponent />} />
-                                <Route path="/dashboard" element={<HomeComponent />} />
                                 <Route path="/refer-earn" element={<ReferEarnComponent />} />
                                 <Route path="/sell" element={<SellComponent />} />
                                 <Route path="/lp-claim" element={<LPClaimComponent />} />

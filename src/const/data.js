@@ -67,8 +67,7 @@ export const rewardData = [
 ];
 
 export const menuItems = [
-    { id: "Home", label: "menu.home", icon: Home, href: "/dashboard" },
-    { id: "Plans", label: "menu.plans", icon: RotateCcw, href: "/" },
+    { id: "Home", label: "menu.home", icon: Home, href: "/" },
     {
         id: "Refer & Earn",
         label: "menu.refer_earn",
