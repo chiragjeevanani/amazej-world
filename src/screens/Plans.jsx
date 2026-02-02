@@ -3,10 +3,9 @@ import { formatUnits } from "viem";
 import { useProtocol } from "@/contexts/ProtocolContext";
 import { roundWithFormat, shortAddress } from "@/blockchain/roundsNumber";
 import { ClaimCountdown } from "@/components/Countdown";
-import WithdrawStatsCard from "@/components/WithdrawStatsCard";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Copy, CheckCircle2 } from "lucide-react";
+import { Copy, CheckCircle2, LayoutGrid, Link, Sparkles, TrendingUp, Wallet, ArrowUpCircle } from "lucide-react";
 
 function gt0(x) { return (x ?? 0n) > 0n; }
 
@@ -28,116 +27,33 @@ export function fmtTs(ts) {
 
 export default function PlansAndActions() {
     const plans = [
-        {
-            name: "Plan 1",
-            baseDeposit: 100,
-            stepReward: 14,
-            topUps: [
-                { step: 5, amount: "50" },
-                { step: 9, amount: "25" },
-                { step: 12, amount: "100" },
-            ],
-        },
-        {
-            name: "Plan 2",
-            baseDeposit: 200,
-            stepReward: 28,
-            topUps: [
-                { step: 5, amount: "100" },
-                { step: 9, amount: "50" },
-                { step: 12, amount: "200" },
-            ],
-            popular: true,
-        },
-        {
-            name: "Plan 3",
-            baseDeposit: 400,
-            stepReward: 56,
-            topUps: [
-                { step: 5, amount: "200" },
-                { step: 9, amount: "100" },
-                { step: 12, amount: "400" },
-            ],
-        },
-        {
-            name: "Plan 4",
-            baseDeposit: 800,
-            stepReward: 112,
-            topUps: [
-                { step: 5, amount: "400" },
-                { step: 9, amount: "200" },
-                { step: 12, amount: "800" },
-            ],
-        },
-        {
-            name: "Plan 5",
-            baseDeposit: 1600,
-            stepReward: 224,
-            topUps: [
-                { step: 5, amount: "800" },
-                { step: 9, amount: "400" },
-                { step: 12, amount: "1600" },
-            ],
-        },
-        {
-            name: "Plan 6",
-            baseDeposit: 3200,
-            stepReward: 448,
-            topUps: [
-                { step: 5, amount: "1600" },
-                { step: 9, amount: "800" },
-                { step: 12, amount: "3200" },
-            ],
-        },
-        {
-            name: "Plan 7",
-            baseDeposit: 6400,
-            stepReward: 896,
-            topUps: [
-                { step: 5, amount: "3200" },
-                { step: 9, amount: "1600" },
-                { step: 12, amount: "6400" },
-            ],
-        },
+        { name: "Plan 1", baseDeposit: 100, stepReward: 14, topUps: [{ step: 5, amount: "50" }, { step: 9, amount: "25" }, { step: 12, amount: "100" }] },
+        { name: "Plan 2", baseDeposit: 200, stepReward: 28, topUps: [{ step: 5, amount: "100" }, { step: 9, amount: "50" }, { step: 12, amount: "200" }], popular: true },
+        { name: "Plan 3", baseDeposit: 400, stepReward: 56, topUps: [{ step: 5, amount: "200" }, { step: 9, amount: "100" }, { step: 12, amount: "400" }] },
+        { name: "Plan 4", baseDeposit: 800, stepReward: 112, topUps: [{ step: 5, amount: "400" }, { step: 9, amount: "200" }, { step: 12, amount: "800" }] },
+        { name: "Plan 5", baseDeposit: 1600, stepReward: 224, topUps: [{ step: 5, amount: "800" }, { step: 9, amount: "400" }, { step: 12, amount: "1600" }] },
+        { name: "Plan 6", baseDeposit: 3200, stepReward: 448, topUps: [{ step: 5, amount: "1600" }, { step: 9, amount: "800" }, { step: 12, amount: "3200" }] },
+        { name: "Plan 7", baseDeposit: 6400, stepReward: 896, topUps: [{ step: 5, amount: "3200" }, { step: 9, amount: "1600" }, { step: 12, amount: "6400" }] },
     ];
+
     const { data, actions } = useProtocol();
     const { loading } = actions;
-
-    const canClaimAll = gt0(data.pending?.total);
-    const canClaimBase = gt0(data.pending?.p0);
-    const canClaimHalf = gt0(data.pending?.p1);
-    const canClaimQuarter = gt0(data.pending?.p2);
+    const { isConnected, address } = useAccount();
 
     const baseCents = data.user?.baseUSDCents ?? 0n;
     const nextPhase = data.user?.nextPhase ?? 0;
 
     const nextRequiredDepositCents = useMemo(() => {
         if (!data?.user?.hasPlan) return 0n;
-        const u = data.user;
-        if (nextPhase === 0) {
-            return baseCents + 1000n;
-        }
-        if (nextPhase === 1) {
-            return baseCents / 2n;
-        }
-        if (nextPhase === 2) {
-            return baseCents / 4n;
-        }
+        if (nextPhase === 0) return baseCents + 1000n;
+        if (nextPhase === 1) return baseCents / 2n;
+        if (nextPhase === 2) return baseCents / 4n;
         return 0n;
     }, [data.user, baseCents, nextPhase]);
 
-    const [baseInput, setBaseInput] = useState("");
-    const parsedBaseInputCents = useMemo(() => {
-        return data.user?.baseUSDCents || 0n;
-    }, [data.user?.baseUSDCents]);
+    const parsedBaseInputCents = useMemo(() => data.user?.baseUSDCents || 0n, [data.user?.baseUSDCents]);
 
-    const disableAll =
-        loading.deposit ||
-        loading.approveUsdt ||
-        loading.claimAll ||
-        loading.claimPhase ||
-        loading.claimReferral ||
-        loading.claimVIP;
+    const disableAll = loading.deposit || loading.approveUsdt || loading.claimAll || loading.claimPhase || loading.claimReferral || loading.claimVIP;
 
     async function handleSelectPlan(usd) {
         const cents = BigInt(usd) * 100n;
@@ -157,25 +73,14 @@ export default function PlansAndActions() {
         if (parsedBaseInputCents <= 0n) return;
         await actions.approveUsdtIfNeeded(parsedBaseInputCents);
         await actions.deposit(parsedBaseInputCents);
-        setBaseInput("");
         actions.refetch();
     }
 
-    const { isConnected, address } = useAccount();
     const [copied, setCopied] = useState(false);
-
     const referralLink = useMemo(() => {
         if (typeof window === 'undefined') return '';
         const demo = window.location.pathname.includes("/amazejworld");
-        const test = window.location.pathname.includes("/test");
-        return `${window.location.origin}${test ? '/test' : demo ? '/amazejworld' : ''}/?ref_id=${address}`;
-    }, [address]);
-
-    const referralLinkDisplay = useMemo(() => {
-        if (typeof window === 'undefined') return '';
-        const demo = window.location.pathname.includes("/amazejworld");
-        const test = window.location.pathname.includes("/test");
-        return `${window.location.host}${test ? '/test' : demo ? '/amazejworld' : ''}/?ref_id=${shortAddress(address || '')}`;
+        return `${window.location.origin}${demo ? '/amazejworld' : ''}/?ref_id=${address}`;
     }, [address]);
 
     const handleCopy = () => {
@@ -185,266 +90,226 @@ export default function PlansAndActions() {
     };
 
     return (
-        <div className="grid gap-8">
-            {/* Balances Section */}
-            <div className="stat-card">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <StatBox label="AMA Balance" value={data.tokenBalanceFmt ? `${data.tokenBalanceFmt} (USDT ${(Number(data.tokenBalanceFmt) * Number(data.priceUSD)).toFixed(4)})` : "—"} />
-                    <StatBox label="USDT Balance" value={data.usdtBalanceFmt ?? "—"} />
-                    <StatBox label="AMA Price" value={data.priceUSD ?? "—"} subValue={`USDT ${data.contractUsdtBalanceFmt} | ${data.contractTokenBalanceFmt} AMA`} />
-                    <StatBox label="Next Claim In" value={data?.user?.nextClaimAt ? <ClaimCountdown nextClaimAtSec={data?.user?.nextClaimAt} /> : "—"} />
+        <div className="max-w-7xl mx-auto space-y-10 p-4 md:p-8">
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-2">
+                <div>
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
+                            <Sparkles size={24} />
+                        </div>
+                        <h2 className="text-sm font-black text-primary uppercase tracking-[0.3em]">Marketplace</h2>
+                    </div>
+                    <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter">
+                        Investment <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Strategies</span>
+                    </h1>
                 </div>
+            </div>
+
+            {/* Performance Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <StatCard
+                    label="AMA Balance"
+                    value={data.tokenBalanceFmt ?? "—"}
+                    subValue={data.tokenBalanceFmt ? `USDT ${(Number(data.tokenBalanceFmt) * Number(data.priceUSD)).toFixed(4)}` : "Estimated value"}
+                    icon={<Wallet className="text-blue-400" />}
+                />
+                <StatCard
+                    label="USDT Balance"
+                    value={data.usdtBalanceFmt ?? "—"}
+                    icon={<TrendingUp className="text-emerald-400" />}
+                />
+                <StatCard
+                    label="AMA Price"
+                    value={`USDT ${data.priceUSD ?? "—"}`}
+                    subValue={data.contractUsdtBalanceFmt ? `USDT ${data.contractUsdtBalanceFmt} | ${data.contractTokenBalanceFmt} AMA` : ""}
+                    icon={<Sparkles className="text-yellow-400" />}
+                />
+                <StatCard
+                    label="Next Claim Window"
+                    value={data?.user?.nextClaimAt ? <ClaimCountdown nextClaimAtSec={data?.user?.nextClaimAt} /> : "Not scheduled"}
+                    icon={<LayoutGrid className="text-purple-400" />}
+                />
             </div>
 
             {/* Top-Up Section */}
             {data.user?.hasPlan && (
                 (() => {
                     const win = data.depositWindow;
-                    const phase = nextPhase;
-                    const prevTranche = phase === 1 ? data.user?.baseTranche : phase === 2 ? data.user?.halfTranche : data.user?.quarterTranche;
-                    const trancheEverStarted = !!prevTranche && !!prevTranche.amountUSDCents && prevTranche.amountUSDCents > 0n;
                     const eligible = Boolean(win?.allowed);
 
-                    const fmtTSLocal = (n) => !n ? "—" : new Date(Number(n) * 1000).toLocaleString();
-                    const eta = (at) => {
-                        if (!at) return "";
-                        const now = Math.floor(Date.now() / 1000);
-                        const target = Number(at);
-                        const s = Math.max(0, target - now);
-                        const sec = s % 60;
-                        const m = Math.floor(s / 60) % 60;
-                        const h = Math.floor(s / 3600) % 24;
-                        const d = Math.floor(s / 86400);
-                        return d > 0 ? `${d}d ${h}h` : h > 0 ? `${h}h ${m}m` : `${m}m ${sec}s`;
-                    };
-
                     const lockHint = !eligible
-                        ? `Locked until early window opens: ${fmtTSLocal(win?.earlyOpenAt)} (${eta(win?.earlyOpenAt)} left)`
-                        : win?.early
-                            ? `Early deposit allowed now. First claim will start from due date: ${fmtTSLocal(win?.cycleEnd)} → first step at ${fmtTSLocal(win?.startsAt)}`
-                            : `Deposit allowed. First step at ${fmtTSLocal(win?.startsAt)}`;
+                        ? `Locked until window opens`
+                        : `Window is currently open.`;
 
-                    return (trancheEverStarted || phase === 0) ? (
-                        <div className="rounded-xl border border-border bg-card p-6 shadow-xl text-card-foreground">
-                            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-                                <div>
-                                    <h3 className="text-xl font-bold mb-2">Next Required Top-Up</h3>
-                                    <div className="flex items-baseline gap-2">
-                                        <span className="text-3xl font-black">{fmtUSDc(nextRequiredDepositCents)}</span>
-                                    </div>
-                                    <p className={`mt-3 text-sm font-medium ${eligible ? "text-muted-foreground" : "text-yellow-500"}`}>
-                                        {lockHint}
-                                    </p>
+                    return (
+                        <div className="relative group">
+                            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-indigo-500 rounded-[2.5rem] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
+                            <div className="relative bg-card/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+                                <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:scale-110 transition-transform">
+                                    <ArrowUpCircle size={200} className="text-primary -rotate-12" />
                                 </div>
 
-                                <button
-                                    disabled={disableAll || (phase === 0 ? parsedBaseInputCents <= 0n : nextRequiredDepositCents <= 0n) || !eligible}
-                                    onClick={phase === 0 ? handleBaseUpgrade : () => handleTopUpExact(nextRequiredDepositCents)}
-                                    className="btn-primary font-bold h-12 px-8 rounded-lg hover:opacity-90 transition-colors disabled:opacity-20 transform hover:scale-105 active:scale-95 duration-200"
-                                >
-                                    {loading.deposit || loading.approveUsdt ? "Processing…" : eligible ? "Deposit Now" : "Locked"}
-                                </button>
+                                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+                                    <div className="space-y-4">
+                                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest ${eligible ? 'bg-emerald-500/20 text-emerald-500 border-emerald-500/30' : 'bg-orange-500/20 text-orange-500 border-orange-500/30'}`}>
+                                            <span className={`relative flex h-2 w-2 ${eligible ? 'animate-pulse' : ''}`}>
+                                                <span className={`relative inline-flex rounded-full h-2 w-2 ${eligible ? 'bg-emerald-500' : 'bg-orange-500'}`}></span>
+                                            </span>
+                                            {eligible ? 'Window Active' : 'Waiting for Window'}
+                                        </div>
+                                        <h3 className="text-3xl font-black tracking-tight">Next Required Top-Up</h3>
+                                        <div className="flex flex-col">
+                                            <span className="text-5xl font-black text-foreground tracking-tighter">{fmtUSDc(nextRequiredDepositCents)}</span>
+                                            <p className="mt-2 text-sm font-bold text-muted-foreground/60">{lockHint}</p>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        disabled={disableAll || (nextPhase === 0 ? parsedBaseInputCents <= 0n : nextRequiredDepositCents <= 0n) || !eligible}
+                                        onClick={nextPhase === 0 ? handleBaseUpgrade : () => handleTopUpExact(nextRequiredDepositCents)}
+                                        className="h-16 min-w-[240px] rounded-2xl bg-primary text-primary-foreground font-black text-xs uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/40 disabled:opacity-20 disabled:scale-100"
+                                    >
+                                        {loading.deposit || loading.approveUsdt ? "Processing…" : eligible ? "Execute Deposit" : "Window Locked"}
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    ) : null;
+                    );
                 })()
             )}
 
-            {/* Referral Link Section */}
-            <div className="bg-card/40 backdrop-blur-xl rounded-3xl border border-white/10 p-6 shadow-2xl overflow-hidden group relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative z-10">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div className="w-full md:w-auto">
-                            <h3 className="text-sm font-black text-muted-foreground uppercase tracking-widest mb-2">Your Referral Link</h3>
-                            {isConnected ? (
-                                <div className="flex flex-col gap-4">
-                                    <div className="bg-black/20 border border-white/5 rounded-2xl px-4 py-3 font-mono text-sm text-primary break-all">
-                                        {referralLinkDisplay}
-                                    </div>
-                                    <button
-                                        onClick={handleCopy}
-                                        className="w-full md:w-auto flex items-center justify-center gap-2 py-3 px-8 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-black text-xs uppercase tracking-widest transition-all shadow-lg active:scale-95"
-                                    >
-                                        {copied ? (
-                                            <>
-                                                <CheckCircle2 size={16} />
-                                                <span>Copied!</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Copy size={16} />
-                                                <span>Copy Referral Link</span>
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="flex flex-col items-center md:items-start gap-4">
-                                    <p className="text-sm text-muted-foreground italic">Connect your wallet to generate a referral link</p>
-                                    <ConnectButton />
-                                </div>
-                            )}
-                        </div>
-                        <div className="hidden lg:block">
-                            <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 rotate-3 group-hover:rotate-0 transition-transform duration-500">
-                                <Copy size={32} className="text-primary opacity-40" />
-                            </div>
-                        </div>
+            {/* Links & Referral Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 bg-indigo-500/10 border border-indigo-500/20 rounded-[2rem] p-8 flex flex-col md:flex-row items-center gap-8 group">
+                    <div className="h-20 w-20 rounded-[1.5rem] bg-indigo-500 flex items-center justify-center text-white shadow-2xl shadow-indigo-500/40 shrink-0 group-hover:scale-110 transition-transform">
+                        <Link size={40} />
                     </div>
+                    <div className="flex-1 space-y-4 text-center md:text-left">
+                        <h3 className="text-2xl font-black tracking-tight">Grow Your Network</h3>
+                        <p className="text-sm font-medium text-muted-foreground opacity-80 leading-relaxed">
+                            Invite others to the protocol and earn a lifetime percentage of their rewards. Copy your unique link below.
+                        </p>
+                        {isConnected ? (
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                <div className="flex-1 bg-black/20 border border-white/10 rounded-xl px-4 py-3 font-mono text-sm text-indigo-400 break-all flex items-center">
+                                    {shortAddress(address)}... (Click Copy)
+                                </div>
+                                <button
+                                    onClick={handleCopy}
+                                    className="h-12 px-6 rounded-xl bg-foreground text-background font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95"
+                                >
+                                    {copied ? <CheckCircle2 size={16} /> : <Copy size={16} />}
+                                    {copied ? "Copied" : "Copy Link"}
+                                </button>
+                            </div>
+                        ) : (
+                            <ConnectButton />
+                        )}
+                    </div>
+                </div>
+
+                <div className="bg-card/40 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 flex flex-col justify-center gap-4 relative overflow-hidden group">
+                    <div className="absolute -bottom-10 -right-10 opacity-5 group-hover:scale-125 transition-transform duration-1000">
+                        <TrendingUp size={160} />
+                    </div>
+                    <h3 className="text-2xl font-black tracking-tight">Premium Benefits</h3>
+                    <p className="text-sm font-medium text-muted-foreground leading-relaxed">
+                        Scale your tier to unlock higher limits and monthly dividends.
+                    </p>
+                    <button className="flex items-center gap-2 text-xs font-black uppercase text-primary tracking-widest hover:gap-4 transition-all">
+                        Explore Tiers <ChevronRight size={16} />
+                    </button>
                 </div>
             </div>
 
-            {/* Plans Section */}
+            {/* Plans Grid */}
             <div className="space-y-6">
-                <h2 className="text-2xl font-black px-2">Choose Your Strategy</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="flex items-center gap-3 px-2">
+                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                        <LayoutGrid size={18} />
+                    </div>
+                    <h2 className="text-2xl font-black tracking-tight">Active Strategies</h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {plans.map((plan, idx) => (
                         <PlanCard key={idx} plan={plan} idx={idx} data={data} disableAll={disableAll} onSelect={handleSelectPlan} />
                     ))}
                 </div>
             </div>
-
-
-
-
-
         </div>
     );
 }
 
-function StatBox({ label, value, subValue }) {
+function StatCard({ label, value, subValue, icon }) {
     return (
-        <div className="flex flex-col gap-2 p-4 bg-secondary/50 rounded-xl border border-secondary">
-            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{label}</span>
-            <div className="text-xl font-black truncate">{value}</div>
-            {subValue && <div className="text-xs font-medium text-muted-foreground truncate">{subValue}</div>}
+        <div className="relative group bg-card/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/20">
+            <div className="flex items-start justify-between mb-4">
+                <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
+                    {icon}
+                </div>
+            </div>
+            <div className="space-y-1">
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{label}</p>
+                <div className="text-xl font-black text-foreground truncate">{value}</div>
+                {subValue && <p className="text-xs font-black text-muted-foreground/80 uppercase tracking-wider mt-2 bg-white/5 py-1 px-3 rounded-lg border border-white/5 inline-block">{subValue}</p>}
+            </div>
         </div>
     );
 }
 
 function PlanCard({ plan, idx, data, disableAll, onSelect }) {
-    const isAffordable = true; // Add logic if needed
     const isCurrentPlan = (plan.baseDeposit * 100) <= (data?.user?.baseUSDCents || 0n);
 
-    // Ultra-vibrant colors with intense glow logic
     const themes = [
-        // 0: Plan 1 - Electric Blue
-        {
-            outer: "from-blue-600 via-blue-500 to-cyan-500 border-blue-400/50 shadow-blue-500/50",
-            inner: "bg-blue-950/60 border-blue-200/30 text-blue-50",
-            button: "bg-white text-blue-600 border-blue-200 hover:shadow-blue-500/50",
-            shine: "bg-blue-300/20"
-        },
-        // 1: Plan 2 - Neon Cyan
-        {
-            outer: "from-cyan-500 via-cyan-400 to-teal-400 border-cyan-400/50 shadow-cyan-500/50",
-            inner: "bg-cyan-950/60 border-cyan-200/30 text-cyan-50",
-            button: "bg-white text-cyan-600 border-cyan-200 hover:shadow-cyan-500/50",
-            shine: "bg-cyan-300/20"
-        },
-        // 2: Plan 3 - Vivid Teal
-        {
-            outer: "from-teal-500 via-teal-400 to-emerald-500 border-teal-400/50 shadow-teal-500/50",
-            inner: "bg-teal-950/60 border-teal-200/30 text-teal-50",
-            button: "bg-white text-teal-600 border-teal-200 hover:shadow-teal-500/50",
-            shine: "bg-teal-300/20"
-        },
-        // 3: Plan 4 - Emerald Green
-        {
-            outer: "from-emerald-500 via-emerald-400 to-green-500 border-emerald-400/50 shadow-emerald-500/50",
-            inner: "bg-emerald-950/60 border-emerald-200/30 text-emerald-50",
-            button: "bg-white text-emerald-600 border-emerald-200 hover:shadow-emerald-500/50",
-            shine: "bg-emerald-300/20"
-        },
-        // 4: Plan 5 - Lime Punch
-        {
-            outer: "from-green-500 via-lime-500 to-yellow-400 border-lime-400/50 shadow-lime-500/50",
-            inner: "bg-lime-950/60 border-lime-200/30 text-lime-50",
-            button: "bg-white text-lime-600 border-lime-200 hover:shadow-lime-500/50",
-            shine: "bg-lime-300/20"
-        },
-        // 5: Plan 6 - Solar Flare
-        {
-            outer: "from-yellow-400 via-orange-500 to-red-500 border-orange-400/50 shadow-orange-500/50",
-            inner: "bg-orange-950/60 border-orange-200/30 text-orange-50",
-            button: "bg-white text-orange-600 border-orange-200 hover:shadow-orange-500/50",
-            shine: "bg-orange-300/20"
-        },
-        // 6: Plan 7 - Cosmic Purple
-        {
-            outer: "from-purple-600 via-fuchsia-500 to-indigo-600 border-fuchsia-400/50 shadow-fuchsia-500/50",
-            inner: "bg-purple-950/60 border-purple-200/30 text-purple-50",
-            button: "bg-white text-purple-600 border-fuchsia-200 hover:shadow-fuchsia-500/50",
-            shine: "bg-purple-300/20"
-        }
+        { outer: "from-blue-600 to-indigo-600", inner: "bg-blue-950/40", button: "bg-white text-blue-600", accent: "text-blue-300" },
+        { outer: "from-cyan-500 to-emerald-500", inner: "bg-cyan-950/40", button: "bg-white text-cyan-600", accent: "text-cyan-300" },
+        { outer: "from-teal-500 to-teal-700", inner: "bg-teal-950/40", button: "bg-white text-teal-600", accent: "text-teal-300" },
+        { outer: "from-emerald-500 to-green-600", inner: "bg-emerald-950/40", button: "bg-white text-emerald-600", accent: "text-emerald-300" },
+        { outer: "from-lime-500 to-emerald-600", inner: "bg-lime-950/40", button: "bg-white text-lime-600", accent: "text-lime-300" },
+        { outer: "from-orange-500 to-red-600", inner: "bg-white text-orange-600", button: "bg-white text-orange-600", accent: "text-orange-300" },
+        { outer: "from-violet-600 to-fuchsia-600", inner: "bg-violet-950/40", button: "bg-white text-violet-600", accent: "text-violet-300" }
     ];
 
     const theme = themes[idx % themes.length];
 
     return (
         <div className={`
-                relative flex flex-col p-4 rounded-xl border-2 transition-all duration-300 transform overflow-hidden group
-                ${isCurrentPlan ? 'opacity-80 scale-95 saturate-50 z-0' : 'hover:scale-[1.05] hover:z-20'}
-                bg-gradient-to-br ${theme.outer}
-                text-white
-                shadow-2xl hover:shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]
-             `}>
-
-            {/* Glossy sheen overlay */}
-            <div className={`absolute top-0 right-0 w-[120%] h-full bg-linear-to-b from-white/10 to-transparent transform -skew-x-12 translate-x-1/2 opacity-30 pointer-events-none`}></div>
-            <div className={`absolute -top-20 -right-20 w-40 h-40 rounded-full blur-3xl pointer-events-none mix-blend-screen ${theme.shine}`}></div>
+            relative flex flex-col p-6 rounded-[2rem] border-2 transition-all duration-500 transform overflow-hidden group
+            ${isCurrentPlan ? 'opacity-60 scale-95 saturate-0' : 'hover:scale-[1.02] hover:-translate-y-2'}
+            bg-gradient-to-br ${theme.outer} text-white shadow-2xl
+        `}>
+            <div className="absolute top-0 right-0 w-[120%] h-full bg-linear-to-b from-white/10 to-transparent transform -skew-x-12 translate-x-1/2 opacity-20 pointer-events-none"></div>
 
             {plan.popular && (
-                <div className="absolute top-0 right-0 text-[9px] font-black uppercase tracking-tight bg-white text-black px-2 py-1 rounded-bl-lg shadow-lg z-20">
-                    Top Pick
+                <div className="absolute top-0 right-0 text-[10px] font-black uppercase tracking-widest bg-white text-black px-4 py-2 rounded-bl-2xl shadow-lg z-20">
+                    Most Popular
                 </div>
             )}
 
-            {/* Header: Compact Name & Big Price */}
-            <div className="flex justify-between items-start mb-4 z-10 relative">
-                <div>
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/90 drop-shadow-md border-b border-white/20 pb-1 mb-1 inline-block">
-                        {plan.name}
-                    </h3>
-                    <div className="flex flex-col">
-                        <span className="text-3xl font-black drop-shadow-xl tracking-tighter leading-none">
-                            USDT {plan.baseDeposit + 10}
-                        </span>
-                        <span className="text-[9px] font-bold text-white/80 uppercase tracking-widest mt-1 opacity-90">
-                            Entry
-                        </span>
-                    </div>
+            <div className="mb-8 relative z-10">
+                <h3 className="text-[11px] font-black uppercase tracking-[0.2em] opacity-70 mb-2">{plan.name}</h3>
+                <div className="flex items-baseline gap-1">
+                    <span className="text-3xl font-black tracking-tighter italic">USDT</span>
+                    <span className="text-5xl font-black tracking-tighter">{plan.baseDeposit + 10}</span>
                 </div>
             </div>
 
-            <div className="space-y-3 flex-1 z-10">
-                {/* Reward Card - Ultra Glossy */}
-                <div className={`flex items-center justify-between p-3 rounded-lg border backdrop-blur-xl shadow-inner ${theme.inner}`}>
-                    <div className="flex flex-col">
-                        <span className="text-[9px] font-black uppercase opacity-60">Each step reward</span>
-                        <div className="text-xl font-black drop-shadow-md tracking-tight">USDT {plan.stepReward}</div>
-                    </div>
-                    <div className="h-8 w-[1px] bg-white/10 mx-2"></div>
-                    <div className="flex flex-col text-right">
-                        <span className="text-[9px] font-black uppercase opacity-60">Cycle</span>
-                        <div className="text-[10px] font-bold">12 Steps</div>
+            <div className="space-y-4 flex-1 relative z-10">
+                <div className={`flex items-center justify-between p-4 rounded-2xl backdrop-blur-xl border border-white/10 ${theme.inner}`}>
+                    <div className="space-y-0.5">
+                        <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Step Reward</span>
+                        <div className="text-2xl font-black tracking-tight">USDT {plan.stepReward}</div>
                     </div>
                 </div>
 
-                {/* Compact Grid for Steps */}
-                <div className="space-y-2">
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-center opacity-70">
-                        Top-Up Requirements
-                    </h4>
-                    <div className="grid grid-cols-3 gap-1.5">
-                        {plan.topUps.map((top, i) => (
-                            <div key={i} className={`flex flex-col items-center justify-center py-2 px-1 rounded-md border backdrop-blur-md shadow-sm transition-transform hover:scale-110 ${theme.inner}`}>
-                                <div className="text-[7px] font-black opacity-50 mb-0.5">STEP {top.step}</div>
-                                <div className="text-xs font-black drop-shadow-sm">USDT {top.amount}</div>
-                            </div>
-                        ))}
-                    </div>
+                <div className="grid grid-cols-3 gap-2">
+                    {plan.topUps.map((top, i) => (
+                        <div key={i} className={`flex flex-col items-center justify-center p-3 rounded-xl border border-white/5 backdrop-blur-md ${theme.inner}`}>
+                            <span className="text-[8px] font-black opacity-50 mb-1">ST {top.step}</span>
+                            <span className="text-[10px] font-black">${top.amount}</span>
+                        </div>
+                    ))}
                 </div>
             </div>
 
@@ -452,20 +317,26 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
                 disabled={disableAll || isCurrentPlan}
                 onClick={() => onSelect(plan.baseDeposit)}
                 className={`
-                    mt-5 h-9 rounded-lg font-black text-[10px] uppercase tracking-[0.2em]
-                    transition-all transform active:scale-95 shadow-xl border-b-4
-                    flex items-center justify-center
+                    mt-8 h-14 rounded-2xl font-black text-xs uppercase tracking-[0.3em] transition-all active:scale-95 shadow-xl
                     ${isCurrentPlan
-                        ? "bg-black/40 border-black/20 text-white/40 cursor-not-allowed"
-                        : `${theme.button} hover:-translate-y-0.5 active:translate-y-0 active:border-b-0`
-                    }
+                        ? "bg-black/20 border-white/10 text-white/40 cursor-not-allowed"
+                        : "bg-white text-black hover:bg-opacity-90"}
                 `}
             >
-                {isCurrentPlan ? "Active Strategy" : "Start Plan"}
+                {isCurrentPlan ? "Active strategy" : "Initiate Strategy"}
             </button>
         </div>
     );
 }
+
+function ChevronRight({ size, className }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}>
+            <path d="m9 18 6-6-6-6" />
+        </svg>
+    );
+}
+
 
 
 

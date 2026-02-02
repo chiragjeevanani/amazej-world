@@ -29,7 +29,7 @@ function PersonalStat({ label, value, subValue }) {
         <div className="bg-card border border-border p-5 rounded-2xl shadow-lg hover:shadow-primary/5 transition-all text-card-foreground">
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">{label}</p>
             <div className="text-2xl font-black mb-1">{value}</div>
-            <div className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">{subValue}</div>
+            <div className="text-xs font-black text-muted-foreground/80 uppercase tracking-wider">{subValue}</div>
         </div>
     );
 }

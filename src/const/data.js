@@ -67,44 +67,44 @@ export const rewardData = [
 ];
 
 export const menuItems = [
-    { id: "Home", label: "Home", icon: Home, herf: "/" },
+    { id: "Home", label: "Home", icon: Home, href: "/" },
     {
         id: "Refer & Earn",
         label: "Refer & Earn",
         icon: Gift,
-        herf: "/refer-earn",
+        href: "/refer-earn",
     },
-    { id: "Sell", label: "Sell", icon: ShoppingBag, herf: "/sell" },
-    { id: "LP Claim", label: "LP Claim", icon: Droplets, herf: "/lp-claim" },
+    { id: "Sell", label: "Sell", icon: ShoppingBag, href: "/sell" },
+    { id: "LP Claim", label: "LP Claim", icon: Droplets, href: "/lp-claim" },
     {
         id: "Royalty Rewards",
         label: "Royalty Rewards",
         icon: TrendingUp,
-        herf: "/royalty-rewards",
+        href: "/royalty-rewards",
     },
     {
         id: "Withdraw Earnings",
         label: "Withdraw Earnings",
         icon: DollarSign,
-        herf: "/withdraw-earnings",
+        href: "/withdraw-earnings",
     },
     {
         id: "History",
         label: "History",
         icon: History,
-        herf: "/history",
+        href: "/history",
     },
     {
         id: "Referrals",
         label: "Referrals",
         icon: Users,
-        herf: "/referrals",
+        href: "/referrals",
     },
     {
         id: "VIP",
         label: "VIP",
         icon: Crown,
-        herf: "/vip",
+        href: "/vip",
     },
 ];
 

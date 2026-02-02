@@ -62,15 +62,15 @@ function Sidebar({
                 <nav className="flex-1 space-y-1">
                     {menuItems.map((item) => {
                         const Icon = item.icon;
-                        const isActive = item.herf === "/"
+                        const isActive = item.href === "/"
                             ? pathname === "/"
-                            : pathname.startsWith(item.herf);
+                            : pathname.startsWith(item.href);
 
                         return (
                             <button
                                 key={item.id}
                                 onClick={() => {
-                                    navigate(item.herf);
+                                    navigate(item.href);
                                     if (isMobile) setTimeout(() => onClose(), 150);
                                 }}
                                 className={`

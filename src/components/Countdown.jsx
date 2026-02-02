@@ -107,7 +107,7 @@ export function ClaimCountdown({ nextClaimAtSec, onEnd }) {
             <span className="text-muted-foreground/30">:</span>
             <span className="text-foreground">{format(minutes)}m</span>
             <span className="text-muted-foreground/30">:</span>
-            <span className="text-foreground text-[10px] opacity-70 mb-[-2px]">{format(seconds)}s</span>
+            <span className="text-foreground">{format(seconds)}s</span>
             {!running && <span className="ml-2 text-xs text-green-500 bg-green-500/10 px-2 py-0.5 rounded-full uppercase tracking-widest">Ready</span>}
         </div>
     );

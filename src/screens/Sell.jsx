@@ -144,7 +144,7 @@ function StatCard({ title, value, unit, icon }) {
                 <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">{title}</h3>
                 <div className="text-2xl font-black text-card-foreground flex items-baseline gap-1">
                     {value}
-                    <span className="text-[10px] font-bold text-muted-foreground/60">{unit}</span>
+                    <span className="text-xs font-black text-muted-foreground/80">{unit}</span>
                 </div>
             </div>
             <div className="h-12 w-12 rounded-xl bg-secondary/30 border border-border flex items-center justify-center group-hover:scale-110 transition-transform group-hover:bg-secondary/50">
