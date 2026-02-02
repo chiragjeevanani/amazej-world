@@ -124,26 +124,26 @@ export default function HistoryTabs({ onlyShow }) {
 
             {!onlyShow && (
                 <div className="flex flex-wrap gap-3 px-2">
-                    {TABS.map((t) => {
+                    {TABS.map((tabItem) => {
                         const count =
-                            t.key === "deposits" ? depTotal :
-                                t.key === "claims" ? clmTotal :
-                                    t.key === "refAccr" ? refTotal :
-                                        t.key === "vip" ? salaryTotal :
-                                            t.key === "withdraws" ? wdTotal :
-                                                t.key === "sells" ? sellTotal :
-                                                    t.key === "royalty" ? globalRoyaltyTotal : 0;
-                        const isActive = tab === t.key;
+                            tabItem.key === "deposits" ? depTotal :
+                                tabItem.key === "claims" ? clmTotal :
+                                    tabItem.key === "refAccr" ? refTotal :
+                                        tabItem.key === "vip" ? salaryTotal :
+                                            tabItem.key === "withdraws" ? wdTotal :
+                                                tabItem.key === "sells" ? sellTotal :
+                                                    tabItem.key === "royalty" ? globalRoyaltyTotal : 0;
+                        const isActive = tab === tabItem.key;
                         return (
                             <button
-                                key={t.key}
-                                onClick={() => setTab(t.key)}
+                                key={tabItem.key}
+                                onClick={() => setTab(tabItem.key)}
                                 className={`h-11 px-6 rounded-xl text-sm font-black transition-all flex items-center gap-3 border ${isActive
                                     ? "bg-yellow-400 text-black border-yellow-500 shadow-lg shadow-yellow-400/20"
                                     : "bg-secondary/30 text-muted-foreground border-white/5 hover:bg-secondary/50 hover:border-white/10"
                                     }`}
                             >
-                                <span>{t(t.label)}</span>
+                                <span>{t(tabItem.label)}</span>
                                 <span className={`px-2 py-0.5 rounded-md text-[10px] font-black ${isActive ? 'bg-black/10' : 'bg-white/5'}`}>
                                     {count}
                                 </span>
