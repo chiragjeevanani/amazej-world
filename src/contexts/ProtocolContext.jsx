@@ -329,7 +329,7 @@ export function ProtocolProvider({ children }) {
 
     const data = {
         tokenBalance, usdtBalance, // Added raw balances for Sell screen
-        tokenBalanceFmt, usdtBalanceFmt, priceUSD, pending, referral, user, history, depositWindow, chainId, main, usdt,
+        tokenBalanceFmt, usdtBalanceFmt, priceUSD, pending, referral, user, history, depositWindow, chainId, main, usdt, withdraw,
         contractTokenBalanceFmt, contractUsdtBalanceFmt,
         vip: {
             ...parsedVipState,
