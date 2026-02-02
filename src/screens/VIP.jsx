@@ -238,7 +238,7 @@ function RedeCard({ level, vipTables, userRede, teamRedeCount }) {
                     <div className="space-y-1">
                         <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('vip.salary')}</span>
                         <div className="text-sm font-black">
-                            {claimsMade} / {maxClaims} <span className="text-[10px] text-muted-foreground/60 ml-1">({t('vip.salary_frequency', { amount: salaryPerClaim })})</span>
+                            {t('vip.salary_frequency', { amount: salaryPerClaim })}
                         </div>
                     </div>
                 </div>
