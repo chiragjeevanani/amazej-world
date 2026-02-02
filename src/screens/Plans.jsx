@@ -240,7 +240,9 @@ export default function PlansAndActions() {
                                 </button>
                             </div>
                         ) : (
-                            <ConnectButton />
+                            <div className="flex justify-center md:justify-start">
+                                <ConnectButton />
+                            </div>
                         )}
                     </div>
                 </div>
