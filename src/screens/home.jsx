@@ -16,6 +16,7 @@ import { useProtocol } from "@/contexts/ProtocolContext";
 import { useAccount } from "wagmi";
 import { ClaimCountdown } from "@/components/Countdown";
 import { roundWithFormat } from "@/blockchain/roundsNumber";
+import { useTranslation } from "react-i18next";
 
 function fmtUSDc(cents) {
     if (cents === undefined) return "-";
@@ -35,6 +36,7 @@ function PersonalStat({ label, value, subValue }) {
 }
 
 function HomeComponet() {
+    const { t } = useTranslation();
     const { data, actions } = useProtocol();
     const { isConnected } = useAccount();
     const { loading } = actions;
@@ -73,10 +75,10 @@ function HomeComponet() {
         };
 
         const lockHint = !eligible
-            ? `Locked until window opens: ${fmtTSLocal(win?.earlyOpenAt)} (${eta(win?.earlyOpenAt)} left)`
+            ? t('home.locked_until', { time: fmtTSLocal(win?.earlyOpenAt), left: eta(win?.earlyOpenAt) })
             : win?.early
-                ? `Early deposit allowed. First step at ${fmtTSLocal(win?.startsAt)}`
-                : `Deposit allowed. First step at ${fmtTSLocal(win?.startsAt)}`;
+                ? t('home.early_deposit', { time: fmtTSLocal(win?.startsAt) })
+                : t('home.deposit_allowed', { time: fmtTSLocal(win?.startsAt) });
 
         return (
             <div className="relative group overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-background to-background p-8 shadow-2xl transition-all hover:shadow-primary/5">
@@ -90,9 +92,9 @@ function HomeComponet() {
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                             </span>
-                            <span className="text-[10px] font-black uppercase tracking-widest">Active Plan Info</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest">{t('home.active_plan_info')}</span>
                         </div>
-                        <h3 className="text-3xl font-black tracking-tight">Next Required Top-Up</h3>
+                        <h3 className="text-3xl font-black tracking-tight">{t('home.next_required_topup')}</h3>
                         <div className="flex flex-col">
                             <span className="text-5xl font-black text-foreground drop-shadow-sm">{fmtUSDc(nextRequiredDepositCents)}</span>
                             <p className={`mt-3 text-sm font-bold flex items-center gap-2 ${eligible ? "text-primary/80" : "text-amber-500"}`}>
@@ -113,7 +115,7 @@ function HomeComponet() {
                     >
                         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                         <span className="relative z-10">
-                            {loading.deposit || loading.approveUsdt ? "Processing…" : eligible ? `Deposit ${fmtUSDc(nextRequiredDepositCents)}` : "Deposit Locked"}
+                            {loading.deposit || loading.approveUsdt ? t('home.processing') : eligible ? `${t('home.deposit')} ${fmtUSDc(nextRequiredDepositCents)}` : t('home.deposit_locked')}
                         </span>
                     </button>
                 </div>
@@ -135,14 +137,14 @@ function HomeComponet() {
                             <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                                 <Wallet size={18} />
                             </div>
-                            <h2 className="text-2xl font-black tracking-tight">Personal Dashboard</h2>
+                            <h2 className="text-2xl font-black tracking-tight">{t('home.personal_dashboard')}</h2>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <PersonalStat label="AMA Balance" value={data.tokenBalanceFmt ?? "—"} subValue={data.tokenBalanceFmt ? `USDT ${(Number(data.tokenBalanceFmt) * Number(data.priceUSD || 0)).toFixed(4)}` : "Estimated value"} />
-                            <PersonalStat label="USDT Balance" value={data.usdtBalanceFmt ?? "—"} subValue="Available to deposit" />
-                            <PersonalStat label="Accumulated Rewards" value={data.pending?.total !== undefined ? `USDT ${roundWithFormat(data.pending.total * BigInt(Math.floor(Number(data.priceUSD || 0) * 1e18)) / BigInt(1e18))}` : "—"} subValue="Pending claim" />
-                            <PersonalStat label="Next Claim Window" value={data?.user?.nextClaimAt ? <ClaimCountdown nextClaimAtSec={data?.user?.nextClaimAt} /> : "—"} subValue="Approximate time" />
+                            <PersonalStat label={t('home.ama_balance')} value={data.tokenBalanceFmt ?? "—"} subValue={data.tokenBalanceFmt ? `USDT ${(Number(data.tokenBalanceFmt) * Number(data.priceUSD || 0)).toFixed(4)}` : t('home.estimated_value')} />
+                            <PersonalStat label={t('home.usdt_balance')} value={data.usdtBalanceFmt ?? "—"} subValue={t('home.available_deposit')} />
+                            <PersonalStat label={t('home.accumulated_rewards')} value={data.pending?.total !== undefined ? `USDT ${roundWithFormat(data.pending.total * BigInt(Math.floor(Number(data.priceUSD || 0) * 1e18)) / BigInt(1e18))}` : "—"} subValue={t('home.pending_claim')} />
+                            <PersonalStat label={t('home.next_claim_window')} value={data?.user?.nextClaimAt ? <ClaimCountdown nextClaimAtSec={data?.user?.nextClaimAt} /> : "—"} subValue={t('home.approximate_time')} />
                         </div>
 
                         {topUpSection}
@@ -154,37 +156,37 @@ function HomeComponet() {
                         <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                             <TrendingUp size={18} />
                         </div>
-                        <h2 className="text-2xl font-black tracking-tight">Protocol Analytics</h2>
+                        <h2 className="text-2xl font-black tracking-tight">{t('home.protocol_analytics')}</h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
                         <StatCard
-                            title="Token Price"
+                            title={t('home.token_price')}
                             value={data.priceUSD ? `USDT ${data.priceUSD}` : "USDT ——"}
-                            subtitle="per AMA token"
+                            subtitle={t('home.per_token')}
                             icon={DollarSign}
                             chartColor="#8884d8"
                         />
 
                         <StatCard
-                            title="Market Cap"
+                            title={t('home.market_cap')}
                             value="USDT 15,423.47"
-                            subtitle="Total valuation in USDT"
+                            subtitle={t('home.total_valuation')}
                             icon={TrendingUp}
                             chartColor="#4ade80"
                         />
 
                         <StatCard
-                            title="Total Liquidity"
+                            title={t('home.total_liquidity')}
                             value="USDT 175,979.21"
-                            subtitle="Total funds available in liquidity pools"
+                            subtitle={t('home.total_funds')}
                             icon={Droplets}
                             chartColor="#60a5fa"
                         />
 
                         <StatCard
-                            title="Circulating Supply"
+                            title={t('home.circulating_supply')}
                             value="2,074,223.19"
-                            subtitle="Tokens in circulation"
+                            subtitle={t('home.tokens_circulation')}
                             icon={RotateCcw}
                             showChart={true}
                             chartColor="#f472b6"
@@ -201,7 +203,7 @@ function HomeComponet() {
                                 >
                                     <div className="flex justify-between items-center mb-4">
                                         <h3 className="text-[10px] font-black uppercase tracking-widest opacity-60">
-                                            {card.name}
+                                            {t(card.name)}
                                         </h3>
                                         <div className="h-8 w-8 flex items-center justify-center rounded-lg bg-primary text-primary-foreground">
                                             <IconComponent size={14} />
@@ -226,8 +228,8 @@ function HomeComponet() {
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <GlobalReward title="Global Rewards" transactions={rewardData} />
-                        <GlobalReward title="Global Referral Rewards" transactions={rewardData} />
+                        <GlobalReward title={t('home.global_rewards')} transactions={rewardData} />
+                        <GlobalReward title={t('home.global_referral_rewards')} transactions={rewardData} />
                     </div>
                 </div>
 

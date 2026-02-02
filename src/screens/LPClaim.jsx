@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useProtocol } from "@/contexts/ProtocolContext";
 import { roundWithFormat } from "@/blockchain/roundsNumber";
 import { fmtTs } from "@/screens/Plans";
@@ -14,6 +15,7 @@ function fmtUSDc(cents) {
 }
 
 export default function LPClaimComponent() {
+    const { t } = useTranslation();
     const { data, actions } = useProtocol();
     const { loading } = actions;
 
@@ -37,20 +39,19 @@ export default function LPClaimComponent() {
                         <div className="max-w-xl space-y-4">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-primary">
                                 <Sparkles size={14} className="animate-pulse" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Liquidity Pool Rewards</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t('lp.lp_rewards')}</span>
                             </div>
-                            <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter leading-[0.9]">
-                                Claim Your <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-violet-400">Earned Profit</span>
+                            <h1 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-violet-400 tracking-tighter leading-[1.1]">
+                                {t('lp.claim_profit')}
                             </h1>
                             <p className="text-lg font-bold text-muted-foreground pt-2">
-                                Seamlessly withdraw your liquidity rewards accrued across all investment tranches.
+                                {t('lp.withdraw_desc')}
                             </p>
                         </div>
 
                         <div className="flex flex-col items-center gap-4">
                             <div className="text-center lg:text-right">
-                                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Total Claimable</p>
+                                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{t('lp.total_claimable')}</p>
                                 <div className="text-4xl font-black tabular-nums tracking-tight">
                                     {data.pending?.total !== undefined ? `USDT ${roundWithFormat(data.pending.total * BigInt(Math.floor(Number(data.priceUSD || 0) * 1e18)) / BigInt(1e18))}` : "—"}
                                 </div>
@@ -62,7 +63,7 @@ export default function LPClaimComponent() {
                             >
                                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                                 <span className="relative z-10 flex items-center justify-center gap-2">
-                                    {loading.claimAll ? "Syncing..." : <>Claim All Rewards <ArrowUpRight size={18} /></>}
+                                    {loading.claimAll ? t('lp.syncing') : <>{t('lp.claim_all')} <ArrowUpRight size={18} /></>}
                                 </span>
                             </button>
                         </div>
@@ -73,7 +74,7 @@ export default function LPClaimComponent() {
             {/* Tranche Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <TrancheCard
-                    title="Base Tier"
+                    title={t('lp.base_tier')}
                     tranche={data.user?.baseTranche}
                     pending={data.pending?.p0}
                     priceCents={data.priceCents}
@@ -89,7 +90,7 @@ export default function LPClaimComponent() {
                     }}
                 />
                 <TrancheCard
-                    title="Half Tier"
+                    title={t('lp.half_tier')}
                     tranche={data.user?.halfTranche}
                     pending={data.pending?.p1}
                     priceCents={data.priceCents}
@@ -105,7 +106,7 @@ export default function LPClaimComponent() {
                     }}
                 />
                 <TrancheCard
-                    title="Quarter Tier"
+                    title={t('lp.quarter_tier')}
                     tranche={data.user?.quarterTranche}
                     pending={data.pending?.p2}
                     priceCents={data.priceCents}
@@ -126,6 +127,7 @@ export default function LPClaimComponent() {
 }
 
 function TrancheCard({ title, tranche, pending, priceCents, claimable, onClaim, loading, theme }) {
+    const { t } = useTranslation();
     const pendingFmt = pending !== undefined ? `USDT ${roundWithFormat(pending * (priceCents || 0n) / BigInt(10 ** 18))}` : "—";
     const progress = tranche?.claimCounts ? Math.min((tranche.claimCounts / 12) * 100, 100) : 0;
     const isActive = !!tranche?.active;
@@ -141,18 +143,18 @@ function TrancheCard({ title, tranche, pending, priceCents, claimable, onClaim, 
                     <span className="text-2xl font-black text-foreground tracking-tight">{title}</span>
                 </div>
                 <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${isActive ? 'bg-emerald-500/20 text-emerald-500 border-emerald-500/30' : 'bg-white/5 text-muted-foreground border-white/10'}`}>
-                    {isActive ? 'Active' : 'Locked'}
+                    {isActive ? t('lp.active') : t('lp.locked')}
                 </div>
             </div>
 
             {/* Main Stats */}
             <div className="grid grid-cols-2 gap-8 mb-8">
                 <div className="space-y-1">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Principal</p>
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('lp.principal')}</p>
                     <p className="text-xl font-black tabular-nums">{fmtUSDc(tranche?.amountUSDCents)}</p>
                 </div>
                 <div className="space-y-1 text-right">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Progress</p>
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('lp.progress')}</p>
                     <p className="text-xl font-black tabular-nums">{tranche?.claimCounts ?? 0} / 12</p>
                 </div>
             </div>
@@ -170,7 +172,7 @@ function TrancheCard({ title, tranche, pending, priceCents, claimable, onClaim, 
                 <div className="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5">
                     <div className="flex items-center gap-2 opacity-60">
                         <Timer size={14} />
-                        <span className="text-[10px] font-black uppercase tracking-widest">Next Window</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest">{t('lp.next_window')}</span>
                     </div>
                     <span className="text-xs font-black tabular-nums">{fmtTs(tranche?.nextClaimAt)}</span>
                 </div>
@@ -178,7 +180,7 @@ function TrancheCard({ title, tranche, pending, priceCents, claimable, onClaim, 
                 <div className="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5">
                     <div className="flex items-center gap-2 opacity-60">
                         <Droplets size={14} />
-                        <span className="text-[10px] font-black uppercase tracking-widest">Pending Accrual</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest">{t('lp.pending_accrual')}</span>
                     </div>
                     <span className={`text-sm font-black tabular-nums ${theme.accent}`}>{pendingFmt}</span>
                 </div>
@@ -192,7 +194,7 @@ function TrancheCard({ title, tranche, pending, priceCents, claimable, onClaim, 
                             bg-gradient-to-r ${theme.primary} text-white hover:opacity-90 group-hover:shadow-[0_0_30px_-10px_rgba(255,255,255,0.2)]
                         `}
                     >
-                        {loading ? "Processing..." : claimable ? "Claim LP Rewards" : "LP Still Accruing"}
+                        {loading ? t('lp.processing') : claimable ? t('lp.claim_lp_rewards') : t('lp.lp_accruing')}
                     </button>
                 )}
             </div>

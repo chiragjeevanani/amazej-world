@@ -1,5 +1,6 @@
 import * as React from "react";
 import { formatEther } from "viem";
+import { useTranslation } from "react-i18next";
 import { useProtocol } from "@/contexts/ProtocolContext";
 
 function fmtToken18(x) { return (Number(x) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 }); }
@@ -13,13 +14,13 @@ function fmtDate(s) {
 }
 
 const TABS = [
-    { key: "deposits", label: "Deposits" },
-    { key: "claims", label: "LP Rewards" },
-    { key: "refAccr", label: "Referral" },
-    { key: "vip", label: "Salary Rewards" },
-    { key: "withdraws", label: "Withdrawals" },
-    { key: "sells", label: "Sells" },
-    { key: "royalty", label: "Global Royalty" },
+    { key: "deposits", label: "history.tab_deposits" },
+    { key: "claims", label: "history.tab_lp_rewards" },
+    { key: "refAccr", label: "history.tab_referral" },
+    { key: "vip", label: "history.tab_salary" },
+    { key: "withdraws", label: "history.tab_withdrawals" },
+    { key: "sells", label: "history.tab_sells" },
+    { key: "royalty", label: "history.tab_royalty" },
 ];
 
 function Pager({ page, setPage, total, pageSize, className = "" }) {
@@ -86,6 +87,7 @@ function DataLine({ label, value, highlight }) {
 }
 
 export default function HistoryTabs({ onlyShow }) {
+    const { t } = useTranslation();
     const { data: { history }, actions: { refetch } } = useProtocol();
     const {
         enabled, loading, pageSize, depTotal, clmTotal, refTotal, salaryTotal, wdTotal, sellTotal, globalRoyaltyTotal,
@@ -98,7 +100,7 @@ export default function HistoryTabs({ onlyShow }) {
     if (!enabled) {
         return (
             <div className="p-8 rounded-2xl bg-card border border-border text-center">
-                <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs">Connect wallet to view history</p>
+                <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs">{t('history.connect_wallet')}</p>
             </div>
         );
     }
@@ -109,14 +111,14 @@ export default function HistoryTabs({ onlyShow }) {
         <section className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h3 className="text-2xl font-black text-foreground px-2">
-                    {onlyShow ? TABS.find(a => a.key === onlyShow)?.label : 'Transaction Log'}
+                    {onlyShow ? t(TABS.find(a => a.key === onlyShow)?.label) : t('history.transaction_log')}
                 </h3>
                 <button
                     onClick={() => refetch()}
                     className="h-10 px-6 rounded-lg bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest hover:bg-primary/90 disabled:opacity-50 transition-all"
                     disabled={loading}
                 >
-                    {loading ? "Syncing..." : "Refresh"}
+                    {loading ? t('history.syncing') : t('history.refresh')}
                 </button>
             </div>
 
@@ -141,7 +143,7 @@ export default function HistoryTabs({ onlyShow }) {
                                     : "bg-secondary/30 text-muted-foreground border-white/5 hover:bg-secondary/50 hover:border-white/10"
                                     }`}
                             >
-                                <span>{t.label}</span>
+                                <span>{t(t.label)}</span>
                                 <span className={`px-2 py-0.5 rounded-md text-[10px] font-black ${isActive ? 'bg-black/10' : 'bg-white/5'}`}>
                                     {count}
                                 </span>
@@ -153,86 +155,86 @@ export default function HistoryTabs({ onlyShow }) {
 
             <div>
                 {currentTab === "deposits" && (
-                    <HistorySection title="Deposits" total={depTotal} page={depPage} setPage={setDepPage} pageSize={pageSize}>
+                    <HistorySection title={t('history.tab_deposits')} total={depTotal} page={depPage} setPage={setDepPage} pageSize={pageSize}>
                         {deposits.map((d, i) => (
                             <DataCard key={i}>
-                                <DataLine label="Time" value={fmtDate(d.depositedAt)} />
-                                <DataLine label="Amount" value={fmtUSDc(d.depositAmount)} highlight />
-                                <DataLine label="Price" value={`${fmtWad(d.tokenPrice)} $/token`} />
+                                <DataLine label={t('history.time')} value={fmtDate(d.depositedAt)} />
+                                <DataLine label={t('history.amount')} value={fmtUSDc(d.depositAmount)} highlight />
+                                <DataLine label={t('history.price')} value={`${fmtWad(d.tokenPrice)} $/token`} />
                             </DataCard>
                         ))}
                     </HistorySection>
                 )}
 
                 {currentTab === "claims" && (
-                    <HistorySection title="LP Rewards" total={clmTotal} page={clmPage} setPage={setClmPage} pageSize={pageSize}>
+                    <HistorySection title={t('history.tab_lp_rewards')} total={clmTotal} page={clmPage} setPage={setClmPage} pageSize={pageSize}>
                         {claims.map((c, i) => (
                             <DataCard key={i}>
-                                <DataLine label="Time" value={fmtDate(c.claimedAt)} />
-                                <DataLine label="LP Amount" value={fmtUSDc(c.claimAmount)} highlight />
-                                <DataLine label="AMA Tokens" value={fmtWad(c.netTokens + c.feeTokens)} />
-                                <DataLine label="Periods" value={Number(c.periods)} />
+                                <DataLine label={t('history.time')} value={fmtDate(c.claimedAt)} />
+                                <DataLine label={t('history.lp_amount')} value={fmtUSDc(c.claimAmount)} highlight />
+                                <DataLine label={t('history.ama_tokens')} value={fmtWad(c.netTokens + c.feeTokens)} />
+                                <DataLine label={t('history.periods')} value={Number(c.periods)} />
                             </DataCard>
                         ))}
                     </HistorySection>
                 )}
 
                 {currentTab === "refAccr" && (
-                    <HistorySection title="Referral Rewards" total={refTotal} page={refPage} setPage={setRefPage} pageSize={pageSize}>
+                    <HistorySection title={t('history.tab_referral')} total={refTotal} page={refPage} setPage={setRefPage} pageSize={pageSize}>
                         {refAccr.map((r, i) => (
                             <DataCard key={i}>
-                                <DataLine label="Time" value={fmtDate(r.claimedAt)} />
-                                <DataLine label="Reward" value={fmtUSDc(r.claimAmount)} highlight />
-                                <DataLine label="Tier" value={`LVL ${Number(r.level) + 1}`} />
+                                <DataLine label={t('history.time')} value={fmtDate(r.claimedAt)} />
+                                <DataLine label={t('history.reward')} value={fmtUSDc(r.claimAmount)} highlight />
+                                <DataLine label={t('history.tier')} value={`LVL ${Number(r.level) + 1}`} />
                             </DataCard>
                         ))}
                     </HistorySection>
                 )}
 
                 {currentTab === "vip" && (
-                    <HistorySection title="Salary Rewards" total={salaryTotal} page={salaryPage} setPage={setSalaryPage} pageSize={pageSize}>
+                    <HistorySection title={t('history.tab_salary')} total={salaryTotal} page={salaryPage} setPage={setSalaryPage} pageSize={pageSize}>
                         {salaryClms.map((s, i) => (
                             <DataCard key={i}>
-                                <DataLine label="Time" value={fmtDate(s.claimedAt)} />
-                                <DataLine label="Amount" value={fmtUSDc(s.claimAmount)} highlight />
-                                <DataLine label="Rank" value={`VIP ${Number(s.level)}`} />
+                                <DataLine label={t('history.time')} value={fmtDate(s.claimedAt)} />
+                                <DataLine label={t('history.amount')} value={fmtUSDc(s.claimAmount)} highlight />
+                                <DataLine label={t('history.rank')} value={`VIP ${Number(s.level)}`} />
                             </DataCard>
                         ))}
                     </HistorySection>
                 )}
 
                 {currentTab === "royalty" && (
-                    <HistorySection title="Global Royalty" total={globalRoyaltyTotal} page={globalRoyaltyPage} setPage={setGlobalRoyaltyPage} pageSize={pageSize}>
+                    <HistorySection title={t('history.tab_royalty')} total={globalRoyaltyTotal} page={globalRoyaltyPage} setPage={setGlobalRoyaltyPage} pageSize={pageSize}>
                         {globalRoyalty.map((r, i) => (
                             <DataCard key={i}>
-                                <DataLine label="Time" value={fmtDate(r.claimedAt)} />
-                                <DataLine label="Amount" value={fmtUSDc(r.claimAmount)} highlight />
-                                <DataLine label="Rank" value={`VIP ${Number(r.level)}`} />
+                                <DataLine label={t('history.time')} value={fmtDate(r.claimedAt)} />
+                                <DataLine label={t('history.amount')} value={fmtUSDc(r.claimAmount)} highlight />
+                                <DataLine label={t('history.rank')} value={`VIP ${Number(r.level)}`} />
                             </DataCard>
                         ))}
                     </HistorySection>
                 )}
 
                 {currentTab === "withdraws" && (
-                    <HistorySection title="Withdrawals" total={wdTotal} page={wdPage} setPage={setWdPage} pageSize={pageSize}>
+                    <HistorySection title={t('history.tab_withdrawals')} total={wdTotal} page={wdPage} setPage={setWdPage} pageSize={pageSize}>
                         {withdraws.map((w, i) => (
                             <DataCard key={i}>
-                                <DataLine label="Time" value={fmtDate(w.claimedAt)} />
-                                <DataLine label="USDT" value={fmtUSDc(w.claimAmount)} highlight />
-                                <DataLine label="Net AMA" value={fmtToken18(w.netTokens)} />
-                                <DataLine label="Fee AMA" value={fmtToken18(w.feeTokens)} />
+                                <DataLine label={t('history.time')} value={fmtDate(w.claimedAt)} />
+                                <DataLine label={t('history.usdt')} value={fmtUSDc(w.claimAmount)} highlight />
+                                <DataLine label={t('history.net_ama')} value={fmtToken18(w.netTokens)} />
+                                <DataLine label={t('history.fee_ama')} value={fmtToken18(w.feeTokens)} />
                             </DataCard>
                         ))}
                     </HistorySection>
                 )}
 
                 {currentTab === "sells" && (
-                    <HistorySection title="Sell History" total={sellTotal} page={sellPage} setPage={setSellPage} pageSize={pageSize}>
+                    <HistorySection title={t('history.tab_sells')} total={sellTotal} page={sellPage} setPage={setSellPage} pageSize={pageSize}>
                         {sells.map((w, i) => (
                             <DataCard key={i}>
-                                <DataLine label="Time" value={fmtDate(w.soldAt)} />
-                                <DataLine label="USDT" value={fmtUSDc(w.sellAmount)} highlight />
-                                <DataLine label="Tokens Sold" value={fmtToken18(w.netTokens + w.feeTokens)} />
+                                <DataLine label={t('history.time')} value={fmtDate(w.soldAt)} />
+                                <DataLine label={t('history.usdt')} value={fmtUSDc(w.sellAmount)} highlight />
+                                <DataLine label={t('history.tokens_sold')} value={fmtToken18(w.netTokens + w.feeTokens)} />
                             </DataCard>
                         ))}
                     </HistorySection>
@@ -240,7 +242,7 @@ export default function HistoryTabs({ onlyShow }) {
             </div>
             {onlyShow === undefined && deposits.length === 0 && claims.length === 0 && refAccr.length === 0 && (
                 <div className="py-20 text-center opacity-30 select-none">
-                    <p className="text-sm font-black uppercase tracking-[0.5em]">No Activity Logged</p>
+                    <p className="text-sm font-black uppercase tracking-[0.5em]">{t('history.no_activity')}</p>
                 </div>
             )}
         </section>

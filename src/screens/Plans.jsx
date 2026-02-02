@@ -5,7 +5,9 @@ import { roundWithFormat, shortAddress } from "@/blockchain/roundsNumber";
 import { ClaimCountdown } from "@/components/Countdown";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Copy, CheckCircle2, LayoutGrid, Link, Sparkles, TrendingUp, Wallet, ArrowUpCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Copy, CheckCircle2, LayoutGrid, Link, Sparkles, TrendingUp, Wallet, ArrowUpCircle, ExternalLink } from "lucide-react";
+import { contracts, SCAN_LINK } from "@/blockchain/contracts";
 
 function gt0(x) { return (x ?? 0n) > 0n; }
 
@@ -39,6 +41,7 @@ export default function PlansAndActions() {
     const { data, actions } = useProtocol();
     const { loading } = actions;
     const { isConnected, address } = useAccount();
+    const { t } = useTranslation();
 
     const baseCents = data.user?.baseUSDCents ?? 0n;
     const nextPhase = data.user?.nextPhase ?? 0;
@@ -98,10 +101,10 @@ export default function PlansAndActions() {
                         <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
                             <Sparkles size={24} />
                         </div>
-                        <h2 className="text-sm font-black text-primary uppercase tracking-[0.3em]">Marketplace</h2>
+                        <h2 className="text-sm font-black text-primary uppercase tracking-[0.3em]">{t('plans.marketplace')}</h2>
                     </div>
                     <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter">
-                        Investment <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Strategies</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">{t('plans.strategies')}</span>
                     </h1>
                 </div>
             </div>
@@ -109,25 +112,36 @@ export default function PlansAndActions() {
             {/* Performance Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard
-                    label="AMA Balance"
+                    label={t('home.ama_balance')}
                     value={data.tokenBalanceFmt ?? "—"}
-                    subValue={data.tokenBalanceFmt ? `USDT ${(Number(data.tokenBalanceFmt) * Number(data.priceUSD)).toFixed(4)}` : "Estimated value"}
+                    subValue={data.tokenBalanceFmt ? `USDT ${(Number(data.tokenBalanceFmt) * Number(data.priceUSD)).toFixed(4)}` : t('home.estimated_value')}
                     icon={<Wallet className="text-blue-400" />}
                 />
                 <StatCard
-                    label="USDT Balance"
+                    label={t('home.usdt_balance')}
                     value={data.usdtBalanceFmt ?? "—"}
                     icon={<TrendingUp className="text-emerald-400" />}
                 />
                 <StatCard
-                    label="AMA Price"
+                    label={t('home.ama_price')}
                     value={`USDT ${data.priceUSD ?? "—"}`}
                     subValue={data.contractUsdtBalanceFmt ? `USDT ${data.contractUsdtBalanceFmt} | ${data.contractTokenBalanceFmt} AMA` : ""}
                     icon={<Sparkles className="text-yellow-400" />}
+                    action={
+                        <a
+                            href={`${SCAN_LINK}/address/${data.main}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-yellow-500/50 text-[10px] font-black uppercase tracking-widest text-yellow-500 hover:bg-yellow-500 hover:text-black transition-all"
+                        >
+                            {t('plans.go_ama_contract')}
+                            <ExternalLink size={10} />
+                        </a>
+                    }
                 />
                 <StatCard
-                    label="Next Claim Window"
-                    value={data?.user?.nextClaimAt ? <ClaimCountdown nextClaimAtSec={data?.user?.nextClaimAt} /> : "Not scheduled"}
+                    label={t('plans.next_claim_window')}
+                    value={data?.user?.nextClaimAt ? <ClaimCountdown nextClaimAtSec={data?.user?.nextClaimAt} /> : t('plans.not_scheduled')}
                     icon={<LayoutGrid className="text-purple-400" />}
                 />
             </div>
@@ -138,9 +152,28 @@ export default function PlansAndActions() {
                     const win = data.depositWindow;
                     const eligible = Boolean(win?.allowed);
 
+                    const fmtTSLocal = (n) => !n ? "—" : new Date(Number(n) * 1000).toLocaleString(undefined, {
+                        year: 'numeric', month: 'short', day: 'numeric',
+                        hour: '2-digit', minute: '2-digit', second: '2-digit'
+                    });
+
+                    const eta = (at) => {
+                        if (!at) return "";
+                        const now = Math.floor(Date.now() / 1000);
+                        const target = Number(at);
+                        const s = Math.max(0, target - now);
+                        const sec = s % 60;
+                        const m = Math.floor(s / 60) % 60;
+                        const h = Math.floor(s / 3600) % 24;
+                        const d = Math.floor(s / 86400);
+                        return d > 0 ? `${d}d ${h}h` : h > 0 ? `${h}h ${m}m` : `${m}m ${sec}s`;
+                    };
+
                     const lockHint = !eligible
-                        ? `Locked until window opens`
-                        : `Window is currently open.`;
+                        ? t('plans.locked_until', { time: fmtTSLocal(win?.cycleEnd), left: eta(win?.cycleEnd) })
+                        : win?.early
+                            ? t('plans.early_deposit', { time: fmtTSLocal(win?.startsAt) })
+                            : t('plans.deposit_allowed', { time: fmtTSLocal(win?.cycleEnd) });
 
                     return (
                         <div className="relative group">
@@ -156,21 +189,24 @@ export default function PlansAndActions() {
                                             <span className={`relative flex h-2 w-2 ${eligible ? 'animate-pulse' : ''}`}>
                                                 <span className={`relative inline-flex rounded-full h-2 w-2 ${eligible ? 'bg-emerald-500' : 'bg-orange-500'}`}></span>
                                             </span>
-                                            {eligible ? 'Window Active' : 'Waiting for Window'}
+                                            {eligible ? t('plans.window_active') : t('plans.waiting_for_window')}
                                         </div>
-                                        <h3 className="text-3xl font-black tracking-tight">Next Required Top-Up</h3>
+                                        <h3 className="text-3xl font-black tracking-tight">{t('plans.next_required_topup')}</h3>
                                         <div className="flex flex-col">
-                                            <span className="text-5xl font-black text-foreground tracking-tighter">{fmtUSDc(nextRequiredDepositCents)}</span>
-                                            <p className="mt-2 text-sm font-bold text-muted-foreground/60">{lockHint}</p>
+                                            <span className="text-xl font-bold text-muted-foreground/80 mb-1">{t('plans.exact_amount', { amount: fmtUSDc(nextRequiredDepositCents) })}</span>
+                                            {/* <span className="text-5xl font-black text-foreground tracking-tighter">{fmtUSDc(nextRequiredDepositCents)}</span> */}
+                                            <p className={`mt-2 text-sm font-bold ${eligible ? "text-fuchsia-400" : "text-orange-400"}`}>
+                                                {lockHint}
+                                            </p>
                                         </div>
                                     </div>
 
                                     <button
                                         disabled={disableAll || (nextPhase === 0 ? parsedBaseInputCents <= 0n : nextRequiredDepositCents <= 0n) || !eligible}
                                         onClick={nextPhase === 0 ? handleBaseUpgrade : () => handleTopUpExact(nextRequiredDepositCents)}
-                                        className="h-16 min-w-[240px] rounded-2xl bg-primary text-primary-foreground font-black text-xs uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/40 disabled:opacity-20 disabled:scale-100"
+                                        className={`h-16 min-w-[240px] rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl disabled:opacity-20 disabled:scale-100 ${eligible ? 'bg-yellow-400 text-black shadow-yellow-400/20' : 'bg-primary text-primary-foreground shadow-primary/40'}`}
                                     >
-                                        {loading.deposit || loading.approveUsdt ? "Processing…" : eligible ? "Execute Deposit" : "Window Locked"}
+                                        {loading.deposit || loading.approveUsdt ? t('home.processing') : eligible ? `${t('home.deposit')} ${fmtUSDc(nextRequiredDepositCents)}` : t('plans.window_locked')}
                                     </button>
                                 </div>
                             </div>
@@ -186,21 +222,21 @@ export default function PlansAndActions() {
                         <Link size={40} />
                     </div>
                     <div className="flex-1 space-y-4 text-center md:text-left">
-                        <h3 className="text-2xl font-black tracking-tight">Grow Your Network</h3>
+                        <h3 className="text-2xl font-black tracking-tight">{t('plans.grow_your_network')}</h3>
                         <p className="text-sm font-medium text-muted-foreground opacity-80 leading-relaxed">
-                            Invite others to the protocol and earn a lifetime percentage of their rewards. Copy your unique link below.
+                            {t('plans.invite_others')}
                         </p>
                         {isConnected ? (
                             <div className="flex flex-col sm:flex-row gap-3">
                                 <div className="flex-1 bg-black/20 border border-white/10 rounded-xl px-4 py-3 font-mono text-sm text-indigo-400 break-all flex items-center">
-                                    {shortAddress(address)}... (Click Copy)
+                                    {shortAddress(address)}... {t('plans.click_copy')}
                                 </div>
                                 <button
                                     onClick={handleCopy}
                                     className="h-12 px-6 rounded-xl bg-foreground text-background font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95"
                                 >
                                     {copied ? <CheckCircle2 size={16} /> : <Copy size={16} />}
-                                    {copied ? "Copied" : "Copy Link"}
+                                    {copied ? t('plans.copied') : t('plans.copy_link')}
                                 </button>
                             </div>
                         ) : (
@@ -213,12 +249,12 @@ export default function PlansAndActions() {
                     <div className="absolute -bottom-10 -right-10 opacity-5 group-hover:scale-125 transition-transform duration-1000">
                         <TrendingUp size={160} />
                     </div>
-                    <h3 className="text-2xl font-black tracking-tight">Premium Benefits</h3>
+                    <h3 className="text-2xl font-black tracking-tight">{t('plans.premium_benefits')}</h3>
                     <p className="text-sm font-medium text-muted-foreground leading-relaxed">
-                        Scale your tier to unlock higher limits and monthly dividends.
+                        {t('plans.scale_tier')}
                     </p>
                     <button className="flex items-center gap-2 text-xs font-black uppercase text-primary tracking-widest hover:gap-4 transition-all">
-                        Explore Tiers <ChevronRight size={16} />
+                        {t('plans.explore_tiers')} <ChevronRight size={16} />
                     </button>
                 </div>
             </div>
@@ -229,7 +265,7 @@ export default function PlansAndActions() {
                     <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                         <LayoutGrid size={18} />
                     </div>
-                    <h2 className="text-2xl font-black tracking-tight">Active Strategies</h2>
+                    <h2 className="text-2xl font-black tracking-tight">{t('plans.active_strategies')}</h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {plans.map((plan, idx) => (
@@ -241,13 +277,14 @@ export default function PlansAndActions() {
     );
 }
 
-function StatCard({ label, value, subValue, icon }) {
+function StatCard({ label, value, subValue, icon, action }) {
     return (
         <div className="relative group bg-card/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/20">
             <div className="flex items-start justify-between mb-4">
                 <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
                     {icon}
                 </div>
+                {action}
             </div>
             <div className="space-y-1">
                 <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{label}</p>
@@ -259,6 +296,7 @@ function StatCard({ label, value, subValue, icon }) {
 }
 
 function PlanCard({ plan, idx, data, disableAll, onSelect }) {
+    const { t } = useTranslation();
     const isCurrentPlan = (plan.baseDeposit * 100) <= (data?.user?.baseUSDCents || 0n);
 
     const themes = [
@@ -283,23 +321,22 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
 
             {plan.popular && (
                 <div className="absolute top-0 right-0 text-[10px] font-black uppercase tracking-widest bg-white text-black px-4 py-2 rounded-bl-2xl shadow-lg z-20">
-                    Most Popular
+                    {t('plans.most_popular')}
                 </div>
             )}
 
             <div className="mb-8 relative z-10">
                 <h3 className="text-[11px] font-black uppercase tracking-[0.2em] opacity-70 mb-2">{plan.name}</h3>
-                <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-black tracking-tighter italic">USDT</span>
-                    <span className="text-5xl font-black tracking-tighter">{plan.baseDeposit + 10}</span>
+                <div className="flex items-center gap-2">
+                    <span className="text-3xl font-black tracking-tighter italic">{plan.baseDeposit + 10} $ USDT</span>
                 </div>
             </div>
 
             <div className="space-y-4 flex-1 relative z-10">
                 <div className={`flex items-center justify-between p-4 rounded-2xl backdrop-blur-xl border border-white/10 ${theme.inner}`}>
                     <div className="space-y-0.5">
-                        <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Step Reward</span>
-                        <div className="text-2xl font-black tracking-tight">USDT {plan.stepReward}</div>
+                        <span className="text-[10px] font-black uppercase tracking-widest opacity-60">{t('plans.step_reward')}</span>
+                        <div className="text-xl font-black tracking-tight">{plan.stepReward} $ USDT</div>
                     </div>
                 </div>
 
@@ -307,7 +344,7 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
                     {plan.topUps.map((top, i) => (
                         <div key={i} className={`flex flex-col items-center justify-center p-3 rounded-xl border border-white/5 backdrop-blur-md ${theme.inner}`}>
                             <span className="text-[8px] font-black opacity-50 mb-1">ST {top.step}</span>
-                            <span className="text-[10px] font-black">${top.amount}</span>
+                            <span className="text-[10px] font-black">{top.amount} $ USDT</span>
                         </div>
                     ))}
                 </div>
@@ -323,7 +360,7 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
                         : "bg-white text-black hover:bg-opacity-90"}
                 `}
             >
-                {isCurrentPlan ? "Active strategy" : "Initiate Strategy"}
+                {isCurrentPlan ? t('plans.active_strategy') : t('plans.initiate_strategy')}
             </button>
         </div>
     );

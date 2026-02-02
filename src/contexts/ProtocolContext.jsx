@@ -76,7 +76,7 @@ export function ProtocolProvider({ children }) {
     });
 
     const VIP_CALLS = useMemo(() => {
-        if (!enabled) return [];
+        if (!enabled || !vipC) return [];
         const acct = address;
         return [
             { address: vipC, abi: vipModuleAbi, functionName: "getUserStateView", args: [acct] },
@@ -99,10 +99,18 @@ export function ProtocolProvider({ children }) {
     const ROYALTY_CALLS = useMemo(() => {
         if (!enabled || !royalty) return [];
         const acct = address;
-        return [
+        const req = [
             { address: royalty, abi: amzGlobalRoyaltyAbi, functionName: "getMemberDetails", args: [acct] },
             { address: royalty, abi: amzGlobalRoyaltyAbi, functionName: "getRoyaltyPoolStatus" },
         ];
+
+        // If we already have the level, we can fetch the expected earning
+        const level = Number(memberDetailsTuple?.[1] || 0);
+        if (level > 0) {
+            req.push({ address: royalty, abi: amzGlobalRoyaltyAbi, functionName: "getExpectedDailyEarning", args: [level] });
+        }
+
+        return req;
     }, [enabled, address, royalty]);
 
     const { data: royaltyData, refetch: royaltyRefetch } = useReadContracts({
@@ -210,7 +218,10 @@ export function ProtocolProvider({ children }) {
                 dailyPool: poolStatusTuple[1],
                 lastDistribution: poolStatusTuple[2],
                 canDistribute: poolStatusTuple[3]
-            } : undefined
+            } : undefined,
+            expectedEarning: RY(2),
+            contractBalance: usdtRoyalty,
+            usdt: RY(2) // Map expectedEarning to .usdt for convenience in UI
         };
     }, [memberDetailsTuple, poolStatusTuple]);
 
@@ -294,12 +305,41 @@ export function ProtocolProvider({ children }) {
     const vipProgressTuple = V(2);
     const redeProgressTuple = V(3);
 
-    // ... (keeping existing logic, just inserting these variables before actions/data construction)
+    // Parse getUserStateView result (vipDataState) into a clean object
+    const parsedVipState = useMemo(() => {
+        if (!vipDataState) return undefined;
+        // Check if it's an array (tuple) or object
+        if (Array.isArray(vipDataState)) {
+            // Struct UserStateView { 
+            //   0: currentLevel, 1: selfBaseCents, 2: directsFirst, 3: directsVip1, 
+            //   4: teamFirst, 5: lastDepositAt, 6: levelReachedAt[7], 7: oneTimeClaimed[7], 
+            //   8: vip (WindowView), 9: rede (WindowView) 
+            // }
+            return {
+                currentLevel: Number(vipDataState[0]),
+                selfBaseCents: vipDataState[1],
+                directsFirst: vipDataState[2],
+                directsVip1: vipDataState[3],
+                teamFirst: vipDataState[4],
+                vip: vipDataState[8], // WindowView struct
+                rede: vipDataState[9]  // WindowView struct
+            };
+        }
+        return vipDataState; // Already an object (if wagmi mapped it)
+    }, [vipDataState]);
 
     const data = {
+        tokenBalance, usdtBalance, // Added raw balances for Sell screen
         tokenBalanceFmt, usdtBalanceFmt, priceUSD, pending, referral, user, history, depositWindow, chainId, main, usdt,
         contractTokenBalanceFmt, contractUsdtBalanceFmt,
-        vip: { ...vipDataState, currentLevel: vipDataState?.[0], vip: vipDataState },
+        vip: {
+            ...parsedVipState,
+            // Sync level with royalty as fallback
+            currentLevel: Math.max(Number(parsedVipState?.currentLevel ?? 0), Number(royaltyInfo?.activeLevel ?? 0)),
+            // Ensure .rede is accessible for redeposit stats
+            rede: parsedVipState?.rede,
+            vip: parsedVipState?.vip
+        },
         vipTables, claimVip,
         vipProgress: vipProgressTuple,
         redeProgress: redeProgressTuple,

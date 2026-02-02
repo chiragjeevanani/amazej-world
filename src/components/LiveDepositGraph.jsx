@@ -8,24 +8,27 @@ import {
     ResponsiveContainer,
 } from "recharts";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useTranslation } from "react-i18next";
 
 export default function LiveDepositsGraph({
-    title = "Live Activity",
+    title,
     totalDeposits,
     data,
 }) {
     const { theme } = useTheme();
+    const { t } = useTranslation();
     const isDark = theme === 'dark';
+    const chartTitle = title || t('home.live_activity');
 
     return (
         <div className="stat-card h-full flex flex-col">
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h2 className="text-xl font-black">{title}</h2>
-                    <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mt-1">Transaction Velocity</p>
+                    <h2 className="text-xl font-black">{chartTitle}</h2>
+                    <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mt-1">{t('home.transaction_velocity')}</p>
                 </div>
                 <div className="text-right">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Total Volume</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t('home.total_volume')}</p>
                     <p className="text-lg font-black">{totalDeposits}</p>
                 </div>
             </div>

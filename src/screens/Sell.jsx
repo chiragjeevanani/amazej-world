@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Banknote, DollarSign, ArrowRightLeft } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useProtocol } from "@/contexts/ProtocolContext";
 import { roundWithFormat } from "@/blockchain/roundsNumber";
 import { useAccount } from "wagmi";
@@ -8,6 +9,7 @@ import { parseEther } from "viem";
 import HistoryTabs from "@/components/History";
 
 function SellComponent() {
+    const { t } = useTranslation();
     const { data, actions } = useProtocol();
     const { address } = useAccount();
     const [amountIn, setAmountIn] = useState(0);
@@ -18,19 +20,19 @@ function SellComponent() {
                 <div className="col-span-12">
                     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                         <StatCard
-                            title="Total Balance"
+                            title={t('sell.total_balance')}
                             value={roundWithFormat(data.tokenBalance)}
                             unit="AMA"
                             icon={<Banknote className="text-secondary-foreground" size={20} />}
                         />
                         <StatCard
-                            title="USDT Balance"
+                            title={t('sell.usdt_balance')}
                             value={roundWithFormat(data.usdtBalance)}
                             unit="USDT"
                             icon={<Banknote className="text-green-500" size={20} />}
                         />
                         <StatCard
-                            title="AMA Price"
+                            title={t('sell.ama_price')}
                             value={data.priceUSD || '0'}
                             unit="USDT"
                             icon={<DollarSign className="text-yellow-500" size={20} />}
@@ -42,9 +44,9 @@ function SellComponent() {
                     <div className="bg-card border border-border text-card-foreground shadow-2xl rounded-2xl overflow-hidden">
                         <div className="p-6 border-b border-border bg-gradient-to-r from-secondary/50 to-transparent">
                             <div className="flex justify-between items-center">
-                                <h2 className="text-xl font-black">Swap Tokens</h2>
+                                <h2 className="text-xl font-black">{t('sell.swap_tokens')}</h2>
                                 <div className="text-right">
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Balance</p>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{t('sell.balance')}</p>
                                     <p className="font-mono text-sm">{roundWithFormat(data.tokenBalance)} AMA</p>
                                 </div>
                             </div>
@@ -53,13 +55,13 @@ function SellComponent() {
                         <div className="p-6 space-y-6">
                             <div className="space-y-2">
                                 <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                                    <label>Amount In</label>
+                                    <label>{t('sell.amount_in')}</label>
                                     <button
                                         type="button"
                                         onClick={() => setAmountIn(Number(roundWithFormat(data.tokenBalance)) * 0.99)}
                                         className="text-primary hover:text-primary/80 underline decoration-primary/20 underline-offset-4"
                                     >
-                                        Max
+                                        {t('sell.max')}
                                     </button>
                                 </div>
 
@@ -78,7 +80,7 @@ function SellComponent() {
                                 </div>
 
                                 <div className="flex justify-between text-xs font-medium px-1">
-                                    <span className="text-muted-foreground">Value</span>
+                                    <span className="text-muted-foreground">{t('sell.value')}</span>
                                     <span className="text-foreground">≈ USDT {(Number(data.priceUSD) * amountIn).toFixed(2)}</span>
                                 </div>
                             </div>
@@ -90,7 +92,7 @@ function SellComponent() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Receive (Estimated)</label>
+                                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t('sell.receive_estimated')}</label>
                                 <div className="bg-secondary/30 border border-border rounded-xl p-4 flex items-center gap-4 opacity-80 cursor-not-allowed">
                                     <div className="w-full text-2xl font-black text-muted-foreground">
                                         {(amountIn * Number(data.priceUSD) * 0.8).toFixed(2)}
@@ -113,14 +115,14 @@ function SellComponent() {
                                         disabled={actions.loading.sell || !amountIn}
                                         className="w-full h-14 bg-primary text-primary-foreground font-black text-sm uppercase tracking-widest rounded-xl shadow-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
                                     >
-                                        {actions.loading.sell ? "Processing..." : "Confirm Swap"}
+                                        {actions.loading.sell ? t('sell.processing') : t('sell.confirm_swap')}
                                     </button>
                                 )}
                             </div>
 
                             <div className="text-center">
                                 <p className="text-[10px] text-muted-foreground italic">
-                                    Note: 20% fee applied to all sell transactions
+                                    {t('sell.fee_note')}
                                 </p>
                             </div>
                         </div>

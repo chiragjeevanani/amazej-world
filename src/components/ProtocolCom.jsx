@@ -1,28 +1,30 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Instagram } from "lucide-react";
 import { FaXTwitter } from "react-icons/fa6";
 import { RiTelegramFill } from "react-icons/ri";
 import GridBackground from "./GridBackground";
 
 function ProtocolHeader() {
+    const { t } = useTranslation();
     return (
         <div className="relative flex flex-col md:flex-row items-center justify-between p-8 md:p-12 bg-card rounded-3xl border border-border shadow-2xl overflow-hidden min-h-[320px] mb-8">
             <div className="relative z-10 space-y-6 max-w-2xl text-card-foreground">
                 <div>
-                    <h1 className="text-4xl md:text-6xl font-black tracking-tighter mb-2">Amazej Protocol</h1>
+                    <h1 className="text-4xl md:text-6xl font-black tracking-tighter mb-2">{t('dashboard.protocol_title')}</h1>
                     <p className="text-lg md:text-xl font-bold opacity-60 italic">
-                        Of the Public, For The Public
+                        {t('dashboard.protocol_slogan')}
                     </p>
                 </div>
 
                 <div className="flex flex-col gap-3 font-bold text-sm">
                     <a href="#" className="flex items-center gap-2 hover:opacity-60 transition-opacity">
                         <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
-                        Protocol Intelligence Intro
+                        {t('dashboard.protocol_intro')}
                     </a>
                     <a href="#" className="flex items-center gap-2 hover:opacity-60 transition-opacity">
                         <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
-                        Marketing Assets & Tools
+                        {t('dashboard.protocol_tools')}
                     </a>
                 </div>
 

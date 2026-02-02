@@ -2,6 +2,7 @@ import React, { useState, useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Sidebar from '@/components/sidebar'
 import Header from '@/components/header'
+import './i18n';
 
 const PlansComponent = lazy(() => import('@/screens/Plans'))
 const HomeComponent = lazy(() => import('@/screens/home'))

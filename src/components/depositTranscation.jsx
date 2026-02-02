@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Copy } from "lucide-react";
 import Pagination from "./Pagination";
 
@@ -11,6 +12,7 @@ function DepositTransactionsTable({
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
     const [searchQuery, setSearchQuery] = useState("");
+    const { t } = useTranslation();
 
     const filteredTransactions = useMemo(() => {
         if (!searchQuery) return transactions;
@@ -41,11 +43,11 @@ function DepositTransactionsTable({
         <div className="stat-card">
             <div className="flex justify-between items-start mb-6">
                 <div>
-                    <h2 className="text-xl font-black">Global Deposits</h2>
-                    <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mt-1">Real-time inflows</p>
+                    <h2 className="text-xl font-black">{t('home.global_deposits')}</h2>
+                    <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mt-1">{t('home.real_time_inflows')}</p>
                 </div>
                 <div className="text-right">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Total Value</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t('home.total_value')}</p>
                     <p className="text-lg font-black">USDT 708,762.50</p>
                 </div>
             </div>
@@ -54,11 +56,11 @@ function DepositTransactionsTable({
                 <table className="w-full text-left">
                     <thead className="bg-secondary/30 border-b border-border">
                         <tr>
-                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Type</th>
-                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Amount</th>
-                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">User</th>
-                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Hash</th>
-                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Time</th>
+                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('home.type')}</th>
+                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('home.amount')}</th>
+                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('home.user')}</th>
+                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('home.hash')}</th>
+                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('home.time')}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-border">

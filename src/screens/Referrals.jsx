@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useProtocol } from "@/contexts/ProtocolContext";
 import { fmtTs } from "@/screens/Plans";
 import { Users, TrendingUp, Coins, Activity, Rocket, Clock, ShieldCheck, ShieldAlert } from "lucide-react";
@@ -6,6 +7,7 @@ import { Users, TrendingUp, Coins, Activity, Rocket, Clock, ShieldCheck, ShieldA
 function fmtUSDCents(c) { return "USDT " + (Number(c ?? 0n) / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 
 export default function ReferralsComponent() {
+    const { t } = useTranslation();
     const { data } = useProtocol();
 
     return (
@@ -17,17 +19,17 @@ export default function ReferralsComponent() {
                         <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
                             <Users size={24} />
                         </div>
-                        <h2 className="text-sm font-black text-primary uppercase tracking-[0.3em]">Affiliate Program</h2>
+                        <h2 className="text-sm font-black text-primary uppercase tracking-[0.3em]">{t('referrals.affiliate_program')}</h2>
                     </div>
                     <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter">
-                        Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400">Network</span>
+                        {t('referrals.your')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400">{t('referrals.network')}</span>
                     </h1>
                 </div>
                 <div className="bg-card/40 backdrop-blur-xl border border-white/10 rounded-2xl px-6 py-4 shadow-xl">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Network Strength</p>
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{t('referrals.network_strength')}</p>
                     <div className="flex items-center gap-2">
                         <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-xl font-black">Active Protocol</span>
+                        <span className="text-xl font-black">{t('referrals.active_protocol')}</span>
                     </div>
                 </div>
             </div>
@@ -35,29 +37,30 @@ export default function ReferralsComponent() {
             {/* Performance Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <PerformanceCard
-                    label="Total Rewards"
+                    label={t('referrals.total_rewards')}
                     value={fmtUSDCents(data.referral?.availableReferralUSDCents)}
                     icon={<Coins className="text-yellow-400" />}
                     trend="+12.5%"
-                    description="Accumulated earnings"
+                    description={t('referrals.accumulated_earnings')}
                 />
                 <PerformanceCard
-                    label="Direct Network"
+                    label={t('referrals.direct_network')}
                     value={String(data.referral?.directReferrals ?? 0)}
                     icon={<Users className="text-blue-400" />}
-                    description="Directly referred users"
+                    trend={`${t('referrals.active')}: ${data.referral?.directsInWindow ?? 0}`}
+                    description={t('referrals.directly_referred')}
                 />
                 <PerformanceCard
-                    label="Total Team"
+                    label={t('referrals.total_team')}
                     value={String(data.referral?.teamMembers ?? 0)}
                     icon={<Activity className="text-emerald-400" />}
-                    description="Total downline members"
+                    description={t('referrals.total_downline')}
                 />
                 <PerformanceCard
-                    label="Team Volume"
+                    label={t('referrals.team_volume')}
                     value={fmtUSDCents(data.referral?.teamDepositsCents)}
                     icon={<TrendingUp className="text-purple-400" />}
-                    description="Total network volume"
+                    description={t('referrals.total_network_volume')}
                 />
             </div>
 
@@ -74,12 +77,12 @@ export default function ReferralsComponent() {
                         <div className="relative z-10 space-y-8">
                             <div className="flex items-center justify-between">
                                 <div className="space-y-1">
-                                    <h3 className="text-2xl font-black tracking-tight">Fast Track Status</h3>
-                                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Enhanced Rewards Qualification</p>
+                                    <h3 className="text-2xl font-black tracking-tight">{t('referrals.fast_track_status')}</h3>
+                                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{t('referrals.enhanced_rewards')}</p>
                                 </div>
                                 <div className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-[0.2em] border ${data.referral?.unlocked ? 'bg-emerald-500/20 text-emerald-500 border-emerald-500/30' : 'bg-orange-500/20 text-orange-500 border-orange-500/30'}`}>
                                     {data.referral?.unlocked ? <ShieldCheck size={16} /> : <ShieldAlert size={16} />}
-                                    {data.referral?.unlocked ? 'Active' : 'Locked'}
+                                    {data.referral?.unlocked ? t('referrals.active') : t('referrals.locked')}
                                 </div>
                             </div>
 
@@ -87,21 +90,21 @@ export default function ReferralsComponent() {
                                 <div className="space-y-3 p-6 bg-white/5 rounded-2xl border border-white/5">
                                     <div className="flex items-center gap-3 text-muted-foreground mb-4">
                                         <Clock size={18} />
-                                        <span className="text-[10px] font-black uppercase tracking-widest">Window Start</span>
+                                        <span className="text-[10px] font-black uppercase tracking-widest">{t('referrals.window_start')}</span>
                                     </div>
                                     <div className="text-lg font-black">{fmtTs(data.referral?.windowStart)}</div>
                                 </div>
                                 <div className="space-y-3 p-6 bg-white/5 rounded-2xl border border-white/5">
                                     <div className="flex items-center gap-3 text-muted-foreground mb-4">
                                         <Clock size={18} />
-                                        <span className="text-[10px] font-black uppercase tracking-widest">Window Deadline</span>
+                                        <span className="text-[10px] font-black uppercase tracking-widest">{t('referrals.window_deadline')}</span>
                                     </div>
                                     <div className="text-lg font-black">{fmtTs(data.referral?.windowEnd)}</div>
                                 </div>
                             </div>
 
                             <div className="pt-4 text-xs font-medium text-muted-foreground/60 leading-relaxed italic">
-                                * Fast Track rewards are calculated based on your network performance within the specified window end date. Ensure all criteria are met before the deadline.
+                                {t('referrals.fast_track_note')}
                             </div>
                         </div>
                     </div>
@@ -112,12 +115,12 @@ export default function ReferralsComponent() {
                     <div className="h-16 w-16 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground shadow-2xl shadow-primary/40 mb-2">
                         <TrendingUp size={32} />
                     </div>
-                    <h3 className="text-2xl font-black leading-tight">Scale Your <br /> Earnings</h3>
+                    <h3 className="text-2xl font-black leading-tight">{t('referrals.scale_your')}<br /> {t('referrals.earnings')}</h3>
                     <p className="text-sm font-medium text-muted-foreground leading-relaxed">
-                        Refer new users to the Amazej Protocol and earn a percentage of their staking rewards. The more active your network, the higher your tier.
+                        {t('referrals.refer_desc')}
                     </p>
                     <button className="w-full py-4 rounded-2xl bg-foreground text-background font-black text-xs uppercase tracking-[0.2em] hover:opacity-90 transition-all active:scale-95 shadow-xl">
-                        View Guidelines
+                        {t('referrals.view_guidelines')}
                     </button>
                 </div>
             </div>

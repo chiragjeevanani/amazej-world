@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useProtocol } from "@/contexts/ProtocolContext";
+import { useTranslation } from "react-i18next";
 import { DollarSign } from "lucide-react"; // Assuming we might want an icon, or just strictly copy
 // If LightTile uses hardcoded styles, I'll copy them.
 
@@ -28,6 +29,7 @@ function useCountdown(targetSec) {
 }
 
 export default function WithdrawEarningsComponent() {
+    const { t } = useTranslation();
     const { data, actions } = useProtocol();
     const { withdraw } = data;
 
@@ -44,7 +46,7 @@ export default function WithdrawEarningsComponent() {
     const onClaim = async () => {
         try {
             await actions.claimReferral();
-            toast.success("Withdraw Successfully claimed!");
+            toast.success(t('withdraw.success_msg'));
             actions.refetch();
         } catch (e) { }
     };
@@ -54,54 +56,36 @@ export default function WithdrawEarningsComponent() {
             <section className="bg-popover rounded-2xl border border-border p-6 shadow-2xl text-popover-foreground transition-colors">
                 <div className="flex items-center justify-between mb-8">
                     <div>
-                        <h3 className="text-2xl font-black">Withdraw Earnings</h3>
-                        <p className="text-muted-foreground text-sm mt-1">Manage your realized profits</p>
+                        <h3 className="text-2xl font-black">{t('withdraw.title')}</h3>
+                        <p className="text-muted-foreground text-sm mt-1">{t('withdraw.subtitle')}</p>
                     </div>
                     <button
                         disabled={!canClaim || actions.loading.claimReferral}
                         onClick={onClaim}
                         className="bg-foreground text-background font-black text-xs uppercase tracking-widest h-10 px-6 rounded-lg hover:opacity-90 transition-all disabled:opacity-10"
                     >
-                        {actions.loading.claimReferral ? "Processing…" : cd.due ? "Withdraw Now" : "Window Locked"}
+                        {actions.loading.claimReferral ? t('home.processing') : cd.due ? t('withdraw.withdraw_now') : t('withdraw.window_locked')}
                     </button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <LightTile label="Unclaimed" currency="USDT" value={fmtUSDc(withdraw?.availableWithdraw)} />
-                    <LightTile label="Unclaimed Tokens" value={fmtTok(withdraw?.availableWithdrawTokens)} />
-                    <LightTile label="Realized" currency="USDT" value={fmtUSDc(withdraw?.totalWithdrawn)} />
-                    <LightTile label="Realized Tokens" value={fmtTok(withdraw?.totalTokensWithdrawn)} />
-                </div>
-
-                <div className="mt-8 pt-8 border-t border-border grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center md:text-left">Last Liquidation</span>
-                        <span className="text-sm font-black text-center md:text-left">{fmtDate(withdraw?.lastReferralClaimAt)}</span>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center md:text-right">Withdrawal Readiness</span>
-                        <div className="text-sm font-black text-center md:text-right">
-                            {cd.due ? (
-                                canClaim ? <span className="text-green-600">Liquid ready</span> : <span className="text-muted-foreground/50">Insufficient balance</span>
-                            ) : (
-                                <span className="tabular-nums">{cd.d}d {cd.h}h {cd.m}m {cd.s}s</span>
-                            )}
-                        </div>
-                    </div>
+                <div className="grid grid-cols-1 gap-3">
+                    <GreenTile label={t('withdraw.available_usd')} value={`$${fmtUSDc(withdraw?.availableWithdraw)}`} />
+                    <GreenTile label={t('withdraw.available_ama')} value={fmtTok(withdraw?.availableWithdrawTokens)} />
+                    <GreenTile label={t('withdraw.total_withdrawn_usd')} value={`$${fmtUSDc(withdraw?.totalWithdrawn)}`} />
+                    <GreenTile label={t('withdraw.total_withdrawn_ama')} value={fmtTok(withdraw?.totalTokensWithdrawn)} />
+                    <GreenTile label={t('withdraw.last_claimed')} value={fmtDate(withdraw?.lastReferralClaimAt)} />
+                    <GreenTile label={t('withdraw.next_claim')} value={nextRefAt === 0n || cd.due ? t('withdraw.not_available') : fmtDate(nextRefAt)} />
                 </div>
             </section>
         </div>
     );
 }
 
-function LightTile({ label, value, currency }) {
+function GreenTile({ label, value }) {
     return (
-        <div className="p-4 bg-accent/50 rounded-xl border border-border">
-            <div className="flex justify-between items-center mb-1">
-                <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{label}</div>
-                {currency && <div className="text-sm font-black text-popover-foreground">{currency}</div>}
-            </div>
-            <div className="text-xl font-black text-popover-foreground">{value}</div>
+        <div className="p-5 bg-emerald-50 border border-emerald-100/50 rounded-2xl shadow-sm transition-all hover:scale-[1.01]">
+            <div className="text-[13px] font-bold text-emerald-800 mb-2">{label}</div>
+            <div className="text-2xl font-black text-emerald-900 tracking-tight">{value}</div>
         </div>
     );
 }

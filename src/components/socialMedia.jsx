@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Copy, Instagram, Link as LinkIcon, Plus } from "lucide-react";
 import { RiTelegramFill } from "react-icons/ri";
 import { FaXTwitter } from "react-icons/fa6";
@@ -39,35 +40,36 @@ async function addTokenToWallet(opts) {
 }
 
 export default function SocialMediaAndContracts() {
+    const { t } = useTranslation();
     const CONTRACTS = [
         {
-            title: "AMA Token",
+            title: t('home.ama_token'),
             address: "0x240c54c51E359aDc86458ec6aa69ceDEDfEdfCd5",
             scanUrl: "https://polygonscan.com/address/0x240c54c51E359aDc86458ec6aa69ceDEDfEdfCd5",
             canAddToWallet: true,
             token: { symbol: "AMA", decimals: 18, image: undefined },
         },
         {
-            title: "USDT Token",
+            title: t('home.usdt_token'),
             address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
             scanUrl: "https://polygonscan.com/address/0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
             canAddToWallet: true,
             token: { symbol: "USDT", decimals: 6, image: undefined },
         },
         {
-            title: "Liquidity Pool",
+            title: t('home.liquidity_pool'),
             address: "0x6ab8A0299495e5d076B93705EB50B161bd1ac5dc",
             scanUrl: "https://polygonscan.com/address/0x6ab8A0299495e5d076B93705EB50B161bd1ac5dc",
             canAddToWallet: false,
         },
         {
-            title: "Insurance Lock",
+            title: t('home.insurance_lock'),
             address: "0xE9Ba4F738460cE7f31EC95a2407f0019B117F6c6",
             scanUrl: "https://polygonscan.com/address/0xE9Ba4F738460cE7f31EC95a2407f0019B117F6c6",
             canAddToWallet: false,
         },
         {
-            title: "Reward Wallet",
+            title: t('home.reward_wallet'),
             address: "0x4AB88e440945410655BA63813A97ab8093b547b8",
             scanUrl: "https://polygonscan.com/address/0x4AB88e440945410655BA63813A97ab8093b547b8",
             canAddToWallet: false,
@@ -101,7 +103,7 @@ export default function SocialMediaAndContracts() {
         <section className="py-6 border-t mt-3 border-border">
             <div className="rounded-lg">
                 <header className="flex flex-col space-y-1.5 px-6 pb-2">
-                    <h5 className="text-lg font-bold text-foreground">Social Media & Public Token Contracts</h5>
+                    <h5 className="text-lg font-bold text-foreground">{t('home.social_media_contracts')}</h5>
                 </header>
 
                 <div className="p-0 pt-4 md:pt-0 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -125,7 +127,7 @@ export default function SocialMediaAndContracts() {
                     bg-transparent text-foreground w-full lg:w-min hover:bg-accent h-8 rounded-lg px-3 text-xs transition-all"
                                     >
                                         <Plus className="size-4" />
-                                        Add to Wallet
+                                        {t('home.add_to_wallet')}
                                     </button>
                                 )}
 
@@ -140,7 +142,7 @@ export default function SocialMediaAndContracts() {
                                         <button className="inline-flex w-full lg:w-auto items-center justify-center gap-2 whitespace-nowrap font-medium border border-input hover:border-accent-foreground
                     hover:bg-accent h-8 rounded-lg px-3 text-xs transition-all text-foreground">
                                             <LinkIcon className="size-4" />
-                                            <span className="lg:hidden">View Scan</span>
+                                            <span className="lg:hidden">{t('home.view_scan')}</span>
                                         </button>
                                     </a>
 
@@ -150,20 +152,20 @@ export default function SocialMediaAndContracts() {
                                         aria-label="Copy to clipboard"
                                     >
                                         <Copy className="size-4" />
-                                        <span className="lg:hidden">Copy Address</span>
+                                        <span className="lg:hidden">{t('home.copy_address')}</span>
                                         <span className="sr-only">Copy</span>
                                     </button>
                                 </div>
                             </div>
 
                             {copied === c.address && (
-                                <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest mt-1">Copied to clipboard</span>
+                                <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest mt-1">{t('home.copied_clipboard')}</span>
                             )}
                         </div>
                     ))}
 
                     <div className="p-6 bg-primary rounded-xl border border-primary flex flex-col gap-4">
-                        <p className="text-sm font-black text-primary-foreground">Connect & Engage</p>
+                        <p className="text-sm font-black text-primary-foreground">{t('home.connect_engage')}</p>
                         <div className="flex gap-2">
                             {SOCIALS.map((s) => (
                                 <a

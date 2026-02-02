@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Copy } from "lucide-react";
 import Pagination from "./Pagination";
 
@@ -14,6 +15,7 @@ function GlobalReward({
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
     const [searchQuery, setSearchQuery] = useState("");
+    const { t } = useTranslation();
 
     const filteredTransactions = useMemo(() => {
         if (!searchQuery) return transactions;
@@ -46,7 +48,7 @@ function GlobalReward({
             <div className="flex justify-between items-center mb-6">
                 <div>
                     <h2 className="text-xl font-black">{title}</h2>
-                    <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mt-1">Global distribution log</p>
+                    <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mt-1">{t('home.global_distribution_log')}</p>
                 </div>
             </div>
 
@@ -56,9 +58,9 @@ function GlobalReward({
                         <tr>
                             <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">USDT</th>
                             <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">AMA</th>
-                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Rate</th>
-                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">User</th>
-                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Time</th>
+                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('home.rate')}</th>
+                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('home.user')}</th>
+                            <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('home.time')}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-border">

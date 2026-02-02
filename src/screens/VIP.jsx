@@ -1,12 +1,14 @@
 import * as React from "react";
 import { useProtocol } from "@/contexts/ProtocolContext";
-import { Check, Crown, Star, Target, Users, Zap, Award, Info, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Check, Crown, Star, Target, Users, Zap, Award, Info, ChevronRight, RotateCcw } from "lucide-react";
 
 function fmtUSD(usd) { return "USDT " + usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 function fmtUSDCents(c) { return "USDT " + (Number(c ?? 0n) / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 function numUSDCents(c) { return (Number(c ?? 0n) / 100); }
 
 export default function VipScreen() {
+    const { t } = useTranslation();
     const { data, actions } = useProtocol();
     const currentLevel = Number(data.vip?.currentLevel ?? 0);
     const pendingVipTokens = (data.claimVip?.amountUSDT || 0n);
@@ -43,25 +45,25 @@ export default function VipScreen() {
                         <div className="space-y-6">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-500/30 text-yellow-500">
                                 <Star size={14} className="animate-pulse fill-current" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em]">VIP Protocol Status</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t('vip.status_label')}</span>
                             </div>
                             <div>
                                 <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter leading-none mb-4">
-                                    Exclusive <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">VIP Tiers</span>
+                                    {t('vip.exclusive')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">{t('vip.tiers')}</span>
                                 </h1>
                                 <p className="text-lg font-bold text-muted-foreground max-w-md">
-                                    Unlock massive rewards, monthly salaries, and one-time bonuses as you scale the protocol.
+                                    {t('vip.subtitle')}
                                 </p>
                             </div>
                         </div>
 
                         <div className="flex flex-col items-center lg:items-end gap-6">
                             <div className="text-center lg:text-right bg-white/5 rounded-3xl p-6 border border-white/10 backdrop-blur-md">
-                                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Current Standing</p>
-                                <div className="text-3xl font-black text-yellow-500">Level {currentLevel}</div>
+                                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{t('vip.current_standing')}</p>
+                                <div className="text-3xl font-black text-yellow-500">{t('vip.level', { level: currentLevel })}</div>
                             </div>
                             <div className="text-center lg:text-right">
-                                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Accumulated Bonuses</p>
+                                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{t('vip.accumulated_bonuses')}</p>
                                 <div className="text-4xl font-black tabular-nums tracking-tight mb-4">
                                     USDT {(Number(pendingVipTokens) / 100).toFixed(2)}
                                 </div>
@@ -77,7 +79,7 @@ export default function VipScreen() {
                                 >
                                     {canClaim && <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />}
                                     <span className="relative z-10">
-                                        {actions.loading.claimVIP ? "Syncing..." : canClaim ? "Claim Rewards" : "No Rewards"}
+                                        {actions.loading.claimVIP ? t('vip.syncing') : canClaim ? t('vip.claim_rewards') : t('vip.no_rewards')}
                                     </span>
                                 </button>
                             </div>
@@ -93,27 +95,27 @@ export default function VipScreen() {
                         <div className="h-8 w-8 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-500">
                             <Target size={18} />
                         </div>
-                        <h2 className="text-2xl font-black tracking-tight">Your Path to VIP {nextLevel}</h2>
+                        <h2 className="text-2xl font-black tracking-tight">{t('vip.path_to', { level: nextLevel })}</h2>
                     </div>
 
                     <div className="bg-card/40 backdrop-blur-xl border border-white/10 rounded-[2rem] p-6 md:p-10 shadow-xl overflow-hidden">
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                             <div className="lg:col-span-2 space-y-8">
                                 <RequirementItem
-                                    label="Self Stake"
+                                    label={t('vip.self_stake')}
                                     current={progress.self}
                                     target={progress.tSelf}
                                     icon={<Award size={18} />}
                                     prefix="USDT "
                                 />
                                 <RequirementItem
-                                    label={nextLevel > 1 ? "Directs with VIP1" : "Direct Referrals"}
+                                    label={nextLevel > 1 ? t('vip.directs_vip1') : t('vip.direct_referrals')}
                                     current={progress.directs}
                                     target={progress.tDirects}
                                     icon={<Users size={18} />}
                                 />
                                 <RequirementItem
-                                    label="Team Members"
+                                    label={t('vip.team_members')}
                                     current={progress.team}
                                     target={progress.tTeam}
                                     icon={<Zap size={18} />}
@@ -124,14 +126,14 @@ export default function VipScreen() {
                                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:rotate-12 transition-transform">
                                         <Info size={40} className="text-yellow-500" />
                                     </div>
-                                    <h4 className="text-sm font-black uppercase tracking-widest text-yellow-500 mb-2">Protocol Note</h4>
+                                    <h4 className="text-sm font-black uppercase tracking-widest text-yellow-500 mb-2">{t('vip.protocol_note')}</h4>
                                     <p className="text-xs font-medium text-muted-foreground leading-relaxed italic">
-                                        Reach all milestones above to qualify for VIP {nextLevel} rewards. Self stake is based on your current active plan.
+                                        {t('vip.note_text', { level: nextLevel })}
                                     </p>
                                 </div>
                                 <div className="p-6 bg-white/5 rounded-2xl border border-white/5 space-y-4">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Est. Reward Increase</span>
+                                        <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{t('vip.est_increase')}</span>
                                         <span className="text-emerald-500 font-black">+25%</span>
                                     </div>
                                     <div className="h-1 w-full bg-white/10 rounded-full">
@@ -151,7 +153,7 @@ export default function VipScreen() {
                         <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                             <Award size={18} />
                         </div>
-                        <h2 className="text-2xl font-black tracking-tight">VIP Rewards Roadmap</h2>
+                        <h2 className="text-2xl font-black tracking-tight">{t('vip.roadmap_title')}</h2>
                     </div>
                 </div>
 
@@ -168,11 +170,94 @@ export default function VipScreen() {
                     ))}
                 </div>
             </div>
+
+            {/* Redeposit Rewards Section */}
+            <div className="space-y-6">
+                <div className="flex items-center justify-between px-2">
+                    <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500">
+                            <RotateCcw size={18} />
+                        </div>
+                        <h2 className="text-2xl font-black tracking-tight">{t('vip.redeposit_rewards')}</h2>
+                    </div>
+                    <div className="text-xs font-black uppercase tracking-widest text-muted-foreground bg-white/5 px-4 py-2 rounded-xl border border-white/10">
+                        {t('vip.current_team_count')}: <span className="text-orange-500">{data.vip?.rede?.redeTeamCount ? Number(data.vip.rede.redeTeamCount) : 0}</span>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                    {[1, 2, 3, 4, 5, 6, 7].map(lvl => (
+                        <RedeCard
+                            key={lvl}
+                            level={lvl}
+                            vipTables={vipTables}
+                            userRede={data.redeProgress}
+                            teamRedeCount={data.vip?.vip?.redeTeamCount}
+                        />
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function RedeCard({ level, vipTables, userRede, teamRedeCount }) {
+    const { t } = useTranslation();
+    if (!vipTables) return null;
+
+    const self = numUSDCents(vipTables.selfCents[level]);
+    const salaryPerClaim = numUSDCents(vipTables.perClaimCents[level]);
+    const tMin = Number(vipTables.teamMin?.[level] || 0);
+    const maxClaims = Number(vipTables.redeAllowed?.[level - 1] || 4); // Index level-1 for redeAllowed array
+
+    const claimsMade = userRede?.level === level ? Number(userRede.claimsMade) : 0;
+    const isLevelActive = (userRede?.level === level && userRede?.open);
+
+    return (
+        <div className="bg-card/30 backdrop-blur-md border border-white/5 rounded-2xl p-5 group hover:border-orange-500/30 transition-all">
+            <div className="flex flex-col sm:flex-row justify-between gap-4">
+                <div className="flex flex-col gap-1 min-w-[100px]">
+                    <h4 className="text-lg font-black text-foreground">VIP {level}</h4>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-orange-500/60 flex items-center gap-1">
+                        <div className="h-1 w-1 rounded-full bg-current" />
+                        {t('vip.qualification')}
+                    </span>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 flex-1 gap-6">
+                    <div className="space-y-1">
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('vip.self_stake')}</span>
+                        <div className="text-sm font-black">${self.toLocaleString()}</div>
+                    </div>
+                    <div className="space-y-1">
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('vip.team')}</span>
+                        <div className="text-sm font-black">
+                            {teamRedeCount ?? 0} <span className="text-muted-foreground/40">/</span> {tMin}
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('vip.salary')}</span>
+                        <div className="text-sm font-black">
+                            {claimsMade} / {maxClaims} <span className="text-[10px] text-muted-foreground/60 ml-1">(${salaryPerClaim}/claim)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex items-center justify-end">
+                    <div className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all ${isLevelActive
+                        ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/30 animate-pulse"
+                        : "bg-orange-500/5 text-orange-500/40 border-orange-500/10"
+                        }`}>
+                        {isLevelActive ? t('vip.qualified') : t('vip.not_yet')}
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
 
 function RequirementItem({ label, current, target, icon, prefix = "" }) {
+    const { t } = useTranslation();
     const ok = current >= target;
     const pct = Math.min(100, Math.max(2, (Number(current) / Number(target || 1)) * 100));
 
@@ -186,12 +271,12 @@ function RequirementItem({ label, current, target, icon, prefix = "" }) {
                     <div className="min-w-0">
                         <span className="text-lg font-black text-foreground tracking-tight block truncate">{label}</span>
                         <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                            {ok ? 'Target Reached' : 'In Progress'}
+                            {ok ? t('vip.target_reached') : t('vip.in_progress')}
                         </span>
                     </div>
                 </div>
                 <div className="flex flex-row sm:flex-col items-baseline sm:items-end justify-between sm:justify-center gap-2 flex-shrink-0">
-                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] sm:hidden">Value</span>
+                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] sm:hidden">{t('vip.value')}</span>
                     <div className="flex items-baseline gap-1.5">
                         <span className="text-xl font-black tabular-nums">{prefix}{current.toLocaleString()}</span>
                         <span className="text-muted-foreground/40 text-sm font-black">/</span>
@@ -210,6 +295,7 @@ function RequirementItem({ label, current, target, icon, prefix = "" }) {
 }
 
 function LevelCard({ level, vipTables, currentLevel, redeProgress, nextClaimAt }) {
+    const { t } = useTranslation();
     if (!vipTables) return null;
 
     const self = numUSDCents(vipTables.selfCents[level]);
@@ -239,26 +325,26 @@ function LevelCard({ level, vipTables, currentLevel, redeProgress, nextClaimAt }
                             {level}
                         </div>
                         <div>
-                            <h3 className="text-2xl font-black text-foreground">VIP {level} Status</h3>
-                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Protocol Tier Explorer</p>
+                            <h3 className="text-2xl font-black text-foreground">{t('vip.status_card', { level: level })}</h3>
+                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{t('vip.tier_explorer')}</p>
                         </div>
                     </div>
                     <div className={`flex items-center gap-2 px-6 py-2 rounded-xl text-[10px] uppercase tracking-[0.2em] font-black border ${isUnlocked ? 'bg-emerald-500/20 text-emerald-500 border-emerald-500/30' :
                         isEligible ? 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30' :
                             'bg-white/5 text-muted-foreground/40 border-white/10'
                         }`}>
-                        {isUnlocked ? 'Active Phase' : isEligible ? 'Eligible for Activation' : 'Tier Locked'}
+                        {isUnlocked ? t('vip.active_phase') : isEligible ? t('vip.eligible') : t('vip.locked')}
                     </div>
                 </div>
 
                 <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-8">
-                    <LevelStat label="Self Stake" value={`$${self.toLocaleString()}`} />
-                    <LevelStat label={level > 1 ? "VIP1 Directs" : "Directs"} value={`${directCount} / ${level > 1 ? dv1Min : dMin}`} />
-                    <LevelStat label="Team" value={`${teamCount} / ${tMin}`} />
-                    <LevelStat label="One-Time Bonus" value={`$${oneTime}`} highlight={!isUnlocked} />
-                    <LevelStat label="Monthly Salary" value={`$${salary}/mo`} />
+                    <LevelStat label={t('vip.self_stake')} value={`$${self.toLocaleString()}`} />
+                    <LevelStat label={level > 1 ? t('vip.directs_vip1') : t('vip.direct_referrals')} value={`${directCount} / ${level > 1 ? dv1Min : dMin}`} />
+                    <LevelStat label={t('vip.team')} value={`${teamCount} / ${tMin}`} />
+                    <LevelStat label={t('vip.one_time_bonus')} value={`$${oneTime}`} highlight={!isUnlocked} />
+                    <LevelStat label={t('vip.salary')} value={t('vip.salary_frequency', { amount: salary })} />
                     <div className="space-y-1">
-                        <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest block">Next Payout</span>
+                        <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest block">{t('vip.next_payout')}</span>
                         <div className="text-sm font-black truncate tabular-nums">
                             {nextClaimAt && nextClaimAt > 0n ? new Date(Number(nextClaimAt) * 1000).toLocaleDateString() : "—"}
                         </div>

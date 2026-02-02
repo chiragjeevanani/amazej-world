@@ -21,8 +21,10 @@ import { shortAddress } from "@/blockchain/roundsNumber";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import VipScreen from "@/screens/VIP";
+import { useTranslation, Trans } from "react-i18next";
 
 export default function ReferEarnComponent() {
+    const { t } = useTranslation();
     const { data } = useProtocol();
     const { isConnected, address } = useAccount();
     const [copied, setCopied] = useState(false);
@@ -48,17 +50,17 @@ export default function ReferEarnComponent() {
                         <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
                             <Gift size={24} />
                         </div>
-                        <h2 className="text-sm font-black text-primary uppercase tracking-[0.3em]">Affiliate Center</h2>
+                        <h2 className="text-sm font-black text-primary uppercase tracking-[0.3em]">{t('refer.affiliate_center')}</h2>
                     </div>
                     <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter">
-                        Refer & <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400">Earn</span>
+                        {t('refer.refer_earn')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400">{t('refer.earn_highlight')}</span>
                     </h1>
                 </div>
                 <div className="bg-card/40 backdrop-blur-xl border border-white/10 rounded-2xl px-6 py-4 shadow-xl">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Status</p>
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{t('refer.status')}</p>
                     <div className="flex items-center gap-2">
                         <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-xl font-black">Agent Network Active</span>
+                        <span className="text-xl font-black">{t('refer.network_active')}</span>
                     </div>
                 </div>
             </div>
@@ -69,40 +71,40 @@ export default function ReferEarnComponent() {
                 <div className="lg:col-span-2 space-y-10 min-w-0">
                     <section className="space-y-6">
                         <div className="flex justify-between items-center px-2">
-                            <h2 className="text-2xl font-black tracking-tight">Referral Mechanics</h2>
-                            <span className="text-[10px] font-black text-primary bg-primary/10 px-3 py-1 rounded-full uppercase tracking-widest">Core Rules</span>
+                            <h2 className="text-2xl font-black tracking-tight">{t('refer.mechanics_title')}</h2>
+                            <span className="text-[10px] font-black text-primary bg-primary/10 px-3 py-1 rounded-full uppercase tracking-widest">{t('refer.core_rules')}</span>
                         </div>
 
                         <div className="grid gap-4">
                             <MechanicCard
                                 icon={<Activity className="text-blue-400" />}
-                                title="LP Reward"
-                                desc={<>Earn <span className="text-foreground font-black">14%</span> rewards on a <span className="text-foreground font-black">10-day cycle</span>.</>}
+                                title={t('refer.lp_reward_title')}
+                                desc={<Trans i18nKey="refer.lp_reward_desc" components={{ bold: <span className="text-foreground font-black" /> }} />}
                             />
                             <MechanicCard
                                 icon={<Share2 className="text-emerald-400" />}
-                                title="Referral Reward"
-                                desc={<>Flat <span className="text-foreground font-black">5%</span> referral reward on direct referrals.</>}
+                                title={t('refer.referral_reward_title')}
+                                desc={<Trans i18nKey="refer.referral_reward_desc" components={{ bold: <span className="text-foreground font-black" /> }} />}
                             />
                             <MechanicCard
                                 icon={<Zap className="text-yellow-400" />}
-                                title="Fastrack Reward"
-                                desc={<>Unlock <span className="text-foreground font-black">7 direct first deposits within 30 days</span> and earn <span className="text-foreground font-black">additional 9 levels</span> of rewards for lifetime.</>}
+                                title={t('refer.fastrack_reward_title')}
+                                desc={<Trans i18nKey="refer.fastrack_reward_desc" components={{ bold: <span className="text-foreground font-black" /> }} />}
                             />
                             <MechanicCard
                                 icon={<DollarSign className="text-purple-400" />}
-                                title="Salary Reward"
-                                desc={<>Earn salaries from <span className="text-foreground font-black">USDT 15 to USDT 3,300</span> every <span className="text-foreground font-black">10 days</span> based on performance.</>}
+                                title={t('refer.salary_reward_title')}
+                                desc={<Trans i18nKey="refer.salary_reward_desc" components={{ bold: <span className="text-foreground font-black" /> }} />}
                             />
                             <MechanicCard
                                 icon={<Award className="text-orange-400" />}
-                                title="Team Reward"
-                                desc={<>One-time team reward bonus between <span className="text-foreground font-black">USDT 7 to USDT 2,500</span>.</>}
+                                title={t('refer.team_reward_title')}
+                                desc={<Trans i18nKey="refer.team_reward_desc" components={{ bold: <span className="text-foreground font-black" /> }} />}
                             />
                             <MechanicCard
                                 icon={<Crown className="text-indigo-400" />}
-                                title="Global Royalty Reward"
-                                desc={<>Earn a share of the global royalty pool by achieving VIP levels. <span className="text-foreground font-black">VIP 7</span> offers lifetime benefits.</>}
+                                title={t('refer.global_reward_title')}
+                                desc={<Trans i18nKey="refer.global_reward_desc" components={{ bold: <span className="text-foreground font-black" /> }} />}
                             />
                         </div>
                     </section>
@@ -117,8 +119,8 @@ export default function ReferEarnComponent() {
 
                             <div className="relative z-10 space-y-6">
                                 <div>
-                                    <h3 className="text-2xl font-black tracking-tight">Your Network Link</h3>
-                                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">Growth Accelerator</p>
+                                    <h3 className="text-2xl font-black tracking-tight">{t('refer.network_link')}</h3>
+                                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">{t('refer.growth_accelerator')}</p>
                                 </div>
 
                                 {isConnected ? (
@@ -131,7 +133,7 @@ export default function ReferEarnComponent() {
                                             className="w-full h-14 rounded-2xl bg-foreground text-background font-black text-xs uppercase tracking-[0.2em] hover:opacity-90 transition-all active:scale-95 shadow-xl flex items-center justify-center gap-3"
                                         >
                                             {copied ? <CheckCircle2 size={18} /> : <Copy size={18} />}
-                                            {copied ? "Link Copied!" : "Copy Your Link"}
+                                            {copied ? t('refer.link_copied') : t('refer.copy_link')}
                                         </button>
                                     </div>
                                 ) : (
@@ -139,7 +141,7 @@ export default function ReferEarnComponent() {
                                         <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                                             <Shield size={32} />
                                         </div>
-                                        <p className="text-sm font-medium text-muted-foreground text-center">Connect your wallet to generate your unique referral link.</p>
+                                        <p className="text-sm font-medium text-muted-foreground text-center">{t('refer.connect_wallet')}</p>
                                         <ConnectButton />
                                     </div>
                                 )}
@@ -151,54 +153,54 @@ export default function ReferEarnComponent() {
                 {/* Right Column: Tables */}
                 <div className="lg:col-span-3 space-y-8 min-w-0 overflow-hidden">
                     <div className="flex justify-between items-center px-2">
-                        <h2 className="text-2xl font-black tracking-tight">Reward Tables</h2>
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Detailed breakdown</span>
+                        <h2 className="text-2xl font-black tracking-tight">{t('refer.reward_tables')}</h2>
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{t('refer.breakdown')}</span>
                     </div>
 
                     <div className="grid gap-8">
                         <RewardTable
-                            title="Fastrack Levels"
-                            headers={["Level", "Reward %", "Accumulated"]}
+                            title={t('refer.table_fastrack')}
+                            headers={[t('refer.header_level'), t('refer.header_reward_pct'), t('refer.header_accumulated')]}
                             rows={[
-                                ["Level 1", "5.0%", "5.0%"],
-                                ["Level 2", "0.5%", "5.5%"],
-                                ["Level 3", "0.5%", "6.0%"],
-                                ["Level 4", "0.5%", "6.5%"],
-                                ["Level 5", "0.5%", "7.0%"],
-                                ["Level 6", "0.5%", "7.5%"],
-                                ["Level 7", "0.5%", "8.0%"],
-                                ["Level 8", "0.5%", "8.5%"],
-                                ["Level 9", "0.5%", "9.0%"],
+                                [t('refer.level_x', { num: 1 }), "5.0%", "5.0%"],
+                                [t('refer.level_x', { num: 2 }), "0.5%", "5.5%"],
+                                [t('refer.level_x', { num: 3 }), "0.5%", "6.0%"],
+                                [t('refer.level_x', { num: 4 }), "0.5%", "6.5%"],
+                                [t('refer.level_x', { num: 5 }), "0.5%", "7.0%"],
+                                [t('refer.level_x', { num: 6 }), "0.5%", "7.5%"],
+                                [t('refer.level_x', { num: 7 }), "0.5%", "8.0%"],
+                                [t('refer.level_x', { num: 8 }), "0.5%", "8.5%"],
+                                [t('refer.level_x', { num: 9 }), "0.5%", "9.0%"],
                             ]}
                         />
 
                         <RewardTable
-                            title="Global Royalty Pool"
-                            headers={["Tier", "Share %", "Cycle Duration"]}
+                            title={t('refer.table_global')}
+                            headers={[t('refer.header_tier'), t('refer.header_share_pct'), t('refer.header_cycle')]}
                             rows={[
-                                ["VIP 1", "30%", "40 Days Window"],
-                                ["VIP 2", "10%", "40 Days Window"],
-                                ["VIP 3", "10%", "40 Days Window"],
-                                ["VIP 4", "10%", "40 Days Window"],
-                                ["VIP 5", "10%", "40 Days Window"],
-                                ["VIP 6", "10%", "40 Days Window"],
-                                ["VIP 7", "20%", "Lifetime Benefit"],
+                                ["VIP 1", "30%", t('refer.days_window')],
+                                ["VIP 2", "10%", t('refer.days_window')],
+                                ["VIP 3", "10%", t('refer.days_window')],
+                                ["VIP 4", "10%", t('refer.days_window')],
+                                ["VIP 5", "10%", t('refer.days_window')],
+                                ["VIP 6", "10%", t('refer.days_window')],
+                                ["VIP 7", "20%", t('refer.lifetime')],
                             ]}
                         />
 
                         <RewardTable
-                            title="Performance Salary Scales"
-                            headers={["Rank", "LP Pack", "Criteria", "Reward / 10d"]}
+                            title={t('refer.table_salary')}
+                            headers={[t('refer.header_rank'), t('refer.header_lp_pack'), t('refer.header_criteria'), t('refer.header_reward_10d')]}
                             rows={[
-                                ["VIP 1", "—", "Direct 7 Agents", "USDT 15"],
-                                ["VIP 2", "—", "2 VIP1 + Team 25", "USDT 50"],
-                                ["VIP 3", "—", "3 VIP1 + Team 124", "USDT 150"],
-                                ["VIP 4", "810", "4 VIP1 + Team 502", "USDT 400"],
-                                ["VIP 5", "1610", "5 VIP1 + Team 1501", "USDT 800"],
-                                ["VIP 6", "3210", "6 VIP1 + Team 3400", "USDT 1600"],
-                                ["VIP 7", "6410", "9 VIP1 + Team 5002", "USDT 3300"],
+                                ["VIP 1", "—", t('refer.criteria_vip1'), "USDT 15"],
+                                ["VIP 2", "—", t('refer.criteria_vip2'), "USDT 50"],
+                                ["VIP 3", "—", t('refer.criteria_vip3'), "USDT 150"],
+                                ["VIP 4", "810", t('refer.criteria_vip4'), "USDT 400"],
+                                ["VIP 5", "1610", t('refer.criteria_vip5'), "USDT 800"],
+                                ["VIP 6", "3210", t('refer.criteria_vip6'), "USDT 1600"],
+                                ["VIP 7", "6410", t('refer.criteria_vip7'), "USDT 3300"],
                             ]}
-                            footer="Achievement unlock results in immediate allocation."
+                            footer={t('refer.salary_footer')}
                         />
                     </div>
                 </div>
@@ -211,8 +213,8 @@ export default function ReferEarnComponent() {
                         <Star size={32} />
                     </div>
                     <div>
-                        <h2 className="text-3xl font-black tracking-tight">Network Progression</h2>
-                        <p className="text-muted-foreground font-medium max-w-lg">Track your journey through the ranks and unlock premium protocol benefits as your team grows.</p>
+                        <h2 className="text-3xl font-black tracking-tight">{t('refer.network_progression')}</h2>
+                        <p className="text-muted-foreground font-medium max-w-lg">{t('refer.track_journey')}</p>
                     </div>
                 </div>
                 <VipScreen />

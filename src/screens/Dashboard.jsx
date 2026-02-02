@@ -1,6 +1,9 @@
+import React from "react";
 import ProtocolHeader from "@/components/ProtocolCom";
+import { useTranslation, Trans } from "react-i18next";
 
 function DashboardComponent() {
+    const { t } = useTranslation();
     return (
         <div className="space-y-6">
             <div className="md:px-6 p-2">
@@ -11,10 +14,10 @@ function DashboardComponent() {
                 <div className="bg-card border border-border text-card-foreground shadow-2xl rounded-2xl overflow-hidden">
                     <div className="flex flex-col space-y-4 p-8 border-b border-border bg-gradient-to-r from-secondary/50 to-transparent">
                         <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">
-                            Start Earning with AmazejProtocol!
+                            {t('dashboard.hero_title')}
                         </h1>
                         <p className="text-lg text-muted-foreground max-w-2xl font-medium">
-                            Deposit USDT today and unlock up to <span className="text-foreground font-bold">150% rewards</span> in AMA.
+                            <Trans i18nKey="dashboard.hero_desc" components={{ bold: <span className="text-foreground font-bold" /> }} />
                         </p>
                     </div>
 
@@ -22,20 +25,20 @@ function DashboardComponent() {
                         <div className="space-y-6">
                             <FeatureItem
                                 icon="💰"
-                                title="Reward System"
-                                text={<>Earn up to <strong className="text-foreground">150% rewards</strong> in 12 steps.</>}
+                                title={t('dashboard.reward_system')}
+                                text={<Trans i18nKey="dashboard.reward_desc" components={{ bold: <strong className="text-foreground" /> }} />}
                                 color="bg-blue-500/20 text-blue-500"
                             />
                             <FeatureItem
                                 icon="👥"
-                                title="Community Growth"
-                                text={<>Get <strong className="text-foreground">referral bonuses</strong> for inviting friends.</>}
+                                title={t('dashboard.community_growth')}
+                                text={<Trans i18nKey="dashboard.community_desc" components={{ bold: <strong className="text-foreground" /> }} />}
                                 color="bg-green-500/20 text-green-500"
                             />
                             <FeatureItem
                                 icon="🔒"
-                                title="Security First"
-                                text={<>Part of your deposits goes into a <strong className="text-foreground">insurance lock</strong> for safety.</>}
+                                title={t('dashboard.security_first')}
+                                text={<Trans i18nKey="dashboard.security_desc" components={{ bold: <strong className="text-foreground" /> }} />}
                                 color="bg-yellow-500/20 text-yellow-500"
                             />
                         </div>
@@ -45,10 +48,10 @@ function DashboardComponent() {
                                 type="button"
                                 className="w-full md:w-auto min-w-[200px] h-12 px-8 rounded-lg bg-primary text-primary-foreground font-black text-sm uppercase tracking-widest hover:bg-primary/90 active:scale-95 transition-all shadow-lg"
                             >
-                                Connect Wallet
+                                {t('dashboard.connect_wallet')}
                             </button>
                             <p className="text-xs font-bold text-muted-foreground/60 mt-4 uppercase tracking-widest">
-                                Fast, Secure, and Rewarding!
+                                {t('dashboard.tagline')}
                             </p>
                         </div>
                     </div>

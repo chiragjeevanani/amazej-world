@@ -39,10 +39,10 @@ export const sampleData = [
 ];
 
 export const depositData = [
-    { id: 1, name: "Total Deposit", price: "USDT 2,450.00", value: "+2.5%", icon: DollarSign },
-    { id: 2, name: "Active Users", price: "1,234", value: "+12%", icon: TrendingUp },
-    { id: 3, name: "New Signups", price: "45", value: "+5%", icon: Gift },
-    { id: 4, name: "AMA Price", price: "USDT 7.44", value: "+1.2%", icon: Droplets },
+    { id: 1, name: "home.total_deposit", price: "USDT 2,450.00", value: "+2.5%", icon: DollarSign },
+    { id: 2, name: "home.active_users", price: "1,234", value: "+12%", icon: TrendingUp },
+    { id: 3, name: "home.new_signups", price: "45", value: "+5%", icon: Gift },
+    { id: 4, name: "home.ama_price", price: "USDT 7.44", value: "+1.2%", icon: Droplets },
 ];
 
 export const rewardData = [
@@ -67,42 +67,43 @@ export const rewardData = [
 ];
 
 export const menuItems = [
-    { id: "Home", label: "Home", icon: Home, href: "/" },
+    { id: "Home", label: "menu.home", icon: Home, href: "/dashboard" },
+    { id: "Plans", label: "menu.plans", icon: RotateCcw, href: "/" },
     {
         id: "Refer & Earn",
-        label: "Refer & Earn",
+        label: "menu.refer_earn",
         icon: Gift,
         href: "/refer-earn",
     },
-    { id: "Sell", label: "Sell", icon: ShoppingBag, href: "/sell" },
-    { id: "LP Claim", label: "LP Claim", icon: Droplets, href: "/lp-claim" },
+    { id: "Sell", label: "menu.sell", icon: ShoppingBag, href: "/sell" },
+    { id: "LP Claim", label: "menu.lp_claim", icon: Droplets, href: "/lp-claim" },
     {
         id: "Royalty Rewards",
-        label: "Royalty Rewards",
+        label: "menu.royalty_rewards",
         icon: TrendingUp,
         href: "/royalty-rewards",
     },
     {
         id: "Withdraw Earnings",
-        label: "Withdraw Earnings",
+        label: "menu.withdraw_earnings",
         icon: DollarSign,
         href: "/withdraw-earnings",
     },
     {
         id: "History",
-        label: "History",
+        label: "menu.history",
         icon: History,
         href: "/history",
     },
     {
         id: "Referrals",
-        label: "Referrals",
+        label: "menu.referrals",
         icon: Users,
         href: "/referrals",
     },
     {
         id: "VIP",
-        label: "VIP",
+        label: "menu.vip",
         icon: Crown,
         href: "/vip",
     },
