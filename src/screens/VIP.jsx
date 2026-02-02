@@ -238,7 +238,7 @@ function RedeCard({ level, vipTables, userRede, teamRedeCount }) {
                     <div className="space-y-1">
                         <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('vip.salary')}</span>
                         <div className="text-sm font-black">
-                            {claimsMade} / {maxClaims} <span className="text-[10px] text-muted-foreground/60 ml-1">(${salaryPerClaim}/claim)</span>
+                            {claimsMade} / {maxClaims} <span className="text-[10px] text-muted-foreground/60 ml-1">({t('vip.salary_frequency', { amount: salaryPerClaim })})</span>
                         </div>
                     </div>
                 </div>
@@ -345,7 +345,7 @@ function LevelCard({ level, vipTables, currentLevel, redeProgress, nextClaimAt }
                     <LevelStat label={t('vip.salary')} value={t('vip.salary_frequency', { amount: salary })} />
                     <div className="space-y-1">
                         <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest block">{t('vip.next_payout')}</span>
-                        <div className="text-sm font-black truncate tabular-nums">
+                        <div className="text-sm font-black tabular-nums">
                             {nextClaimAt && nextClaimAt > 0n ? new Date(Number(nextClaimAt) * 1000).toLocaleString() : "—"}
                         </div>
                     </div>

@@ -316,7 +316,7 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
     return (
         <div className={`
             relative flex flex-col p-6 rounded-[2rem] border-2 transition-all duration-500 transform overflow-hidden group
-            ${isCurrentPlan ? 'opacity-60 scale-95 saturate-0' : 'hover:scale-[1.02] hover:-translate-y-2'}
+            ${isCurrentPlan ? 'scale-[0.98] ring-2 ring-emerald-500/50' : 'hover:scale-[1.02] hover:-translate-y-2'}
             bg-gradient-to-br ${theme.outer} text-white shadow-2xl
         `}>
             <div className="absolute top-0 right-0 w-[120%] h-full bg-linear-to-b from-white/10 to-transparent transform -skew-x-12 translate-x-1/2 opacity-20 pointer-events-none"></div>
@@ -358,7 +358,7 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
                 className={`
                     mt-8 h-14 rounded-2xl font-black text-xs uppercase tracking-[0.3em] transition-all active:scale-95 shadow-xl
                     ${isCurrentPlan
-                        ? "bg-black/20 border-white/10 text-white/40 cursor-not-allowed"
+                        ? "bg-emerald-500 text-black shadow-emerald-500/20 cursor-default"
                         : "bg-white text-black hover:bg-opacity-90"}
                 `}
             >
