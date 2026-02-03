@@ -9,7 +9,8 @@ function fmtWad(w) { return (Number(w) / 1e18).toLocaleString(undefined, { maxim
 function fmtDate(s) {
     return s && s > 0n ? new Date(Number(s) * 1000).toLocaleString(undefined, {
         year: 'numeric', month: 'short', day: 'numeric',
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: true
     }) : "—";
 }
 

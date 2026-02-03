@@ -23,7 +23,8 @@ export function fmtTs(ts) {
     const d = new Date(Number(ts) * 1000);
     return d.toLocaleString(undefined, {
         year: 'numeric', month: 'short', day: 'numeric',
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: true
     });
 }
 
@@ -154,7 +155,8 @@ export default function PlansAndActions() {
 
                     const fmtTSLocal = (n) => !n ? "—" : new Date(Number(n) * 1000).toLocaleString(undefined, {
                         year: 'numeric', month: 'short', day: 'numeric',
-                        hour: '2-digit', minute: '2-digit', second: '2-digit'
+                        hour: '2-digit', minute: '2-digit', second: '2-digit',
+                        hour12: true
                     });
 
                     const eta = (at) => {

@@ -118,7 +118,7 @@ i18n
                         syncing: "Syncing...",
                         path_to: "Your Path to VIP {{level}}",
                         self_stake: "Self Stake",
-                        directs_vip1: "Directs with VIP1",
+                        directs_vip1: "VIP 1 Direct",
                         direct_referrals: "Direct Referrals",
                         team_members: "Team Members",
                         protocol_note: "Protocol Note",

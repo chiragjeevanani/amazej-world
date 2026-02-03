@@ -7,7 +7,7 @@ import { DollarSign } from "lucide-react"; // Assuming we might want an icon, or
 
 function fmtUSDc(c) { return c === undefined ? "—" : (Number(c) / 100).toFixed(2); }
 function fmtTok(x) { return x === undefined ? "—" : (Number(x) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 }); }
-function fmtDate(s) { return !s || s === 0n ? "—" : new Date(Number(s) * 1000).toLocaleString(); }
+function fmtDate(s) { return !s || s === 0n ? "—" : new Date(Number(s) * 1000).toLocaleString(undefined, { hour12: true }); }
 
 function useCountdown(targetSec) {
     const targetMs = targetSec && targetSec > 0n ? Number(targetSec) * 1000 : 0;
