@@ -6,8 +6,12 @@ import { ClaimCountdown } from "@/components/Countdown";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useTranslation } from "react-i18next";
-import { Copy, CheckCircle2, LayoutGrid, Link, Sparkles, TrendingUp, Wallet, ArrowUpCircle, ExternalLink } from "lucide-react";
+import { Copy, CheckCircle2, LayoutGrid, Link, Sparkles, TrendingUp, Wallet, ArrowUpCircle, ExternalLink, ShieldCheck, RotateCcw } from "lucide-react";
 import { contracts, SCAN_LINK } from "@/blockchain/contracts";
+
+const ADMIN_WALLETS = [
+    "0xce2a7413aacee78668f640f510daf80d6a2ee1cb", // Default Referrer / Admin
+].map(a => a.toLowerCase());
 
 function gt0(x) { return (x ?? 0n) > 0n; }
 
@@ -35,8 +39,8 @@ export default function PlansAndActions() {
         { name: "Plan 3", baseDeposit: 400, stepReward: 56, topUps: [{ step: 5, amount: "200" }, { step: 9, amount: "100" }, { step: 12, amount: "400" }] },
         { name: "Plan 4", baseDeposit: 800, stepReward: 112, topUps: [{ step: 5, amount: "400" }, { step: 9, amount: "200" }, { step: 12, amount: "800" }] },
         { name: "Plan 5", baseDeposit: 1600, stepReward: 224, topUps: [{ step: 5, amount: "800" }, { step: 9, amount: "400" }, { step: 12, amount: "1600" }] },
-        { name: "Plan 6", baseDeposit: 3200, stepReward: 448, topUps: [{ step: 5, amount: "1600" }, { step: 9, amount: "800" }, { step: 12, amount: "3200" }] },
-        { name: "Plan 7", baseDeposit: 6400, stepReward: 896, topUps: [{ step: 5, amount: "3200" }, { step: 9, amount: "1600" }, { step: 12, amount: "6400" }] },
+        { name: "Plan 6", baseDeposit: 3200, stepReward: 448, topUps: [{ step: 1600, amount: "1600" }, { step: 9, amount: "800" }, { step: 12, amount: "3200" }] },
+        { name: "Plan 7", baseDeposit: 6400, stepReward: 896, topUps: [{ step: 3200, amount: "3200" }, { step: 9, amount: "1600" }, { step: 12, amount: "6400" }] },
     ];
 
     const { data, actions } = useProtocol();
@@ -125,7 +129,7 @@ export default function PlansAndActions() {
                 />
                 <StatCard
                     label={t('home.ama_price')}
-                    value={`USDT ${data.priceUSD ?? "—"}`}
+                    value={<span className="text-3xl group-hover:text-yellow-400 transition-colors">{data.priceUSD ?? "—"}</span>}
                     subValue={data.contractUsdtBalanceFmt ? `USDT ${data.contractUsdtBalanceFmt} | ${data.contractTokenBalanceFmt} AMA` : ""}
                     icon={<Sparkles className="text-yellow-400" />}
                     action={
@@ -180,7 +184,7 @@ export default function PlansAndActions() {
                     return (
                         <div className="relative group">
                             <div className="absolute -inset-1 bg-gradient-to-r from-primary to-indigo-500 rounded-[2.5rem] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
-                            <div className="relative bg-card/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+                            <div className="relative bg-card border border-border rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
                                 <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:scale-110 transition-transform">
                                     <ArrowUpCircle size={200} className="text-primary -rotate-12" />
                                 </div>
@@ -193,7 +197,7 @@ export default function PlansAndActions() {
                                             </span>
                                             {eligible ? t('plans.window_active') : t('plans.waiting_for_window')}
                                         </div>
-                                        <h3 className="text-3xl font-black tracking-tight">{t('plans.next_required_topup')}</h3>
+                                        <h3 className="text-3xl font-black tracking-tight text-card-foreground">{t('plans.next_required_topup')}</h3>
                                         <div className="flex flex-col">
                                             <span className="text-xl font-bold text-muted-foreground/80 mb-1">{t('plans.exact_amount', { amount: fmtUSDc(nextRequiredDepositCents) })}</span>
                                             {/* <span className="text-5xl font-black text-foreground tracking-tighter">{fmtUSDc(nextRequiredDepositCents)}</span> */}
@@ -224,13 +228,13 @@ export default function PlansAndActions() {
                         <Link size={40} />
                     </div>
                     <div className="flex-1 space-y-4 text-center md:text-left">
-                        <h3 className="text-2xl font-black tracking-tight">{t('plans.grow_your_network')}</h3>
+                        <h3 className="text-2xl font-black tracking-tight text-card-foreground">{t('plans.grow_your_network')}</h3>
                         <p className="text-sm font-medium text-muted-foreground opacity-80 leading-relaxed">
                             {t('plans.invite_others')}
                         </p>
                         {isConnected ? (
                             <div className="flex flex-col sm:flex-row gap-3">
-                                <div className="flex-1 bg-black/20 border border-white/10 rounded-xl px-4 py-3 font-mono text-sm text-indigo-400 break-all flex items-center">
+                                <div className="flex-1 bg-secondary/50 border border-border rounded-xl px-4 py-3 font-mono text-sm text-indigo-500 break-all flex items-center">
                                     {shortAddress(address)}... {t('plans.click_copy')}
                                 </div>
                                 <button
@@ -249,7 +253,7 @@ export default function PlansAndActions() {
                     </div>
                 </div>
 
-                <div className="bg-card/40 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 flex flex-col justify-center gap-4 relative overflow-hidden group">
+                <div className="bg-card border border-border rounded-[2rem] p-8 flex flex-col justify-center gap-4 relative overflow-hidden group shadow-xl text-card-foreground">
                     <div className="absolute -bottom-10 -right-10 opacity-5 group-hover:scale-125 transition-transform duration-1000">
                         <TrendingUp size={160} />
                     </div>
@@ -269,7 +273,7 @@ export default function PlansAndActions() {
                     <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                         <LayoutGrid size={18} />
                     </div>
-                    <h2 className="text-2xl font-black tracking-tight">{t('plans.active_strategies')}</h2>
+                    <h2 className="text-2xl font-black tracking-tight text-foreground">{t('plans.active_strategies')}</h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {plans.map((plan, idx) => (
@@ -277,23 +281,83 @@ export default function PlansAndActions() {
                     ))}
                 </div>
             </div>
+
+            {/* Admin Section (Only for specific wallets) */}
+            {ADMIN_WALLETS.includes(address?.toLowerCase()) && (
+                <div className="relative group overflow-hidden">
+                    {/* Pulsating Admin Glow */}
+                    <div className="absolute -inset-1 bg-gradient-to-r from-red-500 via-orange-500 to-red-500 rounded-[2.5rem] blur opacity-20 group-hover:opacity-40 animate-pulse transition duration-1000"></div>
+
+                    <div className="relative bg-card border border-red-500/20 rounded-[2.5rem] p-8 md:p-12 shadow-2xl overflow-hidden">
+                        {/* Background Decoration */}
+                        <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none group-hover:scale-110 transition-transform group-hover:rotate-12 duration-1000">
+                            <ShieldCheck size={240} className="text-red-500" />
+                        </div>
+
+                        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+                            <div className="space-y-4">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-[10px] font-black uppercase tracking-widest text-red-500">
+                                    <span className="relative flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                                    </span>
+                                    Admin Access Protected
+                                </div>
+                                <h3 className="text-3xl font-black tracking-tight text-card-foreground">
+                                    Treasury Management
+                                </h3>
+                                <p className="text-sm font-medium text-muted-foreground/80 max-w-xl">
+                                    Distribute collected USDT fees from the protocol treasury to all registered beneficiaries.
+                                </p>
+                            </div>
+
+                            <button
+                                disabled={loading.distributeFees}
+                                onClick={() => actions.distributeFees()}
+                                className="group/btn relative h-16 min-w-[240px] rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl disabled:opacity-50 bg-red-600 text-white shadow-red-600/20 overflow-hidden"
+                            >
+                                <div className="flex items-center justify-center gap-3 relative z-10">
+                                    {loading.distributeFees ? (
+                                        <RotateCcw className="animate-spin" size={18} />
+                                    ) : (
+                                        <ShieldCheck size={18} />
+                                    )}
+                                    {loading.distributeFees ? t('home.processing') : "Claim Fees"}
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
 
 function StatCard({ label, value, subValue, icon, action }) {
     return (
-        <div className="relative group bg-card/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/20">
-            <div className="flex items-start justify-between mb-4">
-                <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
-                    {icon}
+        <div className="relative group transition-all duration-500 hover:-translate-y-1 h-full">
+            {/* Colored Light Glow (Emitting from behind) */}
+            <div className="absolute -inset-3 bg-gradient-to-r from-primary/30 via-indigo-500/10 to-primary/30 rounded-[3rem] blur-2xl opacity-20 group-hover:opacity-80 transition-opacity duration-700" />
+
+            {/* Sharp Neon Border Accent */}
+            <div className="absolute -inset-[1px] bg-gradient-to-r from-primary/60 via-indigo-400/30 to-primary/60 rounded-[2rem] opacity-30 group-hover:opacity-100 transition-opacity duration-500" />
+
+            <div className="relative z-10 h-full flex flex-col bg-card/90 dark:bg-card rounded-[1.9rem] p-6 shadow-xl transition-all duration-500 border border-border group-hover:border-primary/50 backdrop-blur-sm">
+                <div className="flex items-start justify-between mb-4">
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-500">
+                        {icon}
+                    </div>
+                    {action}
                 </div>
-                {action}
-            </div>
-            <div className="space-y-1">
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{label}</p>
-                <div className="text-xl font-black text-foreground truncate">{value}</div>
-                {subValue && <p className="text-xs font-black text-muted-foreground/80 uppercase tracking-wider mt-2 bg-white/5 py-1 px-3 rounded-lg border border-white/5 inline-block">{subValue}</p>}
+                <div className="space-y-1 flex-1 text-card-foreground">
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{label}</p>
+                    <div className="text-xl font-black truncate tracking-tight group-hover:text-primary transition-colors">{value}</div>
+                    {subValue && (
+                        <p className="text-[10px] font-black text-muted-foreground/80 uppercase tracking-wider mt-2 bg-primary/5 py-1.5 px-3 rounded-lg border border-primary/10 inline-block max-w-full truncate">
+                            {subValue}
+                        </p>
+                    )}
+                </div>
             </div>
         </div>
     );
@@ -305,11 +369,11 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
 
     const themes = [
         { outer: "from-blue-600 to-indigo-600", inner: "bg-blue-950/40", button: "bg-white text-blue-600", accent: "text-blue-300" },
-        { outer: "from-cyan-500 to-emerald-500", inner: "bg-cyan-950/40", button: "bg-white text-cyan-600", accent: "text-cyan-300" },
-        { outer: "from-teal-500 to-teal-700", inner: "bg-teal-950/40", button: "bg-white text-teal-600", accent: "text-teal-300" },
-        { outer: "from-emerald-500 to-green-600", inner: "bg-emerald-950/40", button: "bg-white text-emerald-600", accent: "text-emerald-300" },
-        { outer: "from-lime-500 to-emerald-600", inner: "bg-lime-950/40", button: "bg-white text-lime-600", accent: "text-lime-300" },
-        { outer: "from-orange-500 to-red-600", inner: "bg-white text-orange-600", button: "bg-white text-orange-600", accent: "text-orange-300" },
+        { outer: "from-sky-500 to-blue-600", inner: "bg-sky-950/40", button: "bg-white text-sky-600", accent: "text-sky-300" },
+        { outer: "from-rose-500 to-pink-600", inner: "bg-rose-950/40", button: "bg-white text-rose-600", accent: "text-rose-300" },
+        { outer: "from-amber-400 to-yellow-600", inner: "bg-amber-950/40", button: "bg-white text-amber-600", accent: "text-amber-300" },
+        { outer: "from-emerald-500 to-teal-600", inner: "bg-emerald-950/40", button: "bg-white text-emerald-600", accent: "text-emerald-300" },
+        { outer: "from-orange-500 to-red-600", inner: "bg-red-950/40", button: "bg-white text-orange-600", accent: "text-orange-300" },
         { outer: "from-violet-600 to-fuchsia-600", inner: "bg-violet-950/40", button: "bg-white text-violet-600", accent: "text-violet-300" }
     ];
 
@@ -377,7 +441,3 @@ function ChevronRight({ size, className }) {
         </svg>
     );
 }
-
-
-
-

@@ -21,7 +21,12 @@ export default function VipScreen() {
     const progress = React.useMemo(() => {
         if (!vipTables || !data.user) return null;
         const self = Number(data.user.baseUSDCents || 0n) / 100;
-        const directs = Number(data.referral?.directReferrals || 0);
+
+        // Use directsVip1 for level > 1, total directs for level 1
+        const directs = nextLevel > 1
+            ? Number(data.vip?.directsVip1 || 0)
+            : Number(data.referral?.directReferrals || 0);
+
         const team = Number(data.referral?.teamMembers || 0);
 
         const tSelf = getTableVal(vipTables.selfCents, nextLevel);
@@ -29,7 +34,7 @@ export default function VipScreen() {
         const tTeam = Number(vipTables.teamMin?.[nextLevel] || 0);
 
         return { self, directs, team, tSelf, tDirects, tTeam };
-    }, [vipTables, data.user, data.referral, nextLevel]);
+    }, [vipTables, data.user, data.referral, data.vip, nextLevel]);
 
     return (
         <div className="max-w-7xl mx-auto space-y-10 p-4 md:p-8">
@@ -312,6 +317,7 @@ function LevelCard({ level, vipTables, currentLevel, redeProgress, nextClaimAt }
     const { data } = useProtocol();
     const teamCount = Number(data.referral?.teamMembers || 0);
     const directCount = Number(data.referral?.directReferrals || 0);
+    const directVip1Count = Number(data.vip?.directsVip1 || 0);
 
     return (
         <div className={`relative group transition-all duration-500 ${isUnlocked ? 'scale-[1.01]' : ''}`}>
@@ -339,7 +345,7 @@ function LevelCard({ level, vipTables, currentLevel, redeProgress, nextClaimAt }
 
                 <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-8">
                     <LevelStat label={t('vip.self_stake')} value={`$${self.toLocaleString()}`} />
-                    <LevelStat label={level > 1 ? t('vip.directs_vip1') : t('vip.direct_referrals')} value={`${directCount} / ${level > 1 ? dv1Min : dMin}`} />
+                    <LevelStat label={level > 1 ? t('vip.directs_vip1') : t('vip.direct_referrals')} value={`${level > 1 ? directVip1Count : directCount} / ${level > 1 ? dv1Min : dMin}`} />
                     <LevelStat label={t('vip.team')} value={`${teamCount} / ${tMin}`} />
                     <LevelStat label={t('vip.one_time_bonus')} value={`$${oneTime}`} highlight={!isUnlocked} />
                     <LevelStat label={t('vip.salary')} value={t('vip.salary_frequency', { amount: salary })} />

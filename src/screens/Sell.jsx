@@ -141,16 +141,24 @@ export default SellComponent;
 
 function StatCard({ title, value, unit, icon }) {
     return (
-        <div className="bg-card rounded-2xl border border-border p-6 shadow-xl flex items-center justify-between group hover:border-muted-foreground/20 transition-all">
-            <div className="space-y-1">
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">{title}</h3>
-                <div className="text-2xl font-black text-card-foreground flex items-baseline gap-1">
-                    {value}
-                    <span className="text-xs font-black text-muted-foreground/80">{unit}</span>
+        <div className="relative group transition-all duration-500 hover:-translate-y-1">
+            {/* Colored Light Glow (Emitting from behind) */}
+            <div className="absolute -inset-3 bg-gradient-to-r from-primary/30 via-indigo-500/10 to-primary/30 rounded-[2.5rem] blur-2xl opacity-20 group-hover:opacity-80 transition-opacity duration-700" />
+
+            {/* Sharp Neon Border Accent */}
+            <div className="absolute -inset-[1px] bg-gradient-to-r from-primary/60 via-indigo-400/30 to-primary/60 rounded-2xl opacity-30 group-hover:opacity-100 transition-opacity duration-500" />
+
+            <div className="relative z-10 bg-card/90 rounded-2xl border border-border p-6 shadow-xl flex items-center justify-between group-hover:border-primary/50 transition-all duration-500 backdrop-blur-sm">
+                <div className="space-y-1 text-card-foreground">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">{title}</h3>
+                    <div className="text-2xl font-black flex items-baseline gap-1 tracking-tight group-hover:text-primary transition-colors">
+                        {value}
+                        <span className="text-xs font-black text-muted-foreground/80">{unit}</span>
+                    </div>
                 </div>
-            </div>
-            <div className="h-12 w-12 rounded-xl bg-secondary/30 border border-border flex items-center justify-center group-hover:scale-110 transition-transform group-hover:bg-secondary/50">
-                {icon}
+                <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform group-hover:bg-primary/20">
+                    {icon}
+                </div>
             </div>
         </div>
     );

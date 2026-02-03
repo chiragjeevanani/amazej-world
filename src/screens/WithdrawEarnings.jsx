@@ -2,8 +2,7 @@ import React, { useMemo, useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useProtocol } from "@/contexts/ProtocolContext";
 import { useTranslation } from "react-i18next";
-import { DollarSign } from "lucide-react"; // Assuming we might want an icon, or just strictly copy
-// If LightTile uses hardcoded styles, I'll copy them.
+import { DollarSign } from "lucide-react";
 
 function fmtUSDc(c) { return c === undefined ? "—" : (Number(c) / 100).toFixed(2); }
 function fmtTok(x) { return x === undefined ? "—" : (Number(x) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 }); }
@@ -55,9 +54,9 @@ export default function WithdrawEarningsComponent() {
         <div className="space-y-6">
             <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-[2.5rem] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
-                <div className="relative bg-card/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+                <div className="relative bg-card border border-border rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
-                        <div>
+                        <div className="text-card-foreground">
                             <h3 className="text-3xl font-black tracking-tight">{t('withdraw.title')}</h3>
                             <p className="text-muted-foreground/60 font-bold mt-2">{t('withdraw.subtitle')}</p>
                         </div>
@@ -86,9 +85,17 @@ export default function WithdrawEarningsComponent() {
 
 function GreenTile({ label, value }) {
     return (
-        <div className="p-6 bg-white/5 border border-white/5 rounded-2xl transition-all hover:bg-white/10 hover:scale-[1.02] group/tile">
-            <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">{label}</div>
-            <div className="text-2xl font-black text-emerald-400 tracking-tighter group-hover/tile:text-emerald-300 transition-colors">{value}</div>
+        <div className="relative group/tile transition-all duration-500 hover:-translate-y-1">
+            {/* Emerald Colored Light Glow (Emitting) */}
+            <div className="absolute -inset-3 bg-gradient-to-r from-emerald-500/30 via-teal-500/10 to-emerald-500/30 rounded-[2.5rem] blur-2xl opacity-20 group-hover/tile:opacity-80 transition-opacity duration-700" />
+
+            {/* Sharp Neon Emerald Border */}
+            <div className="absolute -inset-[1px] bg-gradient-to-r from-emerald-500/60 via-teal-400/20 to-emerald-500/40 rounded-2xl opacity-30 group-hover/tile:opacity-100 transition-opacity duration-500" />
+
+            <div className="relative z-10 p-6 bg-card/90 border border-border rounded-2xl transition-all duration-500 group-hover/tile:border-emerald-500/50 shadow-xl backdrop-blur-sm">
+                <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">{label}</div>
+                <div className="text-2xl font-black text-emerald-500 tracking-tighter group-hover/tile:text-emerald-400 transition-all tabular-nums">{value}</div>
+            </div>
         </div>
     );
 }

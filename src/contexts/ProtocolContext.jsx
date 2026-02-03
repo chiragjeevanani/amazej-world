@@ -231,7 +231,7 @@ export function ProtocolProvider({ children }) {
     const contractUsdtBalanceFmt = contractUsdtBalance !== undefined ? roundWithFormat(contractUsdtBalance, 2) : undefined;
 
     const [loading, setLoading] = useState({
-        approveUsdt: false, deposit: false, sell: false, claimAll: false, claimRoyalty: false, distributeTokens: false, claimPhase: false, claimReferral: false, claimVIP: false, setReferrer: false,
+        approveUsdt: false, deposit: false, sell: false, claimAll: false, claimRoyalty: false, distributeFees: false, claimPhase: false, claimReferral: false, claimVIP: false, setReferrer: false,
     });
 
 
@@ -254,6 +254,10 @@ export function ProtocolProvider({ children }) {
     const claimRoyalty = useCallback(() => runTx("claimRoyalty", "Claim Royalty Rewards", () => writeContractAsync({
         address: royalty, abi: amzGlobalRoyaltyAbi, functionName: "distributeDailyRoyalty"
     })), [royalty, writeContractAsync, runTx]);
+
+    const distributeFees = useCallback(() => runTx("distributeFees", "Distribute Fees", () => writeContractAsync({
+        address: treasury, abi: treasuryAbi, functionName: "distribute", args: [usdt]
+    })), [treasury, usdt, writeContractAsync, runTx]);
 
     const approveUsdtIfNeeded = useCallback(async (cents, decs = usdtDecimals) => {
         if (!address || !usdt || !main) throw new Error("Missing config");
@@ -298,8 +302,8 @@ export function ProtocolProvider({ children }) {
 
     const actions = useMemo(() => ({
         refetch: () => { refetch(); vipRefetch(); royaltyRefetch(); earningRefetch(); history.refetch(); },
-        loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty,
-    }), [refetch, vipRefetch, royaltyRefetch, earningRefetch, history, loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty]);
+        loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty, distributeFees,
+    }), [refetch, vipRefetch, royaltyRefetch, earningRefetch, history, loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty, distributeFees]);
 
     const vipProgressTuple = V(2);
     const redeProgressTuple = V(3);
