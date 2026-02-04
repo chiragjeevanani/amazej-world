@@ -64,8 +64,9 @@ export function ProtocolProvider({ children }) {
             { address: m, abi: mainAbi, functionName: "getDeepReferralStatus", args: [acct] },
             { address: m, abi: mainAbi, functionName: "claimsBlocked", args: [acct, 0] },
             { address: u, abi: erc20Abi, functionName: "balanceOf", args: [royalty] },
+            { address: treasury, abi: treasuryAbi, functionName: "owner" },
         ];
-    }, [enabled, address, main, usdt, royalty]);
+    }, [enabled, address, main, usdt, royalty, treasury]);
 
     const { data: mcData, refetch } = useReadContracts({
         contracts: CALLS,
@@ -145,6 +146,7 @@ export function ProtocolProvider({ children }) {
     const deepReferralStatus = R(15);
     const claimsBlocked = R(16);
     const usdtRoyalty = R(17);
+    const owner = R(18);
 
     const vipTuple = V(0);
     const claimVipUSDT = V(1);
@@ -360,7 +362,8 @@ export function ProtocolProvider({ children }) {
         vipProgress: vipProgressTuple,
         vipProg, // Added for VIP screen compatibility
         redeProgress: redeProgressTuple,
-        royalty: royaltyInfo
+        royalty: royaltyInfo,
+        owner
     };
 
     return <ProtocolContext.Provider value={{ data, actions }}>{children}</ProtocolContext.Provider>;

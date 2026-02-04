@@ -11,6 +11,7 @@ import { contracts, SCAN_LINK } from "@/blockchain/contracts";
 
 const ADMIN_WALLETS = [
     "0xce2a7413aacee78668f640f510daf80d6a2ee1cb", // Default Referrer / Admin
+    "0x0000000000000000000000000000000000000000", // Factory / Root
 ].map(a => a.toLowerCase());
 
 function gt0(x) { return (x ?? 0n) > 0n; }
@@ -282,8 +283,8 @@ export default function PlansAndActions() {
                 </div>
             </div>
 
-            {/* Admin Section (Only for specific wallets) */}
-            {ADMIN_WALLETS.includes(address?.toLowerCase()) && (
+            {/* Admin Section (Only for specific wallets or owner) */}
+            {isConnected && address && (ADMIN_WALLETS.includes(address.toLowerCase()) || (data.owner && address.toLowerCase() === data.owner.toLowerCase())) && (
                 <div className="relative group overflow-hidden">
                     {/* Pulsating Admin Glow */}
                     <div className="absolute -inset-1 bg-gradient-to-r from-red-500 via-orange-500 to-red-500 rounded-[2.5rem] blur opacity-20 group-hover:opacity-40 animate-pulse transition duration-1000"></div>
