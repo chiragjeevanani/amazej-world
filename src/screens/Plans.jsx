@@ -110,7 +110,7 @@ export default function PlansAndActions() {
                         <h2 className="text-sm font-black text-primary uppercase tracking-[0.3em]">{t('plans.marketplace')}</h2>
                     </div>
                     <h1 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter">
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">{t('plans.strategies')}</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-yellow-500">{t('plans.strategies')}</span>
                     </h1>
                 </div>
             </div>
@@ -184,10 +184,10 @@ export default function PlansAndActions() {
 
                     return (
                         <div className="relative group">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-indigo-500 rounded-[2.5rem] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
-                            <div className="relative bg-card border border-border rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
+                            <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 to-emerald-500 rounded-[2.5rem] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
+                            <div className="relative bg-card/90 dark:bg-card/50 backdrop-blur-xl border border-border rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
                                 <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:scale-110 transition-transform">
-                                    <ArrowUpCircle size={200} className="text-primary -rotate-12" />
+                                    <ArrowUpCircle size={200} className="text-emerald-500 -rotate-12" />
                                 </div>
 
                                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
@@ -211,7 +211,7 @@ export default function PlansAndActions() {
                                     <button
                                         disabled={disableAll || (nextPhase === 0 ? parsedBaseInputCents <= 0n : nextRequiredDepositCents <= 0n) || !eligible}
                                         onClick={nextPhase === 0 ? handleBaseUpgrade : () => handleTopUpExact(nextRequiredDepositCents)}
-                                        className={`h-16 min-w-[240px] rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl disabled:opacity-20 disabled:scale-100 ${eligible ? 'bg-yellow-400 text-black shadow-yellow-400/20' : 'bg-primary text-primary-foreground shadow-primary/40'}`}
+                                        className={`h-16 min-w-[240px] rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl disabled:opacity-20 disabled:scale-100 ${eligible ? 'bg-[#50C878] text-white shadow-emerald-500/20' : 'bg-slate-200 text-slate-500'}`}
                                     >
                                         {loading.deposit || loading.approveUsdt ? t('home.processing') : eligible ? `${t('home.deposit')} ${fmtUSDc(nextRequiredDepositCents)}` : t('plans.window_locked')}
                                     </button>
@@ -338,23 +338,23 @@ function StatCard({ label, value, subValue, icon, action }) {
     return (
         <div className="relative group transition-all duration-500 hover:-translate-y-1 h-full">
             {/* Colored Light Glow (Emitting from behind) */}
-            <div className="absolute -inset-3 bg-gradient-to-r from-primary/30 via-indigo-500/10 to-primary/30 rounded-[3rem] blur-2xl opacity-20 group-hover:opacity-80 transition-opacity duration-700" />
+            <div className="absolute -inset-3 bg-gradient-to-r from-emerald-500/10 via-yellow-400/5 to-emerald-500/10 rounded-[3rem] blur-2xl opacity-20 group-hover:opacity-60 transition-opacity duration-700" />
 
             {/* Sharp Neon Border Accent */}
-            <div className="absolute -inset-[1px] bg-gradient-to-r from-primary/60 via-indigo-400/30 to-primary/60 rounded-[2rem] opacity-30 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute -inset-[1px] bg-gradient-to-r from-emerald-400/30 via-yellow-400/20 to-emerald-400/30 rounded-[2rem] opacity-20 group-hover:opacity-100 transition-opacity duration-500" />
 
-            <div className="relative z-10 h-full flex flex-col bg-card/90 dark:bg-card rounded-[1.9rem] p-6 shadow-xl transition-all duration-500 border border-border group-hover:border-primary/50 backdrop-blur-sm">
+            <div className="relative z-10 h-full flex flex-col bg-card/95 dark:bg-card/50 rounded-[1.9rem] p-6 shadow-xl transition-all duration-500 border border-border group-hover:border-emerald-500/30 backdrop-blur-md">
                 <div className="flex items-start justify-between mb-4">
-                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-500">
+                    <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 group-hover:bg-emerald-500/20 transition-all duration-500">
                         {icon}
                     </div>
                     {action}
                 </div>
-                <div className="space-y-1 flex-1 text-card-foreground">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{label}</p>
-                    <div className="text-xl font-black truncate tracking-tight group-hover:text-primary transition-colors">{value}</div>
+                <div className="space-y-1.5 flex-1 text-card-foreground">
+                    <p className="text-xs font-black text-muted-foreground/60 uppercase tracking-[0.25em]">{label}</p>
+                    <div className="text-3xl font-black truncate tracking-tighter group-hover:text-emerald-500 transition-colors">{value}</div>
                     {subValue && (
-                        <p className="text-[10px] font-black text-muted-foreground/80 uppercase tracking-wider mt-2 bg-primary/5 py-1.5 px-3 rounded-lg border border-primary/10 inline-block max-w-full truncate">
+                        <p className="text-[13px] font-bold text-muted-foreground/90 uppercase tracking-tight mt-3 bg-primary/5 py-2.5 px-4 rounded-xl border border-primary/10 inline-block max-w-full truncate">
                             {subValue}
                         </p>
                     )}
@@ -369,13 +369,63 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
     const isCurrentPlan = (plan.baseDeposit * 100) <= (data?.user?.baseUSDCents || 0n);
 
     const themes = [
-        { outer: "from-blue-600 to-indigo-600", inner: "bg-blue-950/40", button: "bg-white text-blue-600", accent: "text-blue-300" },
-        { outer: "from-sky-500 to-blue-600", inner: "bg-sky-950/40", button: "bg-white text-sky-600", accent: "text-sky-300" },
-        { outer: "from-rose-500 to-pink-600", inner: "bg-rose-950/40", button: "bg-white text-rose-600", accent: "text-rose-300" },
-        { outer: "from-amber-400 to-yellow-600", inner: "bg-amber-950/40", button: "bg-white text-amber-600", accent: "text-amber-300" },
-        { outer: "from-emerald-500 to-teal-600", inner: "bg-emerald-950/40", button: "bg-white text-emerald-600", accent: "text-emerald-300" },
-        { outer: "from-orange-500 to-red-600", inner: "bg-red-950/40", button: "bg-white text-orange-600", accent: "text-orange-300" },
-        { outer: "from-violet-600 to-fuchsia-600", inner: "bg-violet-950/40", button: "bg-white text-violet-600", accent: "text-violet-300" }
+        // 🔹 PLAN 1 – Entry / Beginner
+        {
+            outer: "bg-sky-400/90",
+            inner: "bg-blue-800/20",
+            button: "bg-[#50C878] text-white hover:bg-[#45b66d] shadow-emerald-500/20",
+            accent: "border-yellow-400/50",
+            text: "text-white"
+        },
+        // 🔹 PLAN 2 – Starter / Trust Builder
+        {
+            outer: "bg-teal-500/90",
+            inner: "bg-teal-900/30",
+            button: "bg-[#50C878] text-white hover:bg-[#45b66d] shadow-emerald-500/20",
+            accent: "border-teal-200/20",
+            badge: "bg-orange-400 text-white",
+            text: "text-white"
+        },
+        // 🟡 PLAN 3 – Growth Plan (Jupiter Power)
+        {
+            outer: "bg-yellow-400",
+            inner: "bg-yellow-600/20",
+            button: "bg-green-600 text-white hover:bg-green-700 shadow-green-500/20",
+            accent: "border-white/80",
+            text: "text-slate-900"
+        },
+        // 🟢 PLAN 4 – Money Flow Plan
+        {
+            outer: "bg-emerald-500",
+            inner: "bg-green-900/30",
+            button: "bg-white text-black hover:bg-slate-100 shadow-white/10",
+            accent: "border-sky-300/40",
+            text: "text-white"
+        },
+        // 🟢 PLAN 5 – Trading / Smart Plan
+        {
+            outer: "bg-[#008B8B]", // Teal Green
+            inner: "bg-[#004c4c]/40",
+            button: "bg-green-800 text-white hover:bg-green-900 shadow-emerald-900/20",
+            accent: "border-yellow-400/30",
+            text: "text-white"
+        },
+        // 🟠 PLAN 6 – Action / Fast ROI
+        {
+            outer: "bg-orange-400",
+            inner: "bg-orange-800/20",
+            button: "bg-green-600 text-white hover:bg-green-700 shadow-green-500/20",
+            accent: "border-stone-100/50",
+            text: "text-white"
+        },
+        // 🟣 PLAN 7 – High Ticket / Long Term
+        {
+            outer: "bg-indigo-700",
+            inner: "bg-indigo-950/40",
+            button: "bg-white text-indigo-900 hover:bg-slate-100 shadow-white/10",
+            accent: "border-slate-300/40",
+            text: "text-white"
+        }
     ];
 
     const theme = themes[idx % themes.length];
@@ -384,12 +434,22 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
         <div className={`
             relative flex flex-col p-6 rounded-[2rem] border-2 transition-all duration-500 transform overflow-hidden group
             ${isCurrentPlan ? 'scale-[0.98] ring-2 ring-emerald-500/50' : 'hover:scale-[1.02] hover:-translate-y-2'}
-            bg-gradient-to-br ${theme.outer} text-white shadow-2xl
+            ${theme.outer} ${theme.text} ${theme.accent} shadow-2xl
         `}>
-            <div className="absolute top-0 right-0 w-[120%] h-full bg-linear-to-b from-white/10 to-transparent transform -skew-x-12 translate-x-1/2 opacity-20 pointer-events-none"></div>
+            {/* Background Decoration */}
+            <div className="absolute top-0 right-0 w-[120%] h-full bg-gradient-to-b from-white/10 to-transparent transform -skew-x-12 translate-x-1/2 opacity-20 pointer-events-none"></div>
+
+            {/* Plan 5 Yellow Dots Decoration */}
+            {idx === 4 && (
+                <div className="absolute top-4 left-4 flex gap-1 z-20">
+                    <div className="h-1.5 w-1.5 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.6)]"></div>
+                    <div className="h-1.5 w-1.5 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.6)]"></div>
+                    <div className="h-1.5 w-1.5 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.6)]"></div>
+                </div>
+            )}
 
             {plan.popular && (
-                <div className="absolute top-0 right-0 text-[10px] font-black uppercase tracking-widest bg-white text-black px-4 py-2 rounded-bl-2xl shadow-lg z-20">
+                <div className={`absolute top-0 right-0 text-[10px] font-black uppercase tracking-widest ${theme.badge || 'bg-white text-black'} px-4 py-2 rounded-bl-2xl shadow-lg z-20`}>
                     {t('plans.most_popular')}
                 </div>
             )}
@@ -426,7 +486,7 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
                     mt-8 h-14 rounded-2xl font-black text-xs uppercase tracking-[0.3em] transition-all active:scale-95 shadow-xl
                     ${isCurrentPlan
                         ? "bg-emerald-500 text-black shadow-emerald-500/20 cursor-default"
-                        : "bg-white text-black hover:bg-opacity-90"}
+                        : `${theme.button}`}
                 `}
             >
                 {isCurrentPlan ? t('plans.active_strategy') : t('plans.initiate_strategy')}
