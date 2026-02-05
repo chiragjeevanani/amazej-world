@@ -302,7 +302,7 @@ function RedeCard({ level, vipTables, userRede, teamRedeCount }) {
                     <div className="space-y-1">
                         <span className={`text-[10px] font-black uppercase tracking-widest ${theme.muted}`}>{t('vip.salary')}</span>
                         <div className="text-sm font-black">
-                            {claimsMade}/{maxClaims} ({t('vip.salary_frequency', { amount: salaryPerClaim })})
+                            {Number(claimsMade) > 255 ? Math.floor(Number(claimsMade) / (Number(salaryPerClaim) * 100 || 1)) : claimsMade}/{maxClaims} ({t('vip.salary_frequency', { amount: salaryPerClaim })})
                         </div>
                     </div>
                 </div>
@@ -420,7 +420,7 @@ function LevelCard({ level, vipTables, currentLevel, redeProgress, nextClaimAt }
                     />
                     <LevelStat
                         label={t('vip.salary')}
-                        value={`${data.vipProgress?.[0] === level ? (Number(data.vipProgress?.[1] || 0)) : (data.vip?.currentLevel >= level ? maxClaims : 0)} / ${maxClaims} (${t('vip.salary_frequency', { amount: salary })})`}
+                        value={`${data.vipProgress?.[0] === level ? (Number(data.vipProgress?.[1] || 0) > 255 ? Math.floor(Number(data.vipProgress?.[1]) / Number(salaryCents || 1n)) : Number(data.vipProgress?.[1] || 0)) : (data.vip?.currentLevel >= level ? maxClaims : 0)} / ${maxClaims} (${t('vip.salary_frequency', { amount: salary })})`}
                         theme={theme}
                     />
                     <div className="space-y-1">
