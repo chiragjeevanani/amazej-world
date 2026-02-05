@@ -412,7 +412,7 @@ function LevelCard({ level, vipTables, currentLevel, redeProgress, nextClaimAt }
                     />
                     <LevelStat
                         label={t('vip.salary')}
-                        value={`${data.vipProg?.[level]?.claimsMade || 0}/${vipTables.redeAllowed?.[level - 1] || 4} (${t('vip.salary_frequency', { amount: salary })})`}
+                        value={`${data.vipProgress?.[0] === level ? (Number(data.vipProgress?.[1] || 0)) : (data.vip?.currentLevel >= level ? (vipTables.redeAllowed?.[level - 1] || 4) : 0)} / ${vipTables.redeAllowed?.[level - 1] || 4} (${t('vip.salary_frequency', { amount: salary })})`}
                         theme={theme}
                     />
                     <div className="space-y-1">
