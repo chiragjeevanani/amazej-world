@@ -56,13 +56,6 @@ export default function ReferEarnComponent() {
                         {t('refer.refer_earn')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400">{t('refer.earn_highlight')}</span>
                     </h1>
                 </div>
-                <div className="bg-card/40 backdrop-blur-xl border border-white/10 rounded-2xl px-6 py-4 shadow-xl">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{t('refer.status')}</p>
-                    <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-xl font-black">{t('refer.network_active')}</span>
-                    </div>
-                </div>
             </div>
 
             {/* Main Content Grid */}

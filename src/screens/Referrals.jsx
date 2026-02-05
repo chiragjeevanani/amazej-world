@@ -48,6 +48,7 @@ export default function ReferralsComponent() {
                     value={String(data.referral?.directReferrals ?? 0)}
                     icon={<Users className="text-blue-400" />}
                     trend={`${t('referrals.active')}: ${data.vip?.directsFirst ?? 0}`}
+                    trendSecondary={`${t('referrals.inactive')}: ${Math.max(0, Number(data.referral?.directReferrals ?? 0) - Number(data.vip?.directsFirst ?? 0))}`}
                     description={t('referrals.directly_referred')}
                 />
                 <PerformanceCard
@@ -137,11 +138,18 @@ function PerformanceCard({ label, value, icon, description, trend }) {
                     <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-white/20 transition-colors">
                         {icon}
                     </div>
-                    {trend && (
-                        <span className="text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-lg uppercase tracking-widest">
-                            {trend}
-                        </span>
-                    )}
+                    <div className="flex flex-col items-end gap-1.5">
+                        {trend && (
+                            <span className="text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-lg uppercase tracking-widest">
+                                {trend}
+                            </span>
+                        )}
+                        {trendSecondary && (
+                            <span className="text-[10px] font-black text-rose-500 bg-rose-500/10 px-2 py-1 rounded-lg uppercase tracking-widest whitespace-nowrap">
+                                {trendSecondary}
+                            </span>
+                        )}
+                    </div>
                 </div>
                 <div className="space-y-1">
                     <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{label}</p>

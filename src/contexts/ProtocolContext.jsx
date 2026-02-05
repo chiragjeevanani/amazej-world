@@ -332,6 +332,8 @@ export function ProtocolProvider({ children }) {
                 directsFirst: vipDataState[2],
                 directsVip1: vipDataState[3],
                 teamFirst: vipDataState[4],
+                levelReachedAt: vipDataState[6],
+                oneTimeClaimed: vipDataState[7],
                 vip: vipDataState[8], // WindowView struct
                 rede: vipDataState[9]  // WindowView struct
             };

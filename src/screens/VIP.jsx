@@ -230,15 +230,18 @@ export default function VipScreen() {
 
             {/* Redeposit Rewards Section */}
             <div className="space-y-6">
-                <div className="flex items-center justify-between px-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-2">
                     <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500">
-                            <RotateCcw size={18} />
+                        <div className="h-10 w-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500 shadow-inner">
+                            <RotateCcw size={22} />
                         </div>
                         <h2 className="text-2xl font-black tracking-tight">{t('vip.redeposit_rewards')}</h2>
                     </div>
-                    <div className="text-xs font-black uppercase tracking-widest text-muted-foreground bg-white/5 px-4 py-2 rounded-xl border border-white/10">
-                        {t('vip.current_team_count')}: <span className="text-orange-500">{data.vip?.rede?.redeTeamCount ? Number(data.vip.rede.redeTeamCount) : 0}</span>
+                    <div className="bg-orange-500/5 backdrop-blur-md border border-orange-500/20 px-6 py-3 rounded-2xl shadow-sm flex flex-col items-center sm:items-end group hover:border-orange-500/40 transition-all duration-300">
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1">{t('vip.current_team_count')}</span>
+                        <div className="text-2xl font-black text-orange-500 tabular-nums leading-none">
+                            {data.vip?.rede?.redeTeamCount ? Number(data.vip.rede.redeTeamCount) : 0}
+                        </div>
                     </div>
                 </div>
 
@@ -296,7 +299,7 @@ function RedeCard({ level, vipTables, userRede, teamRedeCount }) {
                     <div className="space-y-1">
                         <span className={`text-[10px] font-black uppercase tracking-widest ${theme.muted}`}>{t('vip.salary')}</span>
                         <div className="text-sm font-black">
-                            {t('vip.salary_frequency', { amount: salaryPerClaim })}
+                            {claimsMade}/{maxClaims} ({t('vip.salary_frequency', { amount: salaryPerClaim })})
                         </div>
                     </div>
                 </div>
@@ -401,8 +404,17 @@ function LevelCard({ level, vipTables, currentLevel, redeProgress, nextClaimAt }
                     <LevelStat label={t('vip.self_stake')} value={`$${self.toLocaleString()}`} theme={theme} />
                     <LevelStat label={level > 1 ? t('vip.directs_vip1') : t('vip.direct_referrals')} value={`${level > 1 ? directVip1Count : directCount} / ${level > 1 ? dv1Min : dMin}`} theme={theme} />
                     <LevelStat label={t('vip.team')} value={`${teamCount} / ${tMin}`} theme={theme} />
-                    <LevelStat label={t('vip.one_time_bonus')} value={`$${oneTime}`} highlight={!isUnlocked} theme={theme} />
-                    <LevelStat label={t('vip.salary')} value={t('vip.salary_frequency', { amount: salary })} theme={theme} />
+                    <LevelStat
+                        label={t('vip.one_time_bonus')}
+                        value={data.vip?.oneTimeClaimed?.[level - 1] ? `Claimed (${oneTime})` : `$${oneTime}`}
+                        highlight={!isUnlocked && !data.vip?.oneTimeClaimed?.[level - 1]}
+                        theme={theme}
+                    />
+                    <LevelStat
+                        label={t('vip.salary')}
+                        value={`${data.vipProg?.[level]?.claimsMade || 0}/${vipTables.redeAllowed?.[level - 1] || 4} (${t('vip.salary_frequency', { amount: salary })})`}
+                        theme={theme}
+                    />
                     <div className="space-y-1">
                         <span className={`text-[10px] font-black uppercase tracking-widest block ${theme.muted}`}>{t('vip.next_payout')}</span>
                         <div className="text-sm font-black tabular-nums">

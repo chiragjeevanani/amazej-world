@@ -492,7 +492,7 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
             )}
 
             <div className="mb-8 relative z-10">
-                <h3 className="text-[11px] font-black uppercase tracking-[0.2em] opacity-70 mb-2">{plan.name}</h3>
+                <h3 className="text-[13px] font-black uppercase tracking-[0.2em] opacity-70 mb-2">{plan.name}</h3>
                 <div className="flex items-center gap-2">
                     <span className="text-3xl font-black tracking-tighter italic">{plan.baseDeposit + 10} $ USDT</span>
                 </div>
@@ -501,7 +501,7 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
             <div className="space-y-4 flex-1 relative z-10">
                 <div className={`flex items-center justify-between p-4 rounded-2xl backdrop-blur-xl border border-white/10 ${theme.inner}`}>
                     <div className="space-y-0.5">
-                        <span className="text-[10px] font-black uppercase tracking-widest opacity-60">{t('plans.step_reward')}</span>
+                        <span className="text-[12px] font-black uppercase tracking-widest opacity-60">{t('plans.step_reward')}</span>
                         <div className="text-xl font-black tracking-tight">{plan.stepReward} $ USDT</div>
                     </div>
                 </div>
@@ -509,8 +509,8 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
                 <div className="grid grid-cols-3 gap-2">
                     {plan.topUps.map((top, i) => (
                         <div key={i} className={`flex flex-col items-center justify-center p-3 rounded-xl border border-white/5 backdrop-blur-md ${theme.inner}`}>
-                            <span className="text-[8px] font-black opacity-50 mb-1">ST {top.step}</span>
-                            <span className="text-[10px] font-black">{top.amount} $ USDT</span>
+                            <span className="text-[10px] font-black opacity-50 mb-1">ST {top.step}</span>
+                            <span className="text-[13px] font-black">{top.amount} $ USDT</span>
                         </div>
                     ))}
                 </div>

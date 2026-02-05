@@ -71,9 +71,7 @@ export default function WithdrawEarningsComponent() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <GreenTile label={t('withdraw.available_usd')} value={`$${fmtUSDc(withdraw?.availableWithdraw)}`} />
-                        <GreenTile label={t('withdraw.available_ama')} value={fmtTok(withdraw?.availableWithdrawTokens)} />
                         <GreenTile label={t('withdraw.total_withdrawn_usd')} value={`$${fmtUSDc(withdraw?.totalWithdrawn)}`} />
-                        <GreenTile label={t('withdraw.total_withdrawn_ama')} value={fmtTok(withdraw?.totalTokensWithdrawn)} />
                         <GreenTile label={t('withdraw.last_claimed')} value={fmtDate(withdraw?.lastReferralClaimAt)} />
                         <GreenTile label={t('withdraw.next_claim')} value={nextRefAt === 0n || cd.due ? t('withdraw.not_available') : fmtDate(nextRefAt)} />
                     </div>

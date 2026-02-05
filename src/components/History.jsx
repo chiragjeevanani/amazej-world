@@ -198,7 +198,7 @@ export default function HistoryTabs({ onlyShow }) {
                             <DataCard key={i}>
                                 <DataLine label={t('history.time')} value={fmtDate(s.claimedAt)} />
                                 <DataLine label={t('history.amount')} value={fmtUSDc(s.claimAmount)} highlight />
-                                <DataLine label={t('history.rank')} value={`VIP ${Number(s.level)}`} />
+                                <DataLine label={t('history.rank')} value={`${Number(s.level || 0)}`} />
                             </DataCard>
                         ))}
                     </HistorySection>
@@ -210,7 +210,7 @@ export default function HistoryTabs({ onlyShow }) {
                             <DataCard key={i}>
                                 <DataLine label={t('history.time')} value={fmtDate(r.claimedAt)} />
                                 <DataLine label={t('history.amount')} value={fmtUSDc(r.claimAmount)} highlight />
-                                <DataLine label={t('history.rank')} value={`VIP ${Number(r.level)}`} />
+                                <DataLine label={t('history.rank')} value={`${Number(r.level || 0)}`} />
                             </DataCard>
                         ))}
                     </HistorySection>
@@ -221,7 +221,7 @@ export default function HistoryTabs({ onlyShow }) {
                         {withdraws.map((w, i) => (
                             <DataCard key={i}>
                                 <DataLine label={t('history.time')} value={fmtDate(w.claimedAt)} />
-                                <DataLine label={t('history.usdt')} value={fmtUSDc(w.claimAmount)} highlight />
+                                <DataLine label={t('history.usdt_withdrawal')} value={fmtUSDc(w.claimAmount)} highlight />
                                 <DataLine label={t('history.net_ama')} value={fmtToken18(w.netTokens)} />
                                 <DataLine label={t('history.fee_ama')} value={fmtToken18(w.feeTokens)} />
                             </DataCard>
