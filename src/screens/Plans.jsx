@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { formatUnits } from "viem";
 import { useProtocol } from "@/contexts/ProtocolContext";
 import { roundWithFormat, shortAddress } from "@/blockchain/roundsNumber";
@@ -9,9 +9,10 @@ import { useTranslation } from "react-i18next";
 import { Copy, CheckCircle2, LayoutGrid, Link, Sparkles, TrendingUp, Wallet, ArrowUpCircle, ExternalLink, ShieldCheck, RotateCcw } from "lucide-react";
 import { contracts, SCAN_LINK } from "@/blockchain/contracts";
 
+// Admin wallets that can access admin features
+// NOTE: Primarily relies on treasury contract owner check from data.owner
 const ADMIN_WALLETS = [
     "0xce2a7413aacee78668f640f510daf80d6a2ee1cb", // Default Referrer / Admin
-    "0x0000000000000000000000000000000000000000", // Factory / Root
 ].map(a => a.toLowerCase());
 
 function gt0(x) { return (x ?? 0n) > 0n; }
@@ -63,6 +64,22 @@ export default function PlansAndActions() {
     const parsedBaseInputCents = useMemo(() => data.user?.baseUSDCents || 0n, [data.user?.baseUSDCents]);
 
     const disableAll = loading.deposit || loading.approveUsdt || loading.claimAll || loading.claimPhase || loading.claimReferral || loading.claimVIP;
+
+    // Admin check debug logging
+    useEffect(() => {
+        if (address) {
+            const isAdmin = ADMIN_WALLETS.includes(address.toLowerCase());
+            const isOwner = data.owner && address.toLowerCase() === data.owner.toLowerCase();
+            const showAdminSection = isAdmin || isOwner;
+            console.log('🔐 Admin Status Check:', {
+                address: address.toLowerCase(),
+                isInAdminList: isAdmin,
+                isContractOwner: isOwner,
+                contractOwner: data.owner?.toLowerCase(),
+                showAdminSection
+            });
+        }
+    }, [address, data.owner]);
 
     async function handleSelectPlan(usd) {
         const cents = BigInt(usd) * 100n;
@@ -283,21 +300,21 @@ export default function PlansAndActions() {
                 </div>
             </div>
 
-            {/* Admin Section (Only for specific wallets or owner) */}
+            {/* Admin Section (Only for treasury owner or admin wallets) */}
             {isConnected && address && (ADMIN_WALLETS.includes(address.toLowerCase()) || (data.owner && address.toLowerCase() === data.owner.toLowerCase())) && (
-                <div className="relative group overflow-hidden">
-                    {/* Pulsating Admin Glow */}
-                    <div className="absolute -inset-1 bg-gradient-to-r from-red-500 via-orange-500 to-red-500 rounded-[2.5rem] blur opacity-20 group-hover:opacity-40 animate-pulse transition duration-1000"></div>
+                <div className="relative group overflow-visible z-10 min-h-[200px]">
+                    {/* Enhanced Pulsating Admin Glow */}
+                    <div className="absolute -inset-1 bg-gradient-to-r from-red-500 via-orange-500 to-red-500 rounded-[2.5rem] blur opacity-30 group-hover:opacity-50 animate-pulse transition duration-1000"></div>
 
-                    <div className="relative bg-card border border-red-500/20 rounded-[2.5rem] p-8 md:p-12 shadow-2xl overflow-hidden">
+                    <div className="relative bg-card/95 dark:bg-card/80 backdrop-blur-xl border-2 border-red-500/30 rounded-[2.5rem] p-8 md:p-12 shadow-2xl overflow-hidden">
                         {/* Background Decoration */}
-                        <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none group-hover:scale-110 transition-transform group-hover:rotate-12 duration-1000">
+                        <div className="absolute top-0 right-0 p-12 opacity-[0.05] pointer-events-none group-hover:scale-110 transition-transform group-hover:rotate-12 duration-1000">
                             <ShieldCheck size={240} className="text-red-500" />
                         </div>
 
                         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
                             <div className="space-y-4">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-[10px] font-black uppercase tracking-widest text-red-500">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/40 text-[10px] font-black uppercase tracking-widest text-red-500">
                                     <span className="relative flex h-2 w-2">
                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                                         <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
@@ -315,7 +332,7 @@ export default function PlansAndActions() {
                             <button
                                 disabled={loading.distributeFees}
                                 onClick={() => actions.distributeFees()}
-                                className="group/btn relative h-16 min-w-[240px] rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl disabled:opacity-50 bg-red-600 text-white shadow-red-600/20 overflow-hidden"
+                                className="group/btn relative h-16 min-w-[240px] rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-2xl disabled:opacity-50 bg-red-600 text-white shadow-red-600/40 overflow-hidden border-2 border-red-500 z-20"
                             >
                                 <div className="flex items-center justify-center gap-3 relative z-10">
                                     {loading.distributeFees ? (
