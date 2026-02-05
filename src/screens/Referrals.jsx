@@ -129,7 +129,7 @@ export default function ReferralsComponent() {
     );
 }
 
-function PerformanceCard({ label, value, icon, description, trend }) {
+function PerformanceCard({ label, value, icon, description, trend, trendSecondary }) {
     return (
         <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-indigo-500 rounded-3xl blur opacity-0 group-hover:opacity-10 transition duration-500"></div>
