@@ -198,7 +198,8 @@ export default function HistoryTabs({ onlyShow }) {
                             <DataCard key={i}>
                                 <DataLine label={t('history.time')} value={fmtDate(s.claimedAt)} />
                                 <DataLine label={t('history.amount')} value={fmtUSDc(s.claimAmount)} highlight />
-                                <DataLine label={t('history.rank')} value={`${Number(s.level || 0)}`} />
+                                <DataLine label={t('history.rank')} value={`VIP${Number(s.period || 0)}`} />
+                                <DataLine label={t('history.type')} value={s.oneTime ? t('history.team_reward') : t('history.salary')} />
                             </DataCard>
                         ))}
                     </HistorySection>

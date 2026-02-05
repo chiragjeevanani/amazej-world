@@ -346,6 +346,9 @@ i18n
                         net_ama: "Net USDT",
                         fee_ama: "burn USDT",
                         tokens_sold: "Tokens Sold",
+                        type: "Type",
+                        salary: "Salary",
+                        team_reward: "Team Reward",
                         no_activity: "No Activity Logged"
                     }
                 }
@@ -475,6 +478,9 @@ i18n
                         net_ama: "Net USDT",
                         fee_ama: "burn USDT",
                         tokens_sold: "बेचे गए टोकन",
+                        type: "प्रकार",
+                        salary: "वेतन",
+                        team_reward: "टीम पुरस्कार",
                         no_activity: "कोई गतिविधि नहीं"
                     },
                     royalty: {
