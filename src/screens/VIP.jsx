@@ -7,6 +7,58 @@ function fmtUSD(usd) { return "USDT " + usd.toLocaleString(undefined, { minimumF
 function fmtUSDCents(c) { return "USDT " + (Number(c ?? 0n) / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 function numUSDCents(c) { return (Number(c ?? 0n) / 100); }
 
+const VIP_THEMES = [
+    {
+        outer: "bg-sky-400/90",
+        inner: "bg-blue-800/20",
+        accent: "border-yellow-400/50",
+        text: "text-white",
+        muted: "text-white/60"
+    },
+    {
+        outer: "bg-teal-500/90",
+        inner: "bg-teal-900/30",
+        accent: "border-teal-200/20",
+        text: "text-white",
+        muted: "text-white/60"
+    },
+    {
+        outer: "bg-yellow-400",
+        inner: "bg-yellow-600/20",
+        accent: "border-white/80",
+        text: "text-slate-900",
+        muted: "text-slate-900/60"
+    },
+    {
+        outer: "bg-emerald-500",
+        inner: "bg-green-900/30",
+        accent: "border-sky-300/40",
+        text: "text-white",
+        muted: "text-white/60"
+    },
+    {
+        outer: "bg-[#008B8B]",
+        inner: "bg-[#004c4c]/40",
+        accent: "border-yellow-400/30",
+        text: "text-white",
+        muted: "text-white/60"
+    },
+    {
+        outer: "bg-orange-400",
+        inner: "bg-orange-800/20",
+        accent: "border-stone-100/50",
+        text: "text-white",
+        muted: "text-white/60"
+    },
+    {
+        outer: "bg-indigo-700",
+        inner: "bg-indigo-950/40",
+        accent: "border-slate-300/40",
+        text: "text-white",
+        muted: "text-white/60"
+    }
+];
+
 export default function VipScreen() {
     const { t } = useTranslation();
     const { data, actions } = useProtocol();
@@ -217,31 +269,32 @@ function RedeCard({ level, vipTables, userRede, teamRedeCount }) {
 
     const claimsMade = userRede?.level === level ? Number(userRede.claimsMade) : 0;
     const isLevelActive = (userRede?.level === level && userRede?.open);
+    const theme = VIP_THEMES[(level - 1) % VIP_THEMES.length];
 
     return (
-        <div className="bg-card/30 backdrop-blur-md border border-white/5 rounded-2xl p-5 group hover:border-orange-500/30 transition-all">
+        <div className={`backdrop-blur-md border-[1.5px] rounded-2xl p-5 group transition-all ${theme.outer} ${theme.text} ${theme.accent} shadow-xl hover:scale-[1.01]`}>
             <div className="flex flex-col sm:flex-row justify-between gap-4">
                 <div className="flex flex-col gap-1 min-w-[100px]">
-                    <h4 className="text-lg font-black text-foreground">VIP {level}</h4>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-orange-500/60 flex items-center gap-1">
-                        <div className="h-1 w-1 rounded-full bg-current" />
+                    <h4 className="text-xl font-black italic">VIP {level}</h4>
+                    <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1 ${theme.muted}`}>
+                        <div className="h-1.5 w-1.5 rounded-full bg-current" />
                         {t('vip.qualification')}
                     </span>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 flex-1 gap-6">
                     <div className="space-y-1">
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('vip.self_stake')}</span>
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${theme.muted}`}>{t('vip.self_stake')}</span>
                         <div className="text-sm font-black">${self.toLocaleString()}</div>
                     </div>
                     <div className="space-y-1">
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('vip.team')}</span>
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${theme.muted}`}>{t('vip.team')}</span>
                         <div className="text-sm font-black">
-                            {teamRedeCount ?? 0} <span className="text-muted-foreground/40">/</span> {tMin}
+                            {teamRedeCount ?? 0} <span className="opacity-40">/</span> {tMin}
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('vip.salary')}</span>
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${theme.muted}`}>{t('vip.salary')}</span>
                         <div className="text-sm font-black">
                             {t('vip.salary_frequency', { amount: salaryPerClaim })}
                         </div>
@@ -250,8 +303,8 @@ function RedeCard({ level, vipTables, userRede, teamRedeCount }) {
 
                 <div className="flex items-center justify-end">
                     <div className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all ${isLevelActive
-                        ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/30 animate-pulse"
-                        : "bg-orange-500/5 text-orange-500/40 border-orange-500/10"
+                        ? "bg-white/20 text-white border-white/40 animate-pulse"
+                        : "bg-black/10 text-white/40 border-white/10"
                         }`}>
                         {isLevelActive ? t('vip.qualified') : t('vip.not_yet')}
                     </div>
@@ -318,39 +371,40 @@ function LevelCard({ level, vipTables, currentLevel, redeProgress, nextClaimAt }
     const teamCount = Number(data.referral?.teamMembers || 0);
     const directCount = Number(data.referral?.directReferrals || 0);
     const directVip1Count = Number(data.vip?.directsVip1 || 0);
+    const theme = VIP_THEMES[(level - 1) % VIP_THEMES.length];
 
     return (
         <div className={`relative group transition-all duration-500 ${isUnlocked ? 'scale-[1.01]' : ''}`}>
             {isUnlocked && (
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-500/40 to-amber-500/20 rounded-[2rem] blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                <div className={`absolute -inset-0.5 opacity-20 group-hover:opacity-40 transition duration-1000 blur rounded-[2rem] ${theme.outer}`}></div>
             )}
-            <div className={`relative bg-card/40 backdrop-blur-xl border border-white/10 rounded-[2rem] p-6 md:p-8 shadow-xl overflow-hidden transition-all group-hover:border-white/20`}>
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 pb-6 border-b border-white/5">
+            <div className={`relative backdrop-blur-xl border-2 rounded-[2rem] p-6 md:p-8 shadow-2xl overflow-hidden transition-all group-hover:border-white/40 ${theme.outer} ${theme.text} ${theme.accent}`}>
+                <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 pb-6 border-b border-white/10`}>
                     <div className="flex items-center gap-4">
-                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-2xl border transition-all duration-500 ${isUnlocked ? 'bg-yellow-500 border-yellow-400 text-black shadow-lg shadow-yellow-500/20' : 'bg-white/5 border-white/10 text-muted-foreground group-hover:scale-110'}`}>
+                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-2xl border transition-all duration-500 ${theme.inner} ${theme.accent} group-hover:scale-110 shadow-lg`}>
                             {level}
                         </div>
                         <div>
-                            <h3 className="text-2xl font-black text-foreground">{t('vip.status_card', { level: level })}</h3>
-                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{t('vip.tier_explorer')}</p>
+                            <h3 className="text-2xl font-black italic">{t('vip.status_card', { level: level })}</h3>
+                            <p className={`text-xs font-bold uppercase tracking-widest ${theme.muted}`}>{t('vip.tier_explorer')}</p>
                         </div>
                     </div>
-                    <div className={`flex items-center gap-2 px-6 py-2 rounded-xl text-[10px] uppercase tracking-[0.2em] font-black border ${isUnlocked ? 'bg-emerald-500/20 text-emerald-500 border-emerald-500/30' :
+                    <div className={`flex items-center gap-2 px-6 py-2 rounded-xl text-[10px] uppercase tracking-[0.2em] font-black border ${isUnlocked ? 'bg-white/20 text-white border-white/30' :
                         isEligible ? 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30' :
-                            'bg-white/5 text-muted-foreground/40 border-white/10'
+                            'bg-black/20 text-white/40 border-white/10'
                         }`}>
                         {isUnlocked ? t('vip.active_phase') : isEligible ? t('vip.eligible') : t('vip.locked')}
                     </div>
                 </div>
 
                 <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-8">
-                    <LevelStat label={t('vip.self_stake')} value={`$${self.toLocaleString()}`} />
-                    <LevelStat label={level > 1 ? t('vip.directs_vip1') : t('vip.direct_referrals')} value={`${level > 1 ? directVip1Count : directCount} / ${level > 1 ? dv1Min : dMin}`} />
-                    <LevelStat label={t('vip.team')} value={`${teamCount} / ${tMin}`} />
-                    <LevelStat label={t('vip.one_time_bonus')} value={`$${oneTime}`} highlight={!isUnlocked} />
-                    <LevelStat label={t('vip.salary')} value={t('vip.salary_frequency', { amount: salary })} />
+                    <LevelStat label={t('vip.self_stake')} value={`$${self.toLocaleString()}`} theme={theme} />
+                    <LevelStat label={level > 1 ? t('vip.directs_vip1') : t('vip.direct_referrals')} value={`${level > 1 ? directVip1Count : directCount} / ${level > 1 ? dv1Min : dMin}`} theme={theme} />
+                    <LevelStat label={t('vip.team')} value={`${teamCount} / ${tMin}`} theme={theme} />
+                    <LevelStat label={t('vip.one_time_bonus')} value={`$${oneTime}`} highlight={!isUnlocked} theme={theme} />
+                    <LevelStat label={t('vip.salary')} value={t('vip.salary_frequency', { amount: salary })} theme={theme} />
                     <div className="space-y-1">
-                        <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest block">{t('vip.next_payout')}</span>
+                        <span className={`text-[10px] font-black uppercase tracking-widest block ${theme.muted}`}>{t('vip.next_payout')}</span>
                         <div className="text-sm font-black tabular-nums">
                             {nextClaimAt && nextClaimAt > 0n ? new Date(Number(nextClaimAt) * 1000).toLocaleString(undefined, { hour12: true }) : "—"}
                         </div>
@@ -361,11 +415,11 @@ function LevelCard({ level, vipTables, currentLevel, redeProgress, nextClaimAt }
     );
 }
 
-function LevelStat({ label, value, highlight }) {
+function LevelStat({ label, value, highlight, theme }) {
     return (
         <div className="space-y-1">
-            <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest block">{label}</span>
-            <div className={`text-xl font-black tabular-nums tracking-tight ${highlight ? 'text-yellow-500' : 'text-foreground'}`}>
+            <span className={`text-[10px] font-black uppercase tracking-widest block ${theme.muted}`}>{label}</span>
+            <div className={`text-xl font-black tabular-nums tracking-tight ${highlight ? 'text-yellow-400 drop-shadow-md' : ''}`}>
                 {value}
             </div>
         </div>
