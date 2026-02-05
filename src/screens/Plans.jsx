@@ -391,7 +391,7 @@ function StatCard({ label, value, subValue, icon, action }) {
                     <p className="text-xs font-black text-muted-foreground/60 uppercase tracking-[0.25em]">{label}</p>
                     <div className="text-3xl font-black truncate tracking-tighter group-hover:text-emerald-500 transition-colors">{value}</div>
                     {subValue && (
-                        <p className="text-[13px] font-bold text-muted-foreground/90 uppercase tracking-tight mt-3 bg-primary/5 py-2.5 px-4 rounded-xl border border-primary/10 inline-block max-w-full truncate">
+                        <p className="text-sm font-black text-foreground uppercase tracking-tight mt-3 bg-primary/10 py-2.5 px-4 rounded-xl border border-primary/20 inline-block max-w-full truncate shadow-sm transition-all group-hover:scale-105 group-hover:bg-primary/20">
                             {subValue}
                         </p>
                     )}

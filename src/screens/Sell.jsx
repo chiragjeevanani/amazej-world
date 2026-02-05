@@ -23,6 +23,7 @@ function SellComponent() {
                             title={t('sell.total_balance')}
                             value={roundWithFormat(data.tokenBalance)}
                             unit="AMA"
+                            extraContent={`≈ USDT ${(Number(roundWithFormat(data.tokenBalance)) * Number(data.priceUSD || 0)).toFixed(2)}`}
                             icon={<Banknote className="text-secondary-foreground" size={20} />}
                         />
                         <StatCard
@@ -139,7 +140,7 @@ function SellComponent() {
 
 export default SellComponent;
 
-function StatCard({ title, value, unit, icon }) {
+function StatCard({ title, value, unit, icon, extraContent }) {
     return (
         <div className="relative group transition-all duration-500 hover:-translate-y-1">
             {/* Colored Light Glow (Emitting from behind) */}
@@ -154,6 +155,11 @@ function StatCard({ title, value, unit, icon }) {
                     <div className="text-2xl font-black flex items-baseline gap-1 tracking-tight group-hover:text-primary transition-colors">
                         {value}
                         <span className="text-xs font-black text-muted-foreground/80">{unit}</span>
+                        {extraContent && (
+                            <span className="ml-2 text-sm font-black text-emerald-500 bg-emerald-500/15 px-3 py-1 rounded-lg whitespace-nowrap border border-emerald-500/20 shadow-sm transition-all group-hover:scale-105 group-hover:bg-emerald-500/25">
+                                {extraContent}
+                            </span>
+                        )}
                     </div>
                 </div>
                 <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform group-hover:bg-primary/20">
