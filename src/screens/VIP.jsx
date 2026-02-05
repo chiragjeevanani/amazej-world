@@ -268,10 +268,8 @@ function RedeCard({ level, vipTables, userRede, teamRedeCount }) {
     const self = numUSDCents(vipTables.selfCents[level]);
     const salaryPerClaim = numUSDCents(vipTables.vipPerClaimCents[level]);
     const tMin = Number(vipTables.teamMin?.[level] || 0);
+    const maxClaims = 4;
     const salaryCents = BigInt(vipTables.vipPerClaimCents[level] || 0n);
-    const maxClaims = salaryCents > 0n
-        ? Number(BigInt(vipTables.redeAllowed?.[level - 1] || 0n) / salaryCents)
-        : 4;
 
     const claimsMade = userRede?.level === level ? Number(userRede.claimsMade) : 0;
     const isLevelActive = (userRede?.level === level && userRede?.open);
@@ -377,10 +375,8 @@ function LevelCard({ level, vipTables, currentLevel, redeProgress, nextClaimAt }
     const teamCount = Number(data.referral?.teamMembers || 0);
     const directCount = Number(data.referral?.directReferrals || 0);
     const directVip1Count = Number(data.vip?.directsVip1 || 0);
+    const maxClaims = 4;
     const salaryCents = BigInt(vipTables.vipPerClaimCents[level] || 0n);
-    const maxClaims = salaryCents > 0n
-        ? Number(BigInt(vipTables.redeAllowed?.[level - 1] || 0n) / salaryCents)
-        : 4;
 
     const theme = VIP_THEMES[(level - 1) % VIP_THEMES.length];
 
