@@ -66,20 +66,32 @@ export default function PlansAndActions() {
     const disableAll = loading.deposit || loading.approveUsdt || loading.claimAll || loading.claimPhase || loading.claimReferral || loading.claimVIP;
 
     // Admin check debug logging
+    const adminStatus = useMemo(() => {
+        if (!address) return { isAnyAdmin: false };
+        const isInList = ADMIN_WALLETS.includes(address.toLowerCase());
+        const isTreasuryOwner = data.owner && address.toLowerCase() === data.owner.toLowerCase();
+        const isRoyaltyOwner = data.royaltyOwner && address.toLowerCase() === data.royaltyOwner.toLowerCase();
+        const isMainOwner = data.mainOwner && address.toLowerCase() === data.mainOwner.toLowerCase();
+        const isBeneficiary = data.beneficiaries?.some(b => b.wallet?.toLowerCase() === address.toLowerCase());
+
+        return {
+            isInList,
+            isTreasuryOwner,
+            isRoyaltyOwner,
+            isMainOwner,
+            isBeneficiary,
+            isAnyAdmin: isInList || isTreasuryOwner || isRoyaltyOwner || isMainOwner || isBeneficiary
+        };
+    }, [address, data.owner, data.royaltyOwner, data.mainOwner, data.beneficiaries]);
+
     useEffect(() => {
         if (address) {
-            const isAdmin = ADMIN_WALLETS.includes(address.toLowerCase());
-            const isOwner = data.owner && address.toLowerCase() === data.owner.toLowerCase();
-            const showAdminSection = isAdmin || isOwner;
-            console.log('🔐 Admin Status Check:', {
-                address: address.toLowerCase(),
-                isInAdminList: isAdmin,
-                isContractOwner: isOwner,
-                contractOwner: data.owner?.toLowerCase(),
-                showAdminSection
-            });
+            console.group('🔐 Admin Status Check');
+            console.log('User Address:', address.toLowerCase());
+            console.log('Status:', adminStatus);
+            console.groupEnd();
         }
-    }, [address, data.owner]);
+    }, [address, adminStatus]);
 
     async function handleSelectPlan(usd) {
         const cents = BigInt(usd) * 100n;
@@ -130,6 +142,14 @@ export default function PlansAndActions() {
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-yellow-500">{t('plans.strategies')}</span>
                     </h1>
                 </div>
+
+                {/* Admin Badge in Header */}
+                {adminStatus.isAnyAdmin && (
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500">
+                        <ShieldCheck size={18} />
+                        <span className="text-xs font-black uppercase tracking-widest">Admin Mode Active</span>
+                    </div>
+                )}
             </div>
 
             {/* Performance Stats */}
@@ -300,8 +320,8 @@ export default function PlansAndActions() {
                 </div>
             </div>
 
-            {/* Admin Section (Only for treasury owner or admin wallets) */}
-            {isConnected && address && (ADMIN_WALLETS.includes(address.toLowerCase()) || (data.owner && address.toLowerCase() === data.owner.toLowerCase())) && (
+            {/* Admin Section (Only for treasury owner, beneficiaries or admin wallets) */}
+            {isConnected && address && adminStatus.isAnyAdmin && (
                 <div className="relative group overflow-visible z-10 min-h-[200px]">
                     {/* Enhanced Pulsating Admin Glow */}
                     <div className="absolute -inset-1 bg-gradient-to-r from-red-500 via-orange-500 to-red-500 rounded-[2.5rem] blur opacity-30 group-hover:opacity-50 animate-pulse transition duration-1000"></div>
