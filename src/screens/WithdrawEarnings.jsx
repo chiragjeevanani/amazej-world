@@ -3,6 +3,7 @@ import { toast } from "react-hot-toast";
 import { useProtocol } from "@/contexts/ProtocolContext";
 import { useTranslation } from "react-i18next";
 import { DollarSign } from "lucide-react";
+import { ClaimCountdown } from "@/components/Countdown";
 
 function fmtUSDc(c) { return c === undefined ? "—" : (Number(c) / 100).toFixed(2); }
 function fmtTok(x) { return x === undefined ? "—" : (Number(x) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 }); }
@@ -73,7 +74,7 @@ export default function WithdrawEarningsComponent() {
                         <GreenTile label={t('withdraw.available_usd')} value={`$${fmtUSDc(withdraw?.availableWithdraw)}`} />
                         <GreenTile label={t('withdraw.total_withdrawn_usd')} value={`$${fmtUSDc(withdraw?.totalWithdrawn)}`} />
                         <GreenTile label={t('withdraw.last_claimed')} value={fmtDate(withdraw?.lastReferralClaimAt)} />
-                        <GreenTile label={t('withdraw.next_claim')} value={nextRefAt === 0n || cd.due ? t('withdraw.not_available') : fmtDate(nextRefAt)} />
+                        <GreenTile label={t('withdraw.next_claim')} value={nextRefAt === 0n || cd.due ? t('withdraw.available') : <ClaimCountdown nextClaimAtSec={nextRefAt} />} />
                     </div>
                 </div>
             </div>

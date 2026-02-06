@@ -156,6 +156,7 @@ i18n
                         last_claimed: "Last Claimed",
                         next_claim: "Next Claim",
                         not_available: "Not Available",
+                        available: "Available",
                         success_msg: "Withdraw Successfully claimed!",
                         processing: "Processing…"
                     },
