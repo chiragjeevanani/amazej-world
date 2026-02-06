@@ -181,7 +181,7 @@ export default function PlansAndActions() {
                                 {t('plans.go_ama_contract')}
                                 <ExternalLink size={10} />
                             </a>
-                            <span className="text-[10px] font-black text-blue-500 tracking-tight">
+                            <span className="text-[10px] font-bold text-blue-500 tracking-wide mt-1">
                                 Don't Trust. Contract Verify.
                             </span>
                         </div>
