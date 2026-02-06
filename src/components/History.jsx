@@ -81,7 +81,7 @@ function DataCard({ children }) {
 function DataLine({ label, value, highlight }) {
     return (
         <div className="flex items-center justify-between gap-4">
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#d946ef] opacity-80">{label}</span>
+            <span className="text-xs font-black uppercase tracking-widest text-[#d946ef] opacity-80">{label}</span>
             <span className={`text-sm font-black tabular-nums ${highlight ? 'text-foreground' : 'text-foreground/80'}`}>{value}</span>
         </div>
     );
