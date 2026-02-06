@@ -198,7 +198,7 @@ export default function HistoryTabs({ onlyShow }) {
                             <DataCard key={i}>
                                 <DataLine label={t('history.time')} value={fmtDate(s.claimedAt)} />
                                 <DataLine label={t('history.amount')} value={fmtUSDc(s.claimAmount)} highlight />
-                                <DataLine label={t('history.rank')} value={`VIP${Number(s.period || 0)}`} />
+                                <DataLine label={t('history.rank')} value={`VIP${Number(s.level || s.period || 0)}`} />
                                 <DataLine label={t('history.type')} value={s.oneTime ? t('history.team_reward') : t('history.salary')} />
                             </DataCard>
                         ))}
@@ -223,8 +223,8 @@ export default function HistoryTabs({ onlyShow }) {
                             <DataCard key={i}>
                                 <DataLine label={t('history.time')} value={fmtDate(w.claimedAt)} />
                                 <DataLine label={t('history.usdt_withdrawal')} value={fmtUSDc(w.claimAmount)} highlight />
-                                <DataLine label={t('history.net_ama')} value={fmtUSDc(w.claimAmount * 25n / 100n)} />
-                                <DataLine label={t('history.fee_ama')} value={fmtUSDc(w.claimAmount * 75n / 100n)} />
+                                <DataLine label={`${t('history.net_ama')} (75%)`} value={fmtUSDc(w.claimAmount * 75n / 100n)} />
+                                <DataLine label={`${t('history.fee_ama')} (25%)`} value={fmtUSDc(w.claimAmount * 25n / 100n)} />
                             </DataCard>
                         ))}
                     </HistorySection>

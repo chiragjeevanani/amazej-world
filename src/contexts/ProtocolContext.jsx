@@ -292,6 +292,10 @@ export function ProtocolProvider({ children }) {
         address: main, abi: mainAbi, functionName: "claimPhase", args: [phase]
     })), [main, writeContractAsync, runTx]);
 
+    const claimReferral = useCallback(() => runTx("claimReferral", "Claim Referral Rewards", () => writeContractAsync({
+        address: main, abi: mainAbi, functionName: "claimReferral"
+    })), [main, writeContractAsync, runTx]);
+
     const history = useAllHistory(main, 10);
 
     const depositWindow = useMemo(() => {
@@ -310,8 +314,8 @@ export function ProtocolProvider({ children }) {
 
     const actions = useMemo(() => ({
         refetch: () => { refetch(); vipRefetch(); royaltyRefetch(); earningRefetch(); history.refetch(); },
-        loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty, distributeFees,
-    }), [refetch, vipRefetch, royaltyRefetch, earningRefetch, history, loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty, distributeFees]);
+        loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty, distributeFees, claimReferral,
+    }), [refetch, vipRefetch, royaltyRefetch, earningRefetch, history, loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty, distributeFees, claimReferral]);
 
     const vipProgressTuple = V(2);
     const redeProgressTuple = V(3);
