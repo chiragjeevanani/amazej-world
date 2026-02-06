@@ -171,15 +171,20 @@ export default function PlansAndActions() {
                     subValue={data.contractUsdtBalanceFmt ? `USDT ${data.contractUsdtBalanceFmt} | ${data.contractTokenBalanceFmt} AMA` : ""}
                     icon={<Sparkles className="text-yellow-400" />}
                     action={
-                        <a
-                            href="https://bscscan.com/address/0xFF4A6bB452A7C0d0C0AB1d4880CD7e3f38B595b4#readContract"
-                            target="_blank"
-                            rel="noreferrer"
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-yellow-500/50 text-[10px] font-black uppercase tracking-widest text-yellow-500 hover:bg-yellow-500 hover:text-black transition-all"
-                        >
-                            {t('plans.go_ama_contract')}
-                            <ExternalLink size={10} />
-                        </a>
+                        <div className="flex flex-col items-end gap-1">
+                            <a
+                                href="https://bscscan.com/address/0xFF4A6bB452A7C0d0C0AB1d4880CD7e3f38B595b4#readContract"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-yellow-500/50 text-[10px] font-black uppercase tracking-widest text-yellow-500 hover:bg-yellow-500 hover:text-black transition-all"
+                            >
+                                {t('plans.go_ama_contract')}
+                                <ExternalLink size={10} />
+                            </a>
+                            <span className="text-[10px] font-black text-blue-500 tracking-tight">
+                                Don't Trust. Contract Verify.
+                            </span>
+                        </div>
                     }
                 />
                 <StatCard
