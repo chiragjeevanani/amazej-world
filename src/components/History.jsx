@@ -223,8 +223,8 @@ export default function HistoryTabs({ onlyShow }) {
                             <DataCard key={i}>
                                 <DataLine label={t('history.time')} value={fmtDate(w.claimedAt)} />
                                 <DataLine label={t('history.usdt_withdrawal')} value={fmtUSDc(w.claimAmount)} highlight />
-                                <DataLine label={t('history.net_ama')} value={fmtUSDc(w.claimAmount * 75n / 100n)} />
-                                <DataLine label={t('history.fee_ama')} value={fmtUSDc(w.claimAmount * 25n / 100n)} />
+                                <DataLine label={t('history.net_ama')} value={fmtUSDc(w.claimAmount * 25n / 100n)} />
+                                <DataLine label={t('history.fee_ama')} value={fmtUSDc(w.claimAmount * 75n / 100n)} />
                             </DataCard>
                         ))}
                     </HistorySection>
