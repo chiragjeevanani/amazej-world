@@ -89,7 +89,7 @@ function DataLine({ label, value, highlight }) {
 
 export default function HistoryTabs({ onlyShow }) {
     const { t } = useTranslation();
-    const { data: { history }, actions: { refetch } } = useProtocol();
+    const { data: { history, vipTables }, actions: { refetch } } = useProtocol();
     const {
         enabled, loading, pageSize, depTotal, clmTotal, refTotal, salaryTotal, wdTotal, sellTotal, globalRoyaltyTotal,
         depPage, setDepPage, clmPage, setClmPage, refPage, setRefPage, salaryPage, setSalaryPage, wdPage, setWdPage,
@@ -194,14 +194,30 @@ export default function HistoryTabs({ onlyShow }) {
 
                 {currentTab === "vip" && (
                     <HistorySection title={t('history.tab_salary')} total={salaryTotal} page={salaryPage} setPage={setSalaryPage} pageSize={pageSize}>
-                        {salaryClms.map((s, i) => (
-                            <DataCard key={i}>
-                                <DataLine label={t('history.time')} value={fmtDate(s.claimedAt)} />
-                                <DataLine label={t('history.amount')} value={fmtUSDc(s.claimAmount)} highlight />
-                                <DataLine label={t('history.rank')} value={`VIP${Number(s.level || s.period || 0)}`} />
-                                <DataLine label={t('history.type')} value={s.oneTime ? t('history.team_reward') : t('history.salary')} />
-                            </DataCard>
-                        ))}
+                        {salaryClms.map((s, i) => {
+                            let rank = Number(s.level || s.period || 0);
+                            if (vipTables) {
+                                // Try to find rank by amount if not explicitly present
+                                const claimCents = (s.claimAmount || 0n) / 10000000000000000n; // 1e16 wei = 1 cent
+                                const table = s.oneTime ? vipTables.oneTimeCents : vipTables.perClaimCents;
+                                if (table) {
+                                    for (let lvl = 1; lvl <= 7; lvl++) {
+                                        if (BigInt(table[lvl] || 0) === claimCents) {
+                                            rank = lvl;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            return (
+                                <DataCard key={i}>
+                                    <DataLine label={t('history.time')} value={fmtDate(s.claimedAt)} />
+                                    <DataLine label={t('history.amount')} value={fmtUSDc(s.claimAmount)} highlight />
+                                    <DataLine label={t('history.rank')} value={`VIP${rank}`} />
+                                    <DataLine label={t('history.type')} value={s.oneTime ? t('history.team_reward') : t('history.salary')} />
+                                </DataCard>
+                            );
+                        })}
                     </HistorySection>
                 )}
 
