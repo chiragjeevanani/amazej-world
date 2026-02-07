@@ -89,6 +89,7 @@ export function ProtocolProvider({ children }) {
             { address: vipC, abi: vipModuleAbi, functionName: "getRedeProgress", args: [acct] },
             { address: vipC, abi: vipModuleAbi, functionName: "currentTrack", args: [acct] },
             { address: vipC, abi: vipModuleAbi, functionName: "getAllLevelTables", args: [] },
+            { address: vipC, abi: vipModuleAbi, functionName: "getVipEligibility", args: [acct] },
         ];
     }, [enabled, address, vipC]);
 
@@ -157,6 +158,7 @@ export function ProtocolProvider({ children }) {
     const vipTuple = V(0);
     const claimVipUSDT = V(1);
     const tablesTuple = V(5);
+    const eligibilityTuple = V(6);
 
     const user = useMemo(() => {
         if (!userTuple) return undefined;
@@ -213,6 +215,12 @@ export function ProtocolProvider({ children }) {
         const [selfCents, directsMin, directsVip1Min, teamMin, perClaimCents, oneTimeCents, redeAllowed, periodSeconds] = tablesTuple;
         return { selfCents, directsMin, directsVip1Min, teamMin, perClaimCents, oneTimeCents, vipPerClaimCents: perClaimCents, vipOneTimeCents: oneTimeCents, redeAllowed, periodSeconds };
     }, [tablesTuple]);
+
+    const eligibility = useMemo(() => {
+        if (!eligibilityTuple) return undefined;
+        const [baseCents, directs, dirVip1, team, lastDepositAt] = eligibilityTuple;
+        return { baseCents, directs, dirVip1, team, lastDepositAt };
+    }, [eligibilityTuple]);
 
     const royaltyInfo = useMemo(() => {
         if (!memberDetailsTuple) return undefined;
@@ -375,6 +383,7 @@ export function ProtocolProvider({ children }) {
         vipProg, // Added for VIP screen compatibility
         redeProgress: redeProgressTuple,
         royalty: royaltyInfo,
+        eligibility,
         owner,
         beneficiaries,
         royaltyOwner,

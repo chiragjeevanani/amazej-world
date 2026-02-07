@@ -47,14 +47,16 @@ export default function ReferralsComponent() {
                     label={t('referrals.direct_network')}
                     value={String(data.referral?.directReferrals ?? 0)}
                     icon={<Users className="text-blue-400" />}
-                    trend={`${t('referrals.active')}: ${data.vip?.directsFirst ?? 0}`}
-                    trendSecondary={`${t('referrals.inactive')}: ${Math.max(0, Number(data.referral?.directReferrals ?? 0) - Number(data.vip?.directsFirst ?? 0))}`}
+                    trend={`${t('referrals.active')}: ${data.eligibility?.directs ?? 0}`}
+                    trendSecondary={`${t('referrals.inactive')}: ${Math.max(0, Number(data.referral?.directReferrals ?? 0) - Number(data.eligibility?.directs ?? 0))}`}
                     description={t('referrals.directly_referred')}
                 />
                 <PerformanceCard
                     label={t('referrals.total_team')}
                     value={String(data.referral?.teamMembers ?? 0)}
                     icon={<Activity className="text-emerald-400" />}
+                    trend={`${t('referrals.active')}: ${data.eligibility?.team ?? 0}`}
+                    trendSecondary={`${t('referrals.inactive')}: ${Math.max(0, Number(data.referral?.teamMembers ?? 0) - Number(data.eligibility?.team ?? 0))}`}
                     description={t('referrals.total_downline')}
                 />
                 <PerformanceCard
@@ -140,12 +142,12 @@ function PerformanceCard({ label, value, icon, description, trend, trendSecondar
                     </div>
                     <div className="flex flex-col items-end gap-1.5">
                         {trend && (
-                            <span className="text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-lg uppercase tracking-widest">
+                            <span className="text-xs font-black text-emerald-500 bg-emerald-500/10 px-3 py-1.5 rounded-lg uppercase tracking-widest">
                                 {trend}
                             </span>
                         )}
                         {trendSecondary && (
-                            <span className="text-[10px] font-black text-rose-500 bg-rose-500/10 px-2 py-1 rounded-lg uppercase tracking-widest whitespace-nowrap">
+                            <span className="text-xs font-black text-rose-500 bg-rose-500/10 px-3 py-1.5 rounded-lg uppercase tracking-widest whitespace-nowrap">
                                 {trendSecondary}
                             </span>
                         )}
