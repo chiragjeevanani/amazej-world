@@ -74,12 +74,12 @@ export default function VipScreen() {
         if (!vipTables || !data.user) return null;
         const self = Number(data.user.baseUSDCents || 0n) / 100;
 
-        // Use directsVip1 for level > 1, active directs for level 1
+        // Use directsVip1 for level > 1, active cycle directs for level 1
         const directs = nextLevel > 1
             ? Number(data.eligibility?.dirVip1 || data.vip?.directsVip1 || 0)
-            : Number(data.eligibility?.directs || 0);
+            : Number(data.eligibility?.activeDirects || 0);
 
-        const team = Number(data.eligibility?.team || 0);
+        const team = Number(data.eligibility?.activeTeam || 0);
 
         const tSelf = getTableVal(vipTables.selfCents, nextLevel);
         const tDirects = Number(vipTables.directsVip1Min?.[nextLevel] || vipTables.directsMin?.[nextLevel] || 0);
@@ -372,8 +372,8 @@ function LevelCard({ level, vipTables, currentLevel, redeProgress, nextClaimAt }
     const redeCount = redeProgress ? Number(redeProgress[level] || 0) : 0;
 
     const { data } = useProtocol();
-    const teamCount = Number(data.eligibility?.team || 0);
-    const directCount = Number(data.eligibility?.directs || 0);
+    const teamCount = Number(data.eligibility?.activeTeam || 0);
+    const directCount = Number(data.eligibility?.activeDirects || 0);
     const directVip1Count = Number(data.eligibility?.dirVip1 || data.vip?.directsVip1 || 0);
     const maxClaims = 4;
     const salaryCents = BigInt(vipTables.vipPerClaimCents[level] || 0n);

@@ -159,6 +159,7 @@ export function ProtocolProvider({ children }) {
     const claimVipUSDT = V(1);
     const tablesTuple = V(5);
     const eligibilityTuple = V(6);
+    const currentTrack = V(4);
 
     const user = useMemo(() => {
         if (!userTuple) return undefined;
@@ -219,8 +220,22 @@ export function ProtocolProvider({ children }) {
     const eligibility = useMemo(() => {
         if (!eligibilityTuple) return undefined;
         const [baseCents, directs, dirVip1, team, lastDepositAt] = eligibilityTuple;
-        return { baseCents, directs, dirVip1, team, lastDepositAt };
-    }, [eligibilityTuple]);
+
+        // Accurate "active in cycle" counts from the windows
+        const activeDirects = Number(parsedVipState?.vip?.redeDirectCount || 0) + Number(parsedVipState?.rede?.redeDirectCount || 0);
+        const activeTeam = Number(parsedVipState?.vip?.redeTeamCount || 0) + Number(parsedVipState?.rede?.redeTeamCount || 0);
+
+        return {
+            baseCents,
+            directs, // Lifetime deposit makers
+            dirVip1,
+            team,
+            lastDepositAt,
+            activeDirects, // Currently in a claim window (renewed/active)
+            activeTeam,    // Currently in a claim window
+            currentTrack: Number(currentTrack ?? 0)
+        };
+    }, [eligibilityTuple, parsedVipState, currentTrack]);
 
     const royaltyInfo = useMemo(() => {
         if (!memberDetailsTuple) return undefined;

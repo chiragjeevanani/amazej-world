@@ -47,16 +47,16 @@ export default function ReferralsComponent() {
                     label={t('referrals.direct_network')}
                     value={String(data.referral?.directReferrals ?? 0)}
                     icon={<Users className="text-blue-400" />}
-                    trend={`${t('referrals.active')}: ${data.eligibility?.directs ?? 0}`}
-                    trendSecondary={`${t('referrals.inactive')}: ${Math.max(0, Number(data.referral?.directReferrals ?? 0) - Number(data.eligibility?.directs ?? 0))}`}
+                    trend={`${t('referrals.active')}: ${data.eligibility?.activeDirects ?? 0}`}
+                    trendSecondary={`${t('referrals.inactive')}: ${Math.max(0, Number(data.referral?.directReferrals ?? 0) - Number(data.eligibility?.activeDirects ?? 0))}`}
                     description={t('referrals.directly_referred')}
                 />
                 <PerformanceCard
                     label={t('referrals.total_team')}
                     value={String(data.referral?.teamMembers ?? 0)}
                     icon={<Activity className="text-emerald-400" />}
-                    trend={`${t('referrals.active')}: ${data.eligibility?.team ?? 0}`}
-                    trendSecondary={`${t('referrals.inactive')}: ${Math.max(0, Number(data.referral?.teamMembers ?? 0) - Number(data.eligibility?.team ?? 0))}`}
+                    trend={`${t('referrals.active')}: ${data.eligibility?.activeTeam ?? 0}`}
+                    trendSecondary={`${t('referrals.inactive')}: ${Math.max(0, Number(data.referral?.teamMembers ?? 0) - Number(data.eligibility?.activeTeam ?? 0))}`}
                     description={t('referrals.total_downline')}
                 />
                 <PerformanceCard
