@@ -37,7 +37,8 @@ export default function RoyaltyRewardsComponent() {
                     <DarkTile label={t('royalty.active_vip_level')} value={royalty?.activeLevel > 0 ? `${royalty.activeLevel}` : t('royalty.none')} />
                     <DarkTile label={t('royalty.total_vip_in_level')} value={Number(royalty?.activeMembersCount || 0)} />
                     <DarkTile label={t('royalty.claimed_days')} value={Number(royalty?.claimDaysUsed || 0)} />
-                    <DarkTile label={t('royalty.total_claimed')} value={fmtUSDT(royalty?.totalClaimed).replace('USDT ', '')} />
+                    <DarkTile label={t('royalty.total_claimed')} value={royalty?.totalClaimed !== undefined ? (Number(royalty.totalClaimed) / 1e18).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—"} />
+                    <DarkTile label={t('royalty.royalty_available')} value={fmtUSDT(royalty?.usdt).replace('USDT ', '')} highlight={true} />
                     <DarkTile label={t('royalty.last_claimed_date')} value={fmtDate(royalty?.lastClaimDate)} />
 
                     <div className="p-4 bg-secondary/50 rounded-xl border border-border">

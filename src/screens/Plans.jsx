@@ -41,8 +41,8 @@ export default function PlansAndActions() {
         { name: "Plan 3", baseDeposit: 400, stepReward: 56, topUps: [{ step: 5, amount: "200" }, { step: 9, amount: "100" }, { step: 12, amount: "400" }] },
         { name: "Plan 4", baseDeposit: 800, stepReward: 112, topUps: [{ step: 5, amount: "400" }, { step: 9, amount: "200" }, { step: 12, amount: "800" }] },
         { name: "Plan 5", baseDeposit: 1600, stepReward: 224, topUps: [{ step: 5, amount: "800" }, { step: 9, amount: "400" }, { step: 12, amount: "1600" }] },
-        { name: "Plan 6", baseDeposit: 3200, stepReward: 448, topUps: [{ step: 1600, amount: "1600" }, { step: 9, amount: "800" }, { step: 12, amount: "3200" }] },
-        { name: "Plan 7", baseDeposit: 6400, stepReward: 896, topUps: [{ step: 3200, amount: "3200" }, { step: 9, amount: "1600" }, { step: 12, amount: "6400" }] },
+        { name: "Plan 6", baseDeposit: 3200, stepReward: 448, topUps: [{ step: 5, amount: "1600" }, { step: 9, amount: "800" }, { step: 12, amount: "3200" }] },
+        { name: "Plan 7", baseDeposit: 6400, stepReward: 896, topUps: [{ step: 5, amount: "3200" }, { step: 9, amount: "1600" }, { step: 12, amount: "6400" }] },
     ];
 
     const { data, actions } = useProtocol();
