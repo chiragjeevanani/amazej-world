@@ -1,12 +1,12 @@
-import React, { useMemo, useState, useEffect } from "react";
+﻿import React, { useMemo, useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { useProtocol } from "@/contexts/ProtocolContext";
 import { ClaimCountdown } from "@/components/Countdown";
 
-function fmtUSDT(x) { return x === undefined ? "—" : "USDT " + (Number(x) / 1e6).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-function fmtTok(x) { return x === undefined ? "—" : (Number(x) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 }); }
-function fmtDate(s) { return !s || s === 0n ? "—" : new Date(Number(s) * 1000).toLocaleString(undefined, { hour12: true }); }
+function fmtUSDT(x) { return x === undefined ? "â€”" : "USDT " + (Number(x) / 1e18).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function fmtTok(x) { return x === undefined ? "â€”" : (Number(x) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 }); }
+function fmtDate(s) { return !s || s === 0n ? "â€”" : new Date(Number(s) * 1000).toLocaleString(undefined, { hour12: true }); }
 
 export default function RoyaltyRewardsComponent() {
     const { t } = useTranslation();
@@ -38,13 +38,15 @@ export default function RoyaltyRewardsComponent() {
                     <DarkTile label={t('royalty.total_vip_in_level')} value={Number(royalty?.activeMembersCount || 0)} />
                     <DarkTile label={t('royalty.claimed_days')} value={Number(royalty?.claimDaysUsed || 0)} />
                     <DarkTile label={t('royalty.total_claimed')} value={fmtUSDT(royalty?.totalClaimed).replace('USDT ', '')} />
+                    <DarkTile label={t('royalty.royalty_available')} value={fmtUSDT(royalty?.usdt).replace('USDT ', '')} highlight={false} />
+
                     <DarkTile label={t('royalty.last_claimed_date')} value={fmtDate(royalty?.lastClaimDate)} />
 
                     <div className="p-4 bg-secondary/50 rounded-xl border border-border">
                         <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{t('royalty.next_claimed_in')}</div>
                         <div className="text-xl font-black text-card-foreground/90">
                             {royalty?.lastClaimDate ? (
-                                <ClaimCountdown nextClaimAtSec={(royalty?.lastClaimDate + 86400n)} />
+                                <ClaimCountdown nextClaimAtSec={(royalty?.lastClaimDate + (data?.claimPeriod || 0n))} />
                             ) : t('royalty.not_scheduled')}
                         </div>
                     </div>

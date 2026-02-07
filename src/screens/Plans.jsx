@@ -514,8 +514,8 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
                 <div className="grid grid-cols-3 gap-2">
                     {plan.topUps.map((top, i) => (
                         <div key={i} className={`flex flex-col items-center justify-center p-3 rounded-xl border border-white/5 backdrop-blur-md ${theme.inner}`}>
-                            <span className="text-[10px] font-black opacity-50 mb-1">ST {top.step}</span>
-                            <span className="text-[13px] font-black">{top.amount} $ USDT</span>
+                            <span className="text-[10px] font-black opacity-50 mb-1">STEP {top.step}</span>
+                            <span className="text-[13px] font-black">{top.amount} $</span>
                         </div>
                     ))}
                 </div>

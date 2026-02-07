@@ -150,19 +150,23 @@ function StatCard({ title, value, unit, icon, extraContent }) {
             <div className="absolute -inset-[1px] bg-gradient-to-r from-primary/60 via-indigo-400/30 to-primary/60 rounded-2xl opacity-30 group-hover:opacity-100 transition-opacity duration-500" />
 
             <div className="relative z-10 bg-card/90 rounded-2xl border border-border p-6 shadow-xl flex items-center justify-between group-hover:border-primary/50 transition-all duration-500 backdrop-blur-sm">
-                <div className="space-y-1 text-card-foreground">
+                <div className="space-y-2 text-card-foreground min-w-0 flex-1">
                     <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">{title}</h3>
-                    <div className="text-2xl font-black flex items-baseline gap-1 tracking-tight group-hover:text-primary transition-colors">
-                        {value}
-                        <span className="text-xs font-black text-muted-foreground/80">{unit}</span>
+                    <div className="flex flex-col gap-1.5">
+                        <div className="text-2xl font-black flex items-baseline gap-1 tracking-tight group-hover:text-primary transition-colors">
+                            {value}
+                            <span className="text-xs font-black text-muted-foreground/80">{unit}</span>
+                        </div>
                         {extraContent && (
-                            <span className="ml-2 text-sm font-black text-emerald-500 bg-emerald-500/15 px-3 py-1 rounded-lg whitespace-nowrap border border-emerald-500/20 shadow-sm transition-all group-hover:scale-105 group-hover:bg-emerald-500/25">
-                                {extraContent}
-                            </span>
+                            <div className="flex">
+                                <span className="text-[11px] font-black text-emerald-500 bg-emerald-500/15 px-2.5 py-1 rounded-lg whitespace-nowrap border border-emerald-500/20 shadow-sm transition-all group-hover:scale-105 group-hover:bg-emerald-500/25">
+                                    {extraContent}
+                                </span>
+                            </div>
                         )}
                     </div>
                 </div>
-                <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform group-hover:bg-primary/20">
+                <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform group-hover:bg-primary/20 ml-4">
                     {icon}
                 </div>
             </div>
