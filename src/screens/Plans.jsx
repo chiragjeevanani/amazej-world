@@ -470,19 +470,32 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
         }
     ];
 
+    const planCents = BigInt(plan.baseDeposit * 100);
+    const userCents = data?.user?.baseUSDCents || 0n;
+    const isActive = userCents > 0n && userCents === planCents;
+    const isCompleted = userCents > 0n && planCents < userCents;
+
     const theme = themes[idx % themes.length];
 
     return (
         <div className={`
             relative flex flex-col p-6 rounded-[2rem] border-2 transition-all duration-500 transform overflow-hidden group
-            ${isCurrentPlan ? 'scale-[0.98] ring-2 ring-emerald-500/50' : 'hover:scale-[1.02] hover:-translate-y-2'}
+            ${isActive ? 'scale-[0.98] ring-2 ring-emerald-500/50' : 'hover:scale-[1.02] hover:-translate-y-2'}
             ${theme.outer} ${theme.text} ${theme.accent} shadow-2xl
         `}>
             {/* Background Decoration */}
             <div className="absolute top-0 right-0 w-[120%] h-full bg-gradient-to-b from-white/10 to-transparent transform -skew-x-12 translate-x-1/2 opacity-20 pointer-events-none"></div>
 
-            {/* Plan 5 Yellow Dots Decoration */}
-            {idx === 4 && (
+            {/* Active Status Badge */}
+            {isActive && (
+                <div className="absolute top-4 left-4 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 z-20">
+                    <span className="h-1.5 w-1.5 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)] animate-pulse"></span>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-white">Active Now</span>
+                </div>
+            )}
+
+            {/* Plan 5 Yellow Dots Decoration (Adjusted if active) */}
+            {idx === 4 && !isActive && (
                 <div className="absolute top-4 left-4 flex gap-1 z-20">
                     <div className="h-1.5 w-1.5 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.6)]"></div>
                     <div className="h-1.5 w-1.5 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.6)]"></div>
@@ -499,7 +512,7 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
             <div className="mb-8 relative z-10">
                 <h3 className="text-[13px] font-black uppercase tracking-[0.2em] opacity-70 mb-2">{plan.name}</h3>
                 <div className="flex items-center gap-2">
-                    <span className="text-3xl font-black tracking-tighter italic">{plan.baseDeposit + 10} $ USDT</span>
+                    <span className="text-3xl font-black tracking-tighter">{plan.baseDeposit + 10} $ USDT</span>
                 </div>
             </div>
 
@@ -522,16 +535,18 @@ function PlanCard({ plan, idx, data, disableAll, onSelect }) {
             </div>
 
             <button
-                disabled={disableAll || isCurrentPlan}
+                disabled={disableAll || isActive || isCompleted}
                 onClick={() => onSelect(plan.baseDeposit)}
                 className={`
                     mt-8 h-14 rounded-2xl font-black text-xs uppercase tracking-[0.3em] transition-all active:scale-95 shadow-xl
-                    ${isCurrentPlan
+                    ${isActive
                         ? "bg-emerald-500 text-black shadow-emerald-500/20 cursor-default"
-                        : `${theme.button}`}
+                        : isCompleted
+                            ? "bg-slate-500/30 text-white/50 cursor-not-allowed"
+                            : `${theme.button}`}
                 `}
             >
-                {isCurrentPlan ? t('plans.active_strategy') : t('plans.initiate_strategy')}
+                {isActive ? t('plans.active_strategy') : isCompleted ? "Strategy Completed" : t('plans.initiate_strategy')}
             </button>
         </div>
     );

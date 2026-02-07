@@ -159,7 +159,7 @@ function StatCard({ title, value, unit, icon, extraContent }) {
                         </div>
                         {extraContent && (
                             <div className="flex">
-                                <span className="text-[11px] font-black text-emerald-500 bg-emerald-500/15 px-2.5 py-1 rounded-lg whitespace-nowrap border border-emerald-500/20 shadow-sm transition-all group-hover:scale-105 group-hover:bg-emerald-500/25">
+                                <span className="text-[14px] font-black text-emerald-500 bg-emerald-500/15 px-3.5 py-1.5 rounded-lg whitespace-nowrap border border-emerald-500/20 shadow-sm transition-all group-hover:scale-105 group-hover:bg-emerald-500/25">
                                     {extraContent}
                                 </span>
                             </div>
