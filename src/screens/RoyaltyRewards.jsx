@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useProtocol } from "@/contexts/ProtocolContext";
 import { ClaimCountdown } from "@/components/Countdown";
 
-function fmtUSDT(x) { return x === undefined ? "—" : "USDT " + (Number(x) / 1e18).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function fmtUSDT(x) { return x === undefined ? "—" : "USDT " + (Number(x) / 1e17).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 function fmtTok(x) { return x === undefined ? "—" : (Number(x) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 6 }); }
 function fmtDate(s) { return !s || s === 0n ? "—" : new Date(Number(s) * 1000).toLocaleString(undefined, { hour12: true }); }
 
