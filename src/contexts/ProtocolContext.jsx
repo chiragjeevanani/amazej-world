@@ -217,6 +217,34 @@ export function ProtocolProvider({ children }) {
         return { selfCents, directsMin, directsVip1Min, teamMin, perClaimCents, oneTimeCents, vipPerClaimCents: perClaimCents, vipOneTimeCents: oneTimeCents, redeAllowed, periodSeconds };
     }, [tablesTuple]);
 
+    const vipProgressTuple = V(2);
+    const redeProgressTuple = V(3);
+
+    // Parse getUserStateView result (vipDataState) into a clean object
+    const parsedVipState = useMemo(() => {
+        if (!vipDataState) return undefined;
+        // Check if it's an array (tuple) or object
+        if (Array.isArray(vipDataState)) {
+            // Struct UserStateView { 
+            //   0: currentLevel, 1: selfBaseCents, 2: directsFirst, 3: directsVip1, 
+            //   4: teamFirst, 5: lastDepositAt, 6: levelReachedAt[7], 7: oneTimeClaimed[7], 
+            //   8: vip (WindowView), 9: rede (WindowView) 
+            // }
+            return {
+                currentLevel: Number(vipDataState[0]),
+                selfBaseCents: vipDataState[1],
+                directsFirst: vipDataState[2],
+                directsVip1: vipDataState[3],
+                teamFirst: vipDataState[4],
+                levelReachedAt: vipDataState[6],
+                oneTimeClaimed: vipDataState[7],
+                vip: vipDataState[8], // WindowView struct
+                rede: vipDataState[9]  // WindowView struct
+            };
+        }
+        return vipDataState; // Already an object (if wagmi mapped it)
+    }, [vipDataState]);
+
     const eligibility = useMemo(() => {
         if (!eligibilityTuple) return undefined;
         const [baseCents, directs, dirVip1, team, lastDepositAt] = eligibilityTuple;
@@ -340,33 +368,7 @@ export function ProtocolProvider({ children }) {
         loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty, distributeFees, claimReferral,
     }), [refetch, vipRefetch, royaltyRefetch, earningRefetch, history, loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty, distributeFees, claimReferral]);
 
-    const vipProgressTuple = V(2);
-    const redeProgressTuple = V(3);
 
-    // Parse getUserStateView result (vipDataState) into a clean object
-    const parsedVipState = useMemo(() => {
-        if (!vipDataState) return undefined;
-        // Check if it's an array (tuple) or object
-        if (Array.isArray(vipDataState)) {
-            // Struct UserStateView { 
-            //   0: currentLevel, 1: selfBaseCents, 2: directsFirst, 3: directsVip1, 
-            //   4: teamFirst, 5: lastDepositAt, 6: levelReachedAt[7], 7: oneTimeClaimed[7], 
-            //   8: vip (WindowView), 9: rede (WindowView) 
-            // }
-            return {
-                currentLevel: Number(vipDataState[0]),
-                selfBaseCents: vipDataState[1],
-                directsFirst: vipDataState[2],
-                directsVip1: vipDataState[3],
-                teamFirst: vipDataState[4],
-                levelReachedAt: vipDataState[6],
-                oneTimeClaimed: vipDataState[7],
-                vip: vipDataState[8], // WindowView struct
-                rede: vipDataState[9]  // WindowView struct
-            };
-        }
-        return vipDataState; // Already an object (if wagmi mapped it)
-    }, [vipDataState]);
 
     const vipProg = useMemo(() => {
         if (!vipProgressTuple) return {};
