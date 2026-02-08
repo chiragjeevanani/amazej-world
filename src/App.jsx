@@ -12,6 +12,7 @@ const RoyaltyRewardsComponent = lazy(() => import('@/screens/RoyaltyRewards'))
 const WithdrawEarningsComponent = lazy(() => import('@/screens/WithdrawEarnings'))
 const HistoryScreen = lazy(() => import('@/screens/History'))
 const ReferralsComponent = lazy(() => import('@/screens/Referrals'))
+const ReferralDetailViewComponent = lazy(() => import('@/screens/ReferralDetailView'))
 const VipScreen = lazy(() => import('@/screens/VIP'))
 
 function LoadingScreen() {

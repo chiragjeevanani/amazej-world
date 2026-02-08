@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useProtocol } from "@/contexts/ProtocolContext";
 import { fmtTs } from "@/screens/Plans";
 import { Users, TrendingUp, Coins, Activity, Rocket, Clock, ShieldCheck, ShieldAlert } from "lucide-react";
@@ -9,6 +10,7 @@ function fmtUSDCents(c) { return "USDT " + (Number(c ?? 0n) / 100).toLocaleStrin
 export default function ReferralsComponent() {
     const { t } = useTranslation();
     const { data } = useProtocol();
+    const navigate = useNavigate();
 
     return (
         <div className="max-w-7xl mx-auto space-y-10 p-4 md:p-8">
@@ -49,6 +51,8 @@ export default function ReferralsComponent() {
                     icon={<Users className="text-blue-400" />}
                     trend={`${t('referrals.active')}: ${data.eligibility?.activeDirects ?? 0}`}
                     trendSecondary={`${t('referrals.inactive')}: ${Math.max(0, Number(data.referral?.directReferrals ?? 0) - Number(data.eligibility?.activeDirects ?? 0))}`}
+                    onTrendClick={() => navigate('/referrals/active')}
+                    onTrendSecondaryClick={() => navigate('/referrals/inactive')}
                     description={t('referrals.directly_referred')}
                 />
                 <PerformanceCard
