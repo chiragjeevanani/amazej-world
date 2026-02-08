@@ -174,13 +174,12 @@ export function ProtocolProvider({ children }) {
             setReferralsError(err?.shortMessage || err?.message || "Failed to fetch event data from BSC");
         } finally {
             setReferralsLoading(false);
-        }
         */
 
         // Return immediately - no event fetching
         setReferralsLoading(false);
         setDirectReferralsList([]);
-        setReferralsError("Referral address listing is temporarily disabled due to mobile RPC limitations. Counts are still accurate.");
+        // Don't set error - let the UI handle empty state gracefully
     }, [enabled, publicClient, main, address, chainId]);
 
     // Fetch direct referral addresses from events

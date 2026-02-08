@@ -161,24 +161,14 @@ export default function ReferralDetailView() {
                                 <Users size={32} />
                             </div>
                             <div className="space-y-1">
-                                <h3 className="text-xl font-black text-foreground">
-                                    {data.referralsError ? "Network Error" : `No ${filter} referrals visible`}
-                                </h3>
+                                <h3 className="text-xl font-black text-foreground">Individual Addresses Unavailable</h3>
                                 <p className="text-sm font-medium text-muted-foreground max-w-xs mx-auto">
-                                    {data.referralsError
-                                        ? data.referralsError
-                                        : (searchQuery ? "No addresses match your search query." : "If the counts on the previous page show referrals but this list is empty, they might still be indexing on the blockchain.")}
+                                    {searchQuery
+                                        ? "No addresses match your search query."
+                                        : "Individual wallet addresses can't be listed due to mobile RPC limitations, but your referral counts on the dashboard are accurate."}
                                 </p>
                             </div>
-                            {data.referralsError && (
-                                <button
-                                    onClick={() => actions.fetchReferrals()}
-                                    className="px-6 py-3 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-primary/20"
-                                >
-                                    Retry Sync
-                                </button>
-                            )}
-                            {searchQuery && !data.referralsError && (
+                            {searchQuery && (
                                 <button
                                     onClick={() => setSearchQuery('')}
                                     className="text-xs font-black text-primary uppercase tracking-widest hover:underline"
