@@ -121,10 +121,13 @@ export function ProtocolProvider({ children }) {
             const minStartBlock = latestBlock - 2000000n;
             const CHUNK_SIZE = 200000n; // 200k blocks - safer for mobile
 
+
             let currentTo = latestBlock;
             let foundAddresses = new Set();
+            let chunksProcessed = 0;
+            const MAX_CHUNKS = 15; // Limit to prevent infinite loops
 
-            while (currentTo > minStartBlock) {
+            while (currentTo > minStartBlock && chunksProcessed < MAX_CHUNKS) {
                 const currentFrom = currentTo - CHUNK_SIZE > minStartBlock ? currentTo - CHUNK_SIZE : minStartBlock;
 
                 // Update progress
@@ -133,59 +136,68 @@ export function ProtocolProvider({ children }) {
                 const pct = totalBlocks > 0n ? Number((blocksScanned * 100n) / totalBlocks) : 100;
                 setReferralsProgress(Math.min(pct, 100));
 
-                console.log(`Syncing referrals: ${currentFrom} to ${currentTo}...`);
+                console.log(`Syncing referrals: ${currentFrom} to ${currentTo} (chunk ${chunksProcessed + 1}/${MAX_CHUNKS})...`);
 
-                // Fetch logs for this chunk
-                const [referLogs, teamLogs, vipLogs] = await Promise.all([
-                    publicClient.getLogs({
-                        address: main,
-                        event: {
-                            type: 'event',
-                            name: 'ReferrerSet',
-                            inputs: [{ name: 'user', type: 'address', indexed: true }, { name: 'referrer', type: 'address', indexed: true }]
-                        },
-                        args: { referrer: checksummedAddress },
-                        fromBlock: currentFrom,
-                        toBlock: currentTo
-                    }),
-                    publicClient.getLogs({
-                        address: main,
-                        event: {
-                            type: 'event',
-                            name: 'TeamLinked',
-                            inputs: [{ name: 'referrer', type: 'address', indexed: true }, { name: 'user', type: 'address', indexed: true }]
-                        },
-                        args: { referrer: checksummedAddress },
-                        fromBlock: currentFrom,
-                        toBlock: currentTo
-                    }),
-                    publicClient.getLogs({
-                        address: main,
-                        event: {
-                            type: 'event',
-                            name: 'VIPUpgrade1Counted',
-                            inputs: [{ name: 'user', type: 'address', indexed: true }, { name: 'upline', type: 'address', indexed: true }]
-                        },
-                        args: { upline: checksummedAddress },
-                        fromBlock: currentFrom,
-                        toBlock: currentTo
-                    })
-                ]);
+                try {
+                    // Fetch logs for this chunk with a timeout
+                    const [referLogs, teamLogs, vipLogs] = await Promise.race([
+                        Promise.all([
+                            publicClient.getLogs({
+                                address: main,
+                                event: {
+                                    type: 'event',
+                                    name: 'ReferrerSet',
+                                    inputs: [{ name: 'user', type: 'address', indexed: true }, { name: 'referrer', type: 'address', indexed: true }]
+                                },
+                                args: { referrer: checksummedAddress },
+                                fromBlock: currentFrom,
+                                toBlock: currentTo
+                            }),
+                            publicClient.getLogs({
+                                address: main,
+                                event: {
+                                    type: 'event',
+                                    name: 'TeamLinked',
+                                    inputs: [{ name: 'referrer', type: 'address', indexed: true }, { name: 'user', type: 'address', indexed: true }]
+                                },
+                                args: { referrer: checksummedAddress },
+                                fromBlock: currentFrom,
+                                toBlock: currentTo
+                            }),
+                            publicClient.getLogs({
+                                address: main,
+                                event: {
+                                    type: 'event',
+                                    name: 'VIPUpgrade1Counted',
+                                    inputs: [{ name: 'user', type: 'address', indexed: true }, { name: 'upline', type: 'address', indexed: true }]
+                                },
+                                args: { upline: checksummedAddress },
+                                fromBlock: currentFrom,
+                                toBlock: currentTo
+                            })
+                        ]),
+                        new Promise((_, reject) => setTimeout(() => reject(new Error('Chunk timeout')), 8000))
+                    ]);
 
-                const chunkAddrs = [...referLogs, ...teamLogs, ...vipLogs].map(l => l.args.user);
-                let added = false;
-                chunkAddrs.forEach(addr => {
-                    if (!foundAddresses.has(addr)) {
-                        foundAddresses.add(addr);
-                        added = true;
+                    const chunkAddrs = [...referLogs, ...teamLogs, ...vipLogs].map(l => l.args.user);
+                    let added = false;
+                    chunkAddrs.forEach(addr => {
+                        if (!foundAddresses.has(addr)) {
+                            foundAddresses.add(addr);
+                            added = true;
+                        }
+                    });
+
+                    if (added) {
+                        setDirectReferralsList(Array.from(foundAddresses));
                     }
-                });
-
-                if (added) {
-                    setDirectReferralsList(Array.from(foundAddresses));
+                } catch (chunkErr) {
+                    console.warn(`Skipping chunk ${currentFrom}-${currentTo}:`, chunkErr.message);
+                    // Continue to next chunk even if this one fails
                 }
 
                 currentTo = currentFrom - 1n;
+                chunksProcessed++;
             }
 
             setReferralsProgress(100);
