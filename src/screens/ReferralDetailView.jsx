@@ -25,7 +25,7 @@ export default function ReferralDetailView() {
     const { filter } = useParams(); // 'active' or 'inactive'
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { data } = useProtocol();
+    const { data, actions } = useProtocol();
     const [searchQuery, setSearchQuery] = useState('');
     const [copiedAddress, setCopiedAddress] = useState(null);
 
@@ -39,6 +39,8 @@ export default function ReferralDetailView() {
             return matchesStatus && matchesSearch;
         });
     }, [data.directsList, filter, searchQuery]);
+
+    const isListTrulyEmpty = !data.referralsLoading && referrals.length === 0;
 
     const copyToClipboard = (addr) => {
         navigator.clipboard.writeText(addr);
@@ -96,7 +98,15 @@ export default function ReferralDetailView() {
 
             {/* List */}
             <div className="grid grid-cols-1 gap-3">
-                {referrals.length > 0 ? (
+                {data.referralsLoading ? (
+                    <div className="py-24 flex flex-col items-center justify-center space-y-4 bg-card/20 backdrop-blur-xl border border-dashed border-white/10 rounded-[2.5rem]">
+                        <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+                        <div className="space-y-1 text-center">
+                            <h3 className="text-xl font-black text-foreground">Syncing Data</h3>
+                            <p className="text-sm font-medium text-muted-foreground">Reading referral logs from BSC blockchain...</p>
+                        </div>
+                    </div>
+                ) : referrals.length > 0 ? (
                     referrals.map((item, idx) => (
                         <div
                             key={item.address}
@@ -104,18 +114,18 @@ export default function ReferralDetailView() {
                             style={{ animationDelay: `${idx * 50}ms` }}
                         >
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                <div className="flex items-center gap-4">
-                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center border transition-colors ${item.hasPlan ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-rose-500/10 border-rose-500/20 text-rose-500'}`}>
+                                <div className="flex items-center gap-4 min-w-0">
+                                    <div className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center border transition-colors ${item.hasPlan ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-rose-500/10 border-rose-500/20 text-rose-500'}`}>
                                         {item.hasPlan ? <UserCheck size={24} /> : <UserMinus size={24} />}
                                     </div>
-                                    <div className="space-y-0.5">
+                                    <div className="space-y-0.5 min-w-0 overflow-hidden">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-sm md:text-base font-black tracking-tight font-mono">
-                                                {window.innerWidth < 640 ? fmtAddress(item.address) : item.address}
+                                            <span className="text-sm md:text-base font-black tracking-tight font-mono truncate">
+                                                {item.address}
                                             </span>
                                             <button
                                                 onClick={() => copyToClipboard(item.address)}
-                                                className="p-1.5 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-foreground transition-all"
+                                                className="shrink-0 p-1.5 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-foreground transition-all"
                                             >
                                                 {copiedAddress === item.address ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
                                             </button>
@@ -131,7 +141,7 @@ export default function ReferralDetailView() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 sm:shrink-0">
                                     <a
                                         href={`https://bscscan.com/address/${item.address}`}
                                         target="_blank"
@@ -145,23 +155,74 @@ export default function ReferralDetailView() {
                         </div>
                     ))
                 ) : (
-                    <div className="py-20 flex flex-col items-center justify-center text-center space-y-4 bg-card/20 backdrop-blur-xl border border-dashed border-white/10 rounded-[2.5rem]">
-                        <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-muted-foreground/40">
-                            <Users size={32} />
+                    <div className="flex flex-col gap-6">
+                        <div className="py-20 flex flex-col items-center justify-center text-center space-y-4 bg-card/20 backdrop-blur-xl border border-dashed border-white/10 rounded-[2.5rem]">
+                            <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-muted-foreground/40">
+                                <Users size={32} />
+                            </div>
+                            <div className="space-y-1">
+                                <h3 className="text-xl font-black text-foreground">
+                                    {data.referralsError ? "Network Error" : `No ${filter} referrals visible`}
+                                </h3>
+                                <p className="text-sm font-medium text-muted-foreground max-w-xs mx-auto">
+                                    {data.referralsError
+                                        ? data.referralsError
+                                        : (searchQuery ? "No addresses match your search query." : "If the counts on the previous page show referrals but this list is empty, they might still be indexing on the blockchain.")}
+                                </p>
+                            </div>
+                            {data.referralsError && (
+                                <button
+                                    onClick={() => actions.fetchReferrals()}
+                                    className="px-6 py-3 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-primary/20"
+                                >
+                                    Retry Sync
+                                </button>
+                            )}
+                            {searchQuery && !data.referralsError && (
+                                <button
+                                    onClick={() => setSearchQuery('')}
+                                    className="text-xs font-black text-primary uppercase tracking-widest hover:underline"
+                                >
+                                    Clear search
+                                </button>
+                            )}
                         </div>
-                        <div className="space-y-1">
-                            <h3 className="text-xl font-black text-foreground">No {filter} referrals found</h3>
-                            <p className="text-sm font-medium text-muted-foreground max-w-xs mx-auto">
-                                {searchQuery ? "No addresses match your current search query." : `You don't have any direct referrals that are currently ${filter}.`}
-                            </p>
-                        </div>
-                        {searchQuery && (
-                            <button
-                                onClick={() => setSearchQuery('')}
-                                className="text-xs font-black text-primary uppercase tracking-widest hover:underline"
-                            >
-                                Clear search
-                            </button>
+
+                        {/* Fallback Info */}
+                        {!searchQuery && (
+                            <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 space-y-4">
+                                <div className="flex items-start gap-4">
+                                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                                        <ExternalLink size={20} />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h4 className="text-sm font-black uppercase tracking-wider">Blockchain Fallback</h4>
+                                        <p className="text-xs text-muted-foreground leading-relaxed">
+                                            If the list is empty but your dashboard shows counts, check your internal transactions directly on BSCScan.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="pt-2">
+                                    <a
+                                        href={`https://bscscan.com/address/${data.main}#internaltx`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex w-full items-center justify-center gap-2 px-6 py-4 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-xl shadow-primary/20"
+                                    >
+                                        View on BSCScan Explorer <ExternalLink size={14} />
+                                    </a>
+                                </div>
+                                <div className="bg-white/5 rounded-xl p-4 space-y-2">
+                                    <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                                        <span>Referrer:</span>
+                                        <span className="font-mono text-foreground">{fmtAddress(data.user?.address)}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                                        <span>Contract:</span>
+                                        <span className="font-mono text-foreground">{fmtAddress(data.main)}</span>
+                                    </div>
+                                </div>
+                            </div>
                         )}
                     </div>
                 )}

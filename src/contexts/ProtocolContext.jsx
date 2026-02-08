@@ -103,70 +103,79 @@ export function ProtocolProvider({ children }) {
 
     const [directReferralsList, setDirectReferralsList] = useState([]);
     const [referralStatuses, setReferralStatuses] = useState({});
+    const [referralsLoading, setReferralsLoading] = useState(false);
+    const [referralsError, setReferralsError] = useState(null);
+
+    const fetchReferrals = useCallback(async () => {
+        if (!enabled || !publicClient || !main) return;
+        setReferralsLoading(true);
+        setReferralsError(null);
+        try {
+            const checksummedAddress = getAddress(address);
+            console.log("Fetching logs for referrer:", checksummedAddress, "on contract:", main);
+
+            // Fetch ReferrerSet, TeamLinked, and VIPUpgrade1Counted events
+            // Using a safe fromBlock for BSC Mainnet if possible, otherwise 0n
+            const startBlock = chainId === 56 ? 30000000n : 0n; // Optimization for BSC Mainnet
+
+            const [referLogs, teamLogs, vipLogs] = await Promise.all([
+                publicClient.getLogs({
+                    address: main,
+                    event: {
+                        type: 'event',
+                        name: 'ReferrerSet',
+                        inputs: [
+                            { name: 'user', type: 'address', indexed: true },
+                            { name: 'referrer', type: 'address', indexed: true }
+                        ]
+                    },
+                    args: { referrer: checksummedAddress },
+                    fromBlock: startBlock
+                }),
+                publicClient.getLogs({
+                    address: main,
+                    event: {
+                        type: 'event',
+                        name: 'TeamLinked',
+                        inputs: [
+                            { name: 'referrer', type: 'address', indexed: true },
+                            { name: 'user', type: 'address', indexed: true }
+                        ]
+                    },
+                    args: { referrer: checksummedAddress },
+                    fromBlock: startBlock
+                }),
+                publicClient.getLogs({
+                    address: main,
+                    event: {
+                        type: 'event',
+                        name: 'VIPUpgrade1Counted',
+                        inputs: [
+                            { name: 'user', type: 'address', indexed: true },
+                            { name: 'upline', type: 'address', indexed: true }
+                        ]
+                    },
+                    args: { upline: checksummedAddress },
+                    fromBlock: startBlock
+                })
+            ]);
+
+            const allLogs = [...referLogs, ...teamLogs, ...vipLogs];
+            const addresses = Array.from(new Set(allLogs.map(l => l.args.user)));
+            console.log("Fetched direct referrals:", addresses.length, addresses);
+            setDirectReferralsList(addresses);
+        } catch (err) {
+            console.error("Failed to fetch referral logs:", err);
+            setReferralsError(err?.shortMessage || err?.message || "Failed to fetch event data from BSC");
+        } finally {
+            setReferralsLoading(false);
+        }
+    }, [enabled, publicClient, main, address, chainId]);
 
     // Fetch direct referral addresses from events
     useEffect(() => {
-        if (!enabled || !publicClient || !main) return;
-
-        const fetchLogs = async () => {
-            try {
-                const checksummedAddress = getAddress(address);
-                console.log("Fetching logs for referrer:", checksummedAddress, "on contract:", main);
-
-                // Fetch ReferrerSet, TeamLinked, and VIPUpgrade1Counted events
-                const [referLogs, teamLogs, vipLogs] = await Promise.all([
-                    publicClient.getLogs({
-                        address: main,
-                        event: {
-                            type: 'event',
-                            name: 'ReferrerSet',
-                            inputs: [
-                                { name: 'user', type: 'address', indexed: true },
-                                { name: 'referrer', type: 'address', indexed: true }
-                            ]
-                        },
-                        args: { referrer: checksummedAddress },
-                        fromBlock: 0n
-                    }),
-                    publicClient.getLogs({
-                        address: main,
-                        event: {
-                            type: 'event',
-                            name: 'TeamLinked',
-                            inputs: [
-                                { name: 'referrer', type: 'address', indexed: true },
-                                { name: 'user', type: 'address', indexed: true }
-                            ]
-                        },
-                        args: { referrer: checksummedAddress },
-                        fromBlock: 0n
-                    }),
-                    publicClient.getLogs({
-                        address: main,
-                        event: {
-                            type: 'event',
-                            name: 'VIPUpgrade1Counted',
-                            inputs: [
-                                { name: 'user', type: 'address', indexed: true },
-                                { name: 'upline', type: 'address', indexed: true }
-                            ]
-                        },
-                        args: { upline: checksummedAddress },
-                        fromBlock: 0n
-                    })
-                ]);
-
-                const allLogs = [...referLogs, ...teamLogs, ...vipLogs];
-                const addresses = Array.from(new Set(allLogs.map(l => l.args.user)));
-                console.log("Fetched direct referrals:", addresses.length, addresses);
-                setDirectReferralsList(addresses);
-            } catch (err) {
-                console.error("Failed to fetch referral logs:", err);
-            }
-        };
-
-        fetchLogs();
-    }, [enabled, publicClient, main, address]);
+        fetchReferrals();
+    }, [fetchReferrals]);
 
     // Check hasPlan status for all directs
     useEffect(() => {
@@ -464,9 +473,10 @@ export function ProtocolProvider({ children }) {
     })), [vipC, writeContractAsync, runTx]);
 
     const actions = useMemo(() => ({
-        refetch: () => { refetch(); vipRefetch(); royaltyRefetch(); earningRefetch(); history.refetch(); },
+        refetch: () => { refetch(); vipRefetch(); royaltyRefetch(); earningRefetch(); history.refetch(); fetchReferrals(); },
         loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty, distributeFees, claimReferral,
-    }), [refetch, vipRefetch, royaltyRefetch, earningRefetch, history, loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty, distributeFees, claimReferral]);
+        fetchReferrals
+    }), [refetch, vipRefetch, royaltyRefetch, earningRefetch, history, fetchReferrals, loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty, distributeFees, claimReferral]);
 
 
 
@@ -505,6 +515,8 @@ export function ProtocolProvider({ children }) {
             address: addr,
             ...(referralStatuses[addr] || { hasPlan: false, baseUSDCents: 0n })
         })),
+        referralsLoading,
+        referralsError,
         owner,
         beneficiaries,
         royaltyOwner,
