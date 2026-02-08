@@ -107,6 +107,11 @@ export function ProtocolProvider({ children }) {
     const [referralsError, setReferralsError] = useState(null);
 
     const fetchReferrals = useCallback(async () => {
+        // TEMPORARILY DISABLED: Event-based referral fetching causes "Request exceeds defined limit" 
+        // on mobile wallets due to strict RPC limits. The dashboard referral counts still work
+        // via getReferralInfo contract call. Re-enable when we have an indexer/subgraph.
+
+        /*
         if (!enabled || !publicClient || !main) return;
         setReferralsLoading(true);
         setReferralsError(null);
@@ -116,7 +121,7 @@ export function ProtocolProvider({ children }) {
 
             // Fetch ReferrerSet, TeamLinked, and VIPUpgrade1Counted events
             // Using a safe fromBlock for BSC Mainnet if possible, otherwise 0n
-            const startBlock = chainId === 56 ? 30000000n : 0n; // Optimization for BSC Mainnet
+            const startBlock = chainId === 56 ? 30000000n : 0n;
 
             const [referLogs, teamLogs, vipLogs] = await Promise.all([
                 publicClient.getLogs({
@@ -170,6 +175,12 @@ export function ProtocolProvider({ children }) {
         } finally {
             setReferralsLoading(false);
         }
+        */
+
+        // Return immediately - no event fetching
+        setReferralsLoading(false);
+        setDirectReferralsList([]);
+        setReferralsError("Referral address listing is temporarily disabled due to mobile RPC limitations. Counts are still accurate.");
     }, [enabled, publicClient, main, address, chainId]);
 
     // Fetch direct referral addresses from events
