@@ -98,13 +98,25 @@ export default function ReferralDetailView() {
 
             {/* List */}
             <div className="grid grid-cols-1 gap-3">
-                {data.referralsLoading ? (
-                    <div className="py-24 flex flex-col items-center justify-center space-y-4 bg-card/20 backdrop-blur-xl border border-dashed border-white/10 rounded-[2.5rem]">
-                        <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-                        <div className="space-y-1 text-center">
-                            <h3 className="text-xl font-black text-foreground">Syncing Data</h3>
-                            <p className="text-sm font-medium text-muted-foreground">Reading referral logs from BSC blockchain...</p>
+                {(data.referralsLoading || (data.referralsProgress > 0 && data.referralsProgress < 100)) ? (
+                    <div className="py-12 flex flex-col items-center justify-center space-y-6 bg-card/20 backdrop-blur-xl border border-dashed border-white/10 rounded-[2.5rem]">
+                        <div className="relative">
+                            <div className="w-20 h-20 rounded-full border-4 border-primary/10 border-t-primary animate-spin" />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <span className="text-xs font-black text-primary">{data.referralsProgress}%</span>
+                            </div>
                         </div>
+                        <div className="space-y-1 text-center">
+                            <h3 className="text-xl font-black text-foreground">Syncing Network</h3>
+                            <p className="text-sm font-medium text-muted-foreground">Scanning blockchain for referral addresses...</p>
+                        </div>
+
+                        {/* Found so far count */}
+                        {data.directsList && data.directsList.length > 0 && (
+                            <div className="px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest">
+                                Found {data.directsList.length} addresses so far
+                            </div>
+                        )}
                     </div>
                 ) : referrals.length > 0 ? (
                     referrals.map((item, idx) => (
@@ -161,11 +173,13 @@ export default function ReferralDetailView() {
                                 <Users size={32} />
                             </div>
                             <div className="space-y-1">
-                                <h3 className="text-xl font-black text-foreground">Individual Addresses Unavailable</h3>
+                                <h3 className="text-xl font-black text-foreground">
+                                    {searchQuery ? "No Matches Found" : "No Referrals Found"}
+                                </h3>
                                 <p className="text-sm font-medium text-muted-foreground max-w-xs mx-auto">
                                     {searchQuery
                                         ? "No addresses match your search query."
-                                        : "Individual wallet addresses can't be listed due to mobile RPC limitations, but your referral counts on the dashboard are accurate."}
+                                        : "We couldn't find any referral addresses for this wallet, or the sync process is still starting."}
                                 </p>
                             </div>
                             {searchQuery && (
