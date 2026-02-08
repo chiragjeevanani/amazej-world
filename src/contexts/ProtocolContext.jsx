@@ -116,9 +116,10 @@ export function ProtocolProvider({ children }) {
         try {
             const checksummedAddress = getAddress(address);
             const latestBlock = await publicClient.getBlockNumber();
-            // Start from a safe point for BSC Mainnet
-            const minStartBlock = chainId === 56 ? 35000000n : 0n;
-            const CHUNK_SIZE = 500000n; // 500k blocks chunk
+            // Scan only the most recent 2M blocks (roughly 6-7 months on BSC)
+            // This prevents infinite scanning and speeds up mobile sync
+            const minStartBlock = latestBlock - 2000000n;
+            const CHUNK_SIZE = 200000n; // 200k blocks - safer for mobile
 
             let currentTo = latestBlock;
             let foundAddresses = new Set();
