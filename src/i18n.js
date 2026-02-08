@@ -14,7 +14,7 @@ i18n
         resources: {
             en: {
                 translation: {
-                    common: { back: "Back" },
+                    common: { back: "Back", BACK: "Back" },
                     menu: { home: "Home", plans: "Plans", refer_earn: "Refer & Earn", sell: "Sell", lp_claim: "LP Claim", royalty_rewards: "Royalty Rewards", withdraw_earnings: "Withdraw Earnings", history: "History", referrals: "Referrals", vip: "VIP" },
                     home: {
                         personal_dashboard: "Personal Dashboard",
@@ -287,9 +287,12 @@ i18n
                         accumulated_earnings: "Accumulated earnings",
                         direct_network: "Direct Network",
                         active: "Active",
+                        ACTIVE: "Active",
                         directly_referred: "Directly referred users",
                         direct_referrals: "Direct Referrals",
+                        DIRECT_REFERRALS: "Direct Referrals",
                         inactive: "Inactive",
+                        INACTIVE: "Inactive",
                         total_team: "Total Team",
                         total_downline: "Total downline members",
                         team_volume: "Team Volume",
@@ -3712,9 +3715,6 @@ i18n
                         tab_sells: "판매",
                         tab_royalty: "글로벌 로열티",
                         time: "시간",
-                        amount: "금액",
-                        price: "가격",
-                        lp_amount: "LP 금액",
                         ama_tokens: "AMA 토큰",
                         periods: "기간",
                         reward: "보상",

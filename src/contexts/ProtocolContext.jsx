@@ -110,21 +110,55 @@ export function ProtocolProvider({ children }) {
 
         const fetchLogs = async () => {
             try {
-                const logs = await publicClient.getLogs({
-                    address: main,
-                    event: {
-                        type: 'event',
-                        name: 'ReferrerSet',
-                        inputs: [
-                            { name: 'user', type: 'address', indexed: true },
-                            { name: 'referrer', type: 'address', indexed: true }
-                        ]
-                    },
-                    args: { referrer: address },
-                    fromBlock: 0n
-                });
+                const checksummedAddress = getAddress(address);
+                console.log("Fetching logs for referrer:", checksummedAddress, "on contract:", main);
 
-                const addresses = Array.from(new Set(logs.map(l => l.args.user)));
+                // Fetch ReferrerSet, TeamLinked, and VIPUpgrade1Counted events
+                const [referLogs, teamLogs, vipLogs] = await Promise.all([
+                    publicClient.getLogs({
+                        address: main,
+                        event: {
+                            type: 'event',
+                            name: 'ReferrerSet',
+                            inputs: [
+                                { name: 'user', type: 'address', indexed: true },
+                                { name: 'referrer', type: 'address', indexed: true }
+                            ]
+                        },
+                        args: { referrer: checksummedAddress },
+                        fromBlock: 0n
+                    }),
+                    publicClient.getLogs({
+                        address: main,
+                        event: {
+                            type: 'event',
+                            name: 'TeamLinked',
+                            inputs: [
+                                { name: 'referrer', type: 'address', indexed: true },
+                                { name: 'user', type: 'address', indexed: true }
+                            ]
+                        },
+                        args: { referrer: checksummedAddress },
+                        fromBlock: 0n
+                    }),
+                    publicClient.getLogs({
+                        address: main,
+                        event: {
+                            type: 'event',
+                            name: 'VIPUpgrade1Counted',
+                            inputs: [
+                                { name: 'user', type: 'address', indexed: true },
+                                { name: 'upline', type: 'address', indexed: true }
+                            ]
+                        },
+                        args: { upline: checksummedAddress },
+                        fromBlock: 0n
+                    })
+                ]);
+
+                const allLogs = [...referLogs, ...teamLogs, ...vipLogs];
+                const addresses = Array.from(new Set(allLogs.map(l => l.args.user)));
+                console.log("Fetched direct referrals:", addresses.length, addresses);
                 setDirectReferralsList(addresses);
             } catch (err) {
                 console.error("Failed to fetch referral logs:", err);
