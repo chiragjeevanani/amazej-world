@@ -131,7 +131,7 @@ export default function ReferralsComponent() {
     );
 }
 
-function PerformanceCard({ label, value, icon, description, trend, trendSecondary }) {
+function PerformanceCard({ label, value, icon, description, trend, trendSecondary, onTrendClick, onTrendSecondaryClick }) {
     return (
         <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-indigo-500 rounded-3xl blur opacity-0 group-hover:opacity-10 transition duration-500"></div>
@@ -142,12 +142,18 @@ function PerformanceCard({ label, value, icon, description, trend, trendSecondar
                     </div>
                     <div className="flex flex-col items-end gap-1.5">
                         {trend && (
-                            <span className="text-xs font-black text-emerald-500 bg-emerald-500/10 px-3 py-1.5 rounded-lg uppercase tracking-widest">
+                            <span
+                                onClick={onTrendClick}
+                                className={`text-xs font-black text-emerald-500 bg-emerald-500/10 px-3 py-1.5 rounded-lg uppercase tracking-widest ${onTrendClick ? 'cursor-pointer hover:bg-emerald-500/20 active:scale-95 transition-all' : ''}`}
+                            >
                                 {trend}
                             </span>
                         )}
                         {trendSecondary && (
-                            <span className="text-xs font-black text-rose-500 bg-rose-500/10 px-3 py-1.5 rounded-lg uppercase tracking-widest whitespace-nowrap">
+                            <span
+                                onClick={onTrendSecondaryClick}
+                                className={`text-xs font-black text-rose-500 bg-rose-500/10 px-3 py-1.5 rounded-lg uppercase tracking-widest whitespace-nowrap ${onTrendSecondaryClick ? 'cursor-pointer hover:bg-rose-500/20 active:scale-95 transition-all' : ''}`}
+                            >
                                 {trendSecondary}
                             </span>
                         )}

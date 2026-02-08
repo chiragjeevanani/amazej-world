@@ -101,6 +101,72 @@ export function ProtocolProvider({ children }) {
         }
     });
 
+    const [directReferralsList, setDirectReferralsList] = useState([]);
+    const [referralStatuses, setReferralStatuses] = useState({});
+
+    // Fetch direct referral addresses from events
+    useEffect(() => {
+        if (!enabled || !publicClient || !main) return;
+
+        const fetchLogs = async () => {
+            try {
+                const logs = await publicClient.getLogs({
+                    address: main,
+                    event: {
+                        type: 'event',
+                        name: 'ReferrerSet',
+                        inputs: [
+                            { name: 'user', type: 'address', indexed: true },
+                            { name: 'referrer', type: 'address', indexed: true }
+                        ]
+                    },
+                    args: { referrer: address },
+                    fromBlock: 0n
+                });
+
+                const addresses = Array.from(new Set(logs.map(l => l.args.user)));
+                setDirectReferralsList(addresses);
+            } catch (err) {
+                console.error("Failed to fetch referral logs:", err);
+            }
+        };
+
+        fetchLogs();
+    }, [enabled, publicClient, main, address]);
+
+    // Check hasPlan status for all directs
+    useEffect(() => {
+        if (!enabled || !publicClient || !main || directReferralsList.length === 0) return;
+
+        const fetchStatuses = async () => {
+            try {
+                const results = await publicClient.multicall({
+                    contracts: directReferralsList.map(addr => ({
+                        address: main,
+                        abi: mainAbi,
+                        functionName: 'getUser',
+                        args: [addr]
+                    }))
+                });
+
+                const newStatuses = {};
+                directReferralsList.forEach((addr, i) => {
+                    if (results[i].status === 'success') {
+                        newStatuses[addr] = {
+                            hasPlan: results[i].result[0],
+                            baseUSDCents: results[i].result[1]
+                        };
+                    }
+                });
+                setReferralStatuses(newStatuses);
+            } catch (err) {
+                console.error("Failed to fetch referral statuses:", err);
+            }
+        };
+
+        fetchStatuses();
+    }, [enabled, publicClient, main, directReferralsList]);
+
     const ROYALTY_CALLS = useMemo(() => {
         if (!enabled || !royalty) return [];
         const acct = address;
@@ -401,6 +467,10 @@ export function ProtocolProvider({ children }) {
         redeProgress: redeProgressTuple,
         royalty: royaltyInfo,
         eligibility,
+        directsList: directReferralsList.map(addr => ({
+            address: addr,
+            ...(referralStatuses[addr] || { hasPlan: false, baseUSDCents: 0n })
+        })),
         owner,
         beneficiaries,
         royaltyOwner,

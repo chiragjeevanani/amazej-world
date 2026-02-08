@@ -73,6 +73,7 @@ function App() {
                                 <Route path="/withdraw-earnings" element={<WithdrawEarningsComponent />} />
                                 <Route path="/history" element={<HistoryScreen />} />
                                 <Route path="/referrals" element={<ReferralsComponent />} />
+                                <Route path="/referrals/:filter" element={<ReferralDetailViewComponent />} />
                                 <Route path="/vip" element={<VipScreen />} />
                             </Routes>
                         </Suspense>
