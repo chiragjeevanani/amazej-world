@@ -249,9 +249,11 @@ export function ProtocolProvider({ children }) {
         if (!eligibilityTuple) return undefined;
         const [baseCents, directs, dirVip1, team, lastDepositAt] = eligibilityTuple;
 
-        // Accurate "active in cycle" counts from the windows
-        const activeDirects = Number(parsedVipState?.vip?.redeDirectCount || 0) + Number(parsedVipState?.rede?.redeDirectCount || 0);
-        const activeTeam = Number(parsedVipState?.vip?.redeTeamCount || 0) + Number(parsedVipState?.rede?.redeTeamCount || 0);
+        // Accurate "active in cycle" counts from the current tracking window
+        const isRedeTrack = Number(currentTrack ?? 0) > 0;
+        const activeWindow = isRedeTrack ? parsedVipState?.rede : parsedVipState?.vip;
+        const activeDirects = Number(activeWindow?.redeDirectCount || 0);
+        const activeTeam = Number(activeWindow?.redeTeamCount || 0);
 
         return {
             baseCents,
