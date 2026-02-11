@@ -1,6 +1,5 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import { useProtocol } from "@/contexts/ProtocolContext";
 import { fmtTs } from "@/screens/Plans";
 import { Users, TrendingUp, Coins, Activity, Rocket, Clock, ShieldCheck, ShieldAlert } from "lucide-react";
@@ -10,7 +9,6 @@ function fmtUSDCents(c) { return "USDT " + (Number(c ?? 0n) / 100).toLocaleStrin
 export default function ReferralsComponent() {
     const { t } = useTranslation();
     const { data } = useProtocol();
-    const navigate = useNavigate();
 
     return (
         <div className="max-w-7xl mx-auto space-y-10 p-4 md:p-8">
@@ -51,8 +49,6 @@ export default function ReferralsComponent() {
                     icon={<Users className="text-blue-400" />}
                     trend={`${t('referrals.active')}: ${data.eligibility?.activeDirects ?? 0}`}
                     trendSecondary={`${t('referrals.inactive')}: ${Math.max(0, Number(data.referral?.directReferrals ?? 0) - Number(data.eligibility?.activeDirects ?? 0))}`}
-                    onTrendClick={() => navigate('/referrals/active')}
-                    onTrendSecondaryClick={() => navigate('/referrals/inactive')}
                     description={t('referrals.directly_referred')}
                 />
                 <PerformanceCard
@@ -135,7 +131,7 @@ export default function ReferralsComponent() {
     );
 }
 
-function PerformanceCard({ label, value, icon, description, trend, trendSecondary, onTrendClick, onTrendSecondaryClick }) {
+function PerformanceCard({ label, value, icon, description, trend, trendSecondary }) {
     return (
         <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-indigo-500 rounded-3xl blur opacity-0 group-hover:opacity-10 transition duration-500"></div>
@@ -146,18 +142,12 @@ function PerformanceCard({ label, value, icon, description, trend, trendSecondar
                     </div>
                     <div className="flex flex-col items-end gap-1.5">
                         {trend && (
-                            <span
-                                onClick={onTrendClick}
-                                className={`text-xs font-black text-emerald-500 bg-emerald-500/10 px-3 py-1.5 rounded-lg uppercase tracking-widest ${onTrendClick ? 'cursor-pointer hover:bg-emerald-500/20 active:scale-95 transition-all' : ''}`}
-                            >
+                            <span className="text-xs font-black text-emerald-500 bg-emerald-500/10 px-3 py-1.5 rounded-lg uppercase tracking-widest">
                                 {trend}
                             </span>
                         )}
                         {trendSecondary && (
-                            <span
-                                onClick={onTrendSecondaryClick}
-                                className={`text-xs font-black text-rose-500 bg-rose-500/10 px-3 py-1.5 rounded-lg uppercase tracking-widest whitespace-nowrap ${onTrendSecondaryClick ? 'cursor-pointer hover:bg-rose-500/20 active:scale-95 transition-all' : ''}`}
-                            >
+                            <span className="text-xs font-black text-rose-500 bg-rose-500/10 px-3 py-1.5 rounded-lg uppercase tracking-widest whitespace-nowrap">
                                 {trendSecondary}
                             </span>
                         )}

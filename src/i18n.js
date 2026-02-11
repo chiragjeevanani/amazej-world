@@ -14,7 +14,6 @@ i18n
         resources: {
             en: {
                 translation: {
-                    common: { back: "Back", BACK: "Back" },
                     menu: { home: "Home", plans: "Plans", refer_earn: "Refer & Earn", sell: "Sell", lp_claim: "LP Claim", royalty_rewards: "Royalty Rewards", withdraw_earnings: "Withdraw Earnings", history: "History", referrals: "Referrals", vip: "VIP" },
                     home: {
                         personal_dashboard: "Personal Dashboard",
@@ -287,12 +286,8 @@ i18n
                         accumulated_earnings: "Accumulated earnings",
                         direct_network: "Direct Network",
                         active: "Active",
-                        ACTIVE: "Active",
                         directly_referred: "Directly referred users",
-                        direct_referrals: "Direct Referrals",
-                        DIRECT_REFERRALS: "Direct Referrals",
                         inactive: "Inactive",
-                        INACTIVE: "Inactive",
                         total_team: "Total Team",
                         total_downline: "Total downline members",
                         team_volume: "Team Volume",
@@ -361,7 +356,6 @@ i18n
             },
             hi: {
                 translation: {
-                    common: { back: "वापस" },
                     menu: { home: "होम", plans: "योजनाएं", refer_earn: "रेफर करें और कमाएं", sell: "बेचें", lp_claim: "एलपी दावा", royalty_rewards: "रॉयल्टी पुरस्कार", withdraw_earnings: "आय निकालें", history: "इतिहास", referrals: "रेफरल्स", vip: "वीआईपी" },
                     home: {
                         personal_dashboard: "व्यक्तिगत डैशबोर्ड",
@@ -519,7 +513,6 @@ i18n
                         direct_network: "प्रत्यक्ष नेटवर्क",
                         active: "सक्रिय",
                         directly_referred: "सीधे रेफर किए गए उपयोगकर्ता",
-                        direct_referrals: "प्रत्यक्ष रेफरल",
                         inactive: "निष्क्रिय",
                         total_team: "कुल टीम",
                         total_downline: "कुल डाउनलाइन सदस्य",
@@ -694,7 +687,6 @@ i18n
             },
             ne: {
                 translation: {
-                    common: { back: "फिर्ता" },
                     menu: { home: "गृहपृष्ठ", plans: "योजनाहरू", refer_earn: "सिफारिस र कमाउनुहोस्", sell: "बिक्री", lp_claim: "एलपी दाबी", royalty_rewards: "रोयल्टी पुरस्कार", withdraw_earnings: "कमाई झिक्नुहोस्", history: "इतिहास", referrals: "सिफारिसहरू", vip: "भीआईपी" },
                     home: {
                         personal_dashboard: "व्यक्तिगत ड्यासबोर्ड",
@@ -3715,6 +3707,9 @@ i18n
                         tab_sells: "판매",
                         tab_royalty: "글로벌 로열티",
                         time: "시간",
+                        amount: "금액",
+                        price: "가격",
+                        lp_amount: "LP 금액",
                         ama_tokens: "AMA 토큰",
                         periods: "기간",
                         reward: "보상",

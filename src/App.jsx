@@ -12,7 +12,6 @@ const RoyaltyRewardsComponent = lazy(() => import('@/screens/RoyaltyRewards'))
 const WithdrawEarningsComponent = lazy(() => import('@/screens/WithdrawEarnings'))
 const HistoryScreen = lazy(() => import('@/screens/History'))
 const ReferralsComponent = lazy(() => import('@/screens/Referrals'))
-const ReferralDetailViewComponent = lazy(() => import('@/screens/ReferralDetailView'))
 const VipScreen = lazy(() => import('@/screens/VIP'))
 
 function LoadingScreen() {
@@ -74,7 +73,6 @@ function App() {
                                 <Route path="/withdraw-earnings" element={<WithdrawEarningsComponent />} />
                                 <Route path="/history" element={<HistoryScreen />} />
                                 <Route path="/referrals" element={<ReferralsComponent />} />
-                                <Route path="/referrals/:filter" element={<ReferralDetailViewComponent />} />
                                 <Route path="/vip" element={<VipScreen />} />
                             </Routes>
                         </Suspense>

@@ -101,152 +101,6 @@ export function ProtocolProvider({ children }) {
         }
     });
 
-    const [directReferralsList, setDirectReferralsList] = useState([]);
-    const [referralStatuses, setReferralStatuses] = useState({});
-    const [referralsLoading, setReferralsLoading] = useState(false);
-    const [referralsError, setReferralsError] = useState(null);
-    const [referralsProgress, setReferralsProgress] = useState(0); // 0-100 percentage
-
-    const fetchReferrals = useCallback(async () => {
-        if (!enabled || !publicClient || !main) return;
-        setReferralsLoading(true);
-        setReferralsError(null);
-        setReferralsProgress(0);
-
-        try {
-            const checksummedAddress = getAddress(address);
-            const latestBlock = await publicClient.getBlockNumber();
-            // Scan only the most recent 2M blocks (roughly 6-7 months on BSC)
-            // This prevents infinite scanning and speeds up mobile sync
-            const minStartBlock = latestBlock - 2000000n;
-            const CHUNK_SIZE = 200000n; // 200k blocks - safer for mobile
-
-
-            let currentTo = latestBlock;
-            let foundAddresses = new Set();
-            let chunksProcessed = 0;
-            const MAX_CHUNKS = 15; // Limit to prevent infinite loops
-
-            while (currentTo > minStartBlock && chunksProcessed < MAX_CHUNKS) {
-                const currentFrom = currentTo - CHUNK_SIZE > minStartBlock ? currentTo - CHUNK_SIZE : minStartBlock;
-
-                // Update progress
-                const totalBlocks = latestBlock - minStartBlock;
-                const blocksScanned = latestBlock - currentFrom;
-                const pct = totalBlocks > 0n ? Number((blocksScanned * 100n) / totalBlocks) : 100;
-                setReferralsProgress(Math.min(pct, 100));
-
-                console.log(`Syncing referrals: ${currentFrom} to ${currentTo} (chunk ${chunksProcessed + 1}/${MAX_CHUNKS})...`);
-
-                try {
-                    // Fetch logs for this chunk with a timeout
-                    const [referLogs, teamLogs, vipLogs] = await Promise.race([
-                        Promise.all([
-                            publicClient.getLogs({
-                                address: main,
-                                event: {
-                                    type: 'event',
-                                    name: 'ReferrerSet',
-                                    inputs: [{ name: 'user', type: 'address', indexed: true }, { name: 'referrer', type: 'address', indexed: true }]
-                                },
-                                args: { referrer: checksummedAddress },
-                                fromBlock: currentFrom,
-                                toBlock: currentTo
-                            }),
-                            publicClient.getLogs({
-                                address: main,
-                                event: {
-                                    type: 'event',
-                                    name: 'TeamLinked',
-                                    inputs: [{ name: 'referrer', type: 'address', indexed: true }, { name: 'user', type: 'address', indexed: true }]
-                                },
-                                args: { referrer: checksummedAddress },
-                                fromBlock: currentFrom,
-                                toBlock: currentTo
-                            }),
-                            publicClient.getLogs({
-                                address: main,
-                                event: {
-                                    type: 'event',
-                                    name: 'VIPUpgrade1Counted',
-                                    inputs: [{ name: 'user', type: 'address', indexed: true }, { name: 'upline', type: 'address', indexed: true }]
-                                },
-                                args: { upline: checksummedAddress },
-                                fromBlock: currentFrom,
-                                toBlock: currentTo
-                            })
-                        ]),
-                        new Promise((_, reject) => setTimeout(() => reject(new Error('Chunk timeout')), 8000))
-                    ]);
-
-                    const chunkAddrs = [...referLogs, ...teamLogs, ...vipLogs].map(l => l.args.user);
-                    let added = false;
-                    chunkAddrs.forEach(addr => {
-                        if (!foundAddresses.has(addr)) {
-                            foundAddresses.add(addr);
-                            added = true;
-                        }
-                    });
-
-                    if (added) {
-                        setDirectReferralsList(Array.from(foundAddresses));
-                    }
-                } catch (chunkErr) {
-                    console.warn(`Skipping chunk ${currentFrom}-${currentTo}:`, chunkErr.message);
-                    // Continue to next chunk even if this one fails
-                }
-
-                currentTo = currentFrom - 1n;
-                chunksProcessed++;
-            }
-
-            setReferralsProgress(100);
-        } catch (err) {
-            console.error("Referral sync error:", err);
-            setReferralsError(err?.shortMessage || err?.message || "Sync interrupted");
-        } finally {
-            setReferralsLoading(false);
-        }
-    }, [enabled, publicClient, main, address, chainId]);
-
-    // Fetch direct referral addresses from events
-    useEffect(() => {
-        fetchReferrals();
-    }, [fetchReferrals]);
-
-    // Check hasPlan status for all directs
-    useEffect(() => {
-        if (!enabled || !publicClient || !main || directReferralsList.length === 0) return;
-
-        const fetchStatuses = async () => {
-            try {
-                const results = await publicClient.multicall({
-                    contracts: directReferralsList.map(addr => ({
-                        address: main,
-                        abi: mainAbi,
-                        functionName: 'getUser',
-                        args: [addr]
-                    }))
-                });
-
-                const newStatuses = {};
-                directReferralsList.forEach((addr, i) => {
-                    if (results[i].status === 'success') {
-                        newStatuses[addr] = {
-                            hasPlan: results[i].result[0],
-                            baseUSDCents: results[i].result[1]
-                        };
-                    }
-                });
-                setReferralStatuses(newStatuses);
-            } catch (err) {
-                console.error("Failed to fetch referral statuses:", err);
-            }
-        };
-
-        fetchStatuses();
-    }, [enabled, publicClient, main, directReferralsList]);
-
     const ROYALTY_CALLS = useMemo(() => {
         if (!enabled || !royalty) return [];
         const acct = address;
@@ -369,7 +223,13 @@ export function ProtocolProvider({ children }) {
     // Parse getUserStateView result (vipDataState) into a clean object
     const parsedVipState = useMemo(() => {
         if (!vipDataState) return undefined;
+        // Check if it's an array (tuple) or object
         if (Array.isArray(vipDataState)) {
+            // Struct UserStateView { 
+            //   0: currentLevel, 1: selfBaseCents, 2: directsFirst, 3: directsVip1, 
+            //   4: teamFirst, 5: lastDepositAt, 6: levelReachedAt[7], 7: oneTimeClaimed[7], 
+            //   8: vip (WindowView), 9: rede (WindowView) 
+            // }
             return {
                 currentLevel: Number(vipDataState[0]),
                 selfBaseCents: vipDataState[1],
@@ -378,20 +238,29 @@ export function ProtocolProvider({ children }) {
                 teamFirst: vipDataState[4],
                 levelReachedAt: vipDataState[6],
                 oneTimeClaimed: vipDataState[7],
-                vip: vipDataState[8],
-                rede: vipDataState[9]
+                vip: vipDataState[8], // WindowView struct
+                rede: vipDataState[9]  // WindowView struct
             };
         }
-        return vipDataState;
+        return vipDataState; // Already an object (if wagmi mapped it)
     }, [vipDataState]);
 
     const eligibility = useMemo(() => {
         if (!eligibilityTuple) return undefined;
         const [baseCents, directs, dirVip1, team, lastDepositAt] = eligibilityTuple;
+
+        // Accurate "active in cycle" counts from the windows
         const activeDirects = Number(parsedVipState?.vip?.redeDirectCount || 0) + Number(parsedVipState?.rede?.redeDirectCount || 0);
         const activeTeam = Number(parsedVipState?.vip?.redeTeamCount || 0) + Number(parsedVipState?.rede?.redeTeamCount || 0);
+
         return {
-            baseCents, directs, dirVip1, team, lastDepositAt, activeDirects, activeTeam,
+            baseCents,
+            directs, // Lifetime deposit makers
+            dirVip1,
+            team,
+            lastDepositAt,
+            activeDirects, // Currently in a claim window (renewed/active)
+            activeTeam,    // Currently in a claim window
             currentTrack: Number(currentTrack ?? 0)
         };
     }, [eligibilityTuple, parsedVipState, currentTrack]);
@@ -410,7 +279,7 @@ export function ProtocolProvider({ children }) {
             } : undefined,
             expectedEarning: expectedEarning,
             contractBalance: usdtRoyalty,
-            usdt: expectedEarning
+            usdt: expectedEarning // Map expectedEarning to .usdt for convenience in UI
         };
     }, [memberDetailsTuple, poolStatusTuple, expectedEarning, usdtRoyalty]);
 
@@ -495,10 +364,11 @@ export function ProtocolProvider({ children }) {
     })), [vipC, writeContractAsync, runTx]);
 
     const actions = useMemo(() => ({
-        refetch: () => { refetch(); vipRefetch(); royaltyRefetch(); earningRefetch(); history.refetch(); fetchReferrals(); },
+        refetch: () => { refetch(); vipRefetch(); royaltyRefetch(); earningRefetch(); history.refetch(); },
         loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty, distributeFees, claimReferral,
-        fetchReferrals
-    }), [refetch, vipRefetch, royaltyRefetch, earningRefetch, history, fetchReferrals, loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty, distributeFees, claimReferral]);
+    }), [refetch, vipRefetch, royaltyRefetch, earningRefetch, history, loading, approveUsdtIfNeeded, deposit, claimAll, claimPhase, claimVIP, claimRoyalty, distributeFees, claimReferral]);
+
+
 
     const vipProg = useMemo(() => {
         if (!vipProgressTuple) return {};
@@ -514,28 +384,23 @@ export function ProtocolProvider({ children }) {
     }, [vipProgressTuple]);
 
     const data = {
-        tokenBalance, usdtBalance,
+        tokenBalance, usdtBalance, // Added raw balances for Sell screen
         tokenBalanceFmt, usdtBalanceFmt, priceUSD, pending, referral, user, history, depositWindow, chainId, main, usdt, withdraw,
         contractTokenBalanceFmt, contractUsdtBalanceFmt,
         vip: {
             ...parsedVipState,
+            // Sync level with royalty as fallback
             currentLevel: Math.max(Number(parsedVipState?.currentLevel ?? 0), Number(royaltyInfo?.activeLevel ?? 0)),
+            // Ensure .rede is accessible for redeposit stats
             rede: parsedVipState?.rede,
             vip: parsedVipState?.vip
         },
         vipTables, claimVip,
         vipProgress: vipProgressTuple,
-        vipProg,
+        vipProg, // Added for VIP screen compatibility
         redeProgress: redeProgressTuple,
         royalty: royaltyInfo,
         eligibility,
-        directsList: directReferralsList.map(addr => ({
-            address: addr,
-            ...(referralStatuses[addr] || { hasPlan: false, baseUSDCents: 0n })
-        })),
-        referralsLoading,
-        referralsError,
-        referralsProgress,
         owner,
         beneficiaries,
         royaltyOwner,
